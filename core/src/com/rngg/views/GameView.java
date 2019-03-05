@@ -1,12 +1,11 @@
 package com.rngg.views;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 
-public class GameView extends AbstractView {
-    public GameView(Game game) {
-        super(game);
+public class GameView extends View {
+    public GameView() {
+
     }
 
     @Override

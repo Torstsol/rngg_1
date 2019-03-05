@@ -1,27 +1,28 @@
 package com.rngg.views;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.rngg.controllers.Controller;
 
-public class MainMenuView extends AbstractView {
+public class MainMenuView extends View {
     SpriteBatch batch;
     Texture img;
+    Controller controller;
 
-    public MainMenuView(Game game) {
-        super(game);
-
+    public MainMenuView(Controller controller) {
         batch = new SpriteBatch();
         img = new Texture("badlogic.jpg");
+
+        this.controller = controller;
     }
 
     @Override
     public void update(float delta) {
         System.out.println("Updating MainMenuView");
         if(Gdx.input.isKeyPressed(Input.Keys.A))
-            game.setScreen(new GameView(game));
+            controller.setView();
     }
 
     @Override

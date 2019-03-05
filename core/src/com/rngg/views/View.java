@@ -6,16 +6,15 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
-public class AbstractView implements Screen {
+public class View implements Screen {
     private OrthographicCamera camera;
     protected Game game;
 
-    public AbstractView(Game game) {
+    public View() {
         super();
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 400);
-        this.game = game;
     }
 
     public void update(float delta) {

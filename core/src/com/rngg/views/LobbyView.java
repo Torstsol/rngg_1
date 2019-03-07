@@ -31,7 +31,8 @@ public class LobbyView extends View {
         batch.begin();
         font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         font.draw(batch, ">Lobby View<", 50, 250);
-        font.draw(batch, "Press 'b' to go back", 50, 150);
+        font.draw(batch, "Press 'g' to go to game view", 50, 150);
+        font.draw(batch, "Press 'b' to go back", 50, 50);
         batch.end();
     }
 

@@ -1,9 +1,14 @@
 package com.rngg.controllers;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.rngg.models.GameModel;
+import com.rngg.views.GameView;
+import com.rngg.views.MenuView;
 
 public class GameController extends Controller {
+
     GameModel gameModel;
 
     public GameController(Game game, GameModel gameModel) {
@@ -13,8 +18,12 @@ public class GameController extends Controller {
 
     @Override
     public void update(float delta) {
-        System.out.println("GameController update");
+        Gdx.app.log(this.getClass().getSimpleName(), "update");
+
         gameModel.playerScore++;
+
+        if(Gdx.input.isKeyPressed(Input.Keys.B))
+            game.setScreen(new MenuView(new MenuController(game)));
     }
 
     public int getPlayerScore() {

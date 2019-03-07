@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input;
 
 abstract public class Controller {
+
     Game game;
     Controller controller;
 
@@ -12,4 +13,5 @@ abstract public class Controller {
     }
 
     abstract public void update(float delta);
+
 }

@@ -4,16 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.rngg.controllers.LobbyController;
+import com.rngg.controllers.MenuController;
 
-public class LobbyView extends View {
+public class MenuView extends View {
 
-    LobbyController controller;
+    MenuController controller;
 
     private SpriteBatch batch;
     private BitmapFont font;
 
-    public LobbyView(LobbyController controller) {
+    public MenuView(MenuController controller) {
         this.controller = controller;
 
         batch = new SpriteBatch();
@@ -30,8 +30,9 @@ public class LobbyView extends View {
 
         batch.begin();
         font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        font.draw(batch, ">Lobby View<", 50, 250);
-        font.draw(batch, "Press 'b' to go back", 50, 150);
+        font.draw(batch, ">Menu View<", 50, 250);
+        font.draw(batch, "Press 'l' to go to lobby view", 50, 150);
+        font.draw(batch, "Press 's' to go to settings view", 50, 50);
         batch.end();
     }
 
@@ -39,4 +40,5 @@ public class LobbyView extends View {
     public void dispose() {
         batch.dispose();
     }
+
 }

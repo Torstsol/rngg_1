@@ -19,8 +19,4 @@ public class MainMenuController extends Controller {
             game.setScreen(new GameView(new GameController(game, new GameModel())));
     }
 
-    @Override
-    public void handleInput(Input.Keys key) {
-
-    }
 }

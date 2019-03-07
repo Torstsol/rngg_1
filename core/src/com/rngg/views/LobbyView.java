@@ -1,14 +1,14 @@
 package com.rngg.views;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.rngg.controllers.MainMenuController;
+import com.rngg.controllers.LobbyController;
 
-public class MainMenuView extends View {
-    MainMenuController controller;
+public class LobbyView extends View {
+    LobbyController controller;
 
     SpriteBatch batch;
 
-    public MainMenuView(MainMenuController controller) {
+    public LobbyView(LobbyController controller) {
         this.controller = controller;
 
         batch = new SpriteBatch();

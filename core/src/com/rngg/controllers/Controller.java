@@ -1,16 +1,17 @@
 package com.rngg.controllers;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Input;
 import com.rngg.views.GameView;
 
-public class Controller {
+abstract public class Controller {
     Game game;
 
     public Controller(Game game) {
         this.game = game;
     }
 
-    public void setView() {
-        game.setScreen(new GameView());
-    }
+    abstract public void update(float delta);
+
+    abstract public void handleInput(Input.Keys key);
 }

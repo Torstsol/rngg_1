@@ -15,9 +15,5 @@ public class Rngg extends Game {
 	public void render () {
 	    screen.render(Gdx.graphics.getDeltaTime());
 	}
-	
-	@Override
-	public void dispose () {
 
-	}
 }

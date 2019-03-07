@@ -4,16 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.rngg.controllers.GameController;
+import com.rngg.controllers.MenuController;
 
-public class GameView extends View {
+public class MenuView extends View {
 
-    private GameController controller;
+    MenuController controller;
 
     private SpriteBatch batch;
     private BitmapFont font;
 
-    public GameView(GameController controller) {
+    public MenuView(MenuController controller) {
         this.controller = controller;
 
         batch = new SpriteBatch();
@@ -21,7 +21,8 @@ public class GameView extends View {
                 Gdx.files.internal("minecraftia.png"), false);
     }
 
-    @Override public void render(float delta) {
+    @Override
+    public void render(float delta) {
         controller.update(delta);
 
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
@@ -29,10 +30,15 @@ public class GameView extends View {
 
         batch.begin();
         font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        font.draw(batch, Integer.toString(controller.getPlayerScore()), 50, 350);
-        font.draw(batch, ">Game View<", 50, 250);
-        font.draw(batch, "Press 'b' to go back", 50, 150);
+        font.draw(batch, ">Menu View<", 50, 250);
+        font.draw(batch, "Press 'l' to go to lobby view", 50, 150);
+        font.draw(batch, "Press 's' to go to settings view", 50, 50);
         batch.end();
+    }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
     }
 
 }

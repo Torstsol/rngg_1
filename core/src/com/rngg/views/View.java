@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
 abstract public class View implements Screen {
+
     private OrthographicCamera camera;
 
     public View() {
@@ -54,4 +55,5 @@ abstract public class View implements Screen {
     public void dispose() {
 
     }
+
 }

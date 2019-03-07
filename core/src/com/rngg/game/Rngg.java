@@ -2,13 +2,14 @@ package com.rngg.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.rngg.controllers.MainMenuController;
-import com.rngg.views.MainMenuView;
+import com.rngg.controllers.MenuController;
+import com.rngg.views.MenuView;
 
 public class Rngg extends Game {
+
 	@Override
 	public void create () {
-		this.setScreen(new MainMenuView(new MainMenuController(this)));
+		this.setScreen(new MenuView(new MenuController(this)));
 	}
 
 	@Override

@@ -4,29 +4,32 @@ package com.rngg.singletons;
 import java.util.Arrays;
 
 public class RNG {
-    private static RNG instance = null;
     private String[] labels;
     private float[] values, probabilities;
 
+    private int[] rollResult;
+
     // TODO main for testing purposes, remove before merging
     public static void main(String[] args) {
-        RNG rng = RNG.d6();
-        int[] roll = rng.roll(8);
-        System.out.println(Arrays.toString(rng.labelFromRoll(roll)));
-        System.out.println(rng.valueFromRoll(roll));
+        RNG rng = RNG.getInstance();
+        rng.d6();
+        rng.roll(8);
+        System.out.println(Arrays.toString(rng.labelFromRoll()));
+        System.out.println(rng.valueFromRoll());
     }
 
-    public RNG getInstance() {
-        return instance;
+    private static class LazyHolder {
+        static final RNG INSTANCE = new RNG();
     }
 
-    private RNG(String[] labels, float[] values, float[] probabilities) {
-        if (labels.length != values.length
-                || labels.length != probabilities.length
-                // my (@sondremb's) AndroidStudio throws a hissy fit at below line,
-                // and says that the condition is always false.
-                // Testing determined that to be a lie.
-                || values.length != probabilities.length) {
+    private RNG() { d6(); }
+
+    public static RNG getInstance() {
+        return LazyHolder.INSTANCE;
+    }
+
+    private void setLabelsValuesProbs(String[] labels, float[] values, float[] probabilities) {
+        if (labels.length != values.length  || labels.length != probabilities.length) {
             throw new IllegalArgumentException("Arguments must have same length");
         }
 
@@ -34,6 +37,7 @@ public class RNG {
         for (float p : probabilities) {
             sum += p;
         }
+
         if (!almostEqual(sum, 1)) {
             throw new IllegalArgumentException("Probability array must sum to 1 (was " + sum + ")");
         }
@@ -61,39 +65,29 @@ public class RNG {
         return probabilities.length - 1;
     }
 
-    public int[] roll(int n) {
+    public void roll(int n) {
         // roll multiple dice at once
         int[] ret = new int[n];
         for (int i = 0; i < n; i++) {
             ret[i] = roll();
         }
-        return ret;
+        rollResult = ret;
     }
 
-    public float valueFromRoll(int i) {
-        // returns value under index i (output from roll function)
-        return values[i];
-    }
-
-    public float valueFromRoll(int[] is) {
+    public float valueFromRoll() {
         // takes an array of indices, returns sum of values
         float sum = 0;
-        for (int i : is) {
+        for (int i : rollResult) {
             sum += values[i];
         }
         return sum;
     }
 
-    public String labelFromRoll(int i) {
-        // returns label under index i (output from roll function)
-        return labels[i];
-    }
-
-    public String[] labelFromRoll(int[] is) {
+    public String[] labelFromRoll() {
         // takes an array of indices, returns array of labels
-        String[] ret = new String[is.length];
-        for (int j = 0; j < is.length; j++) {
-            ret[j] = labels[is[j]];
+        String[] ret = new String[rollResult.length];
+        for (int j = 0; j < rollResult.length; j++) {
+            ret[j] = labels[rollResult[j]];
         }
         return ret;
     }
@@ -102,8 +96,8 @@ public class RNG {
 
     // --- BEGIN useful instances ---
 
-    public static RNG uniformRange(int min, int max, int step) {
-        // creates an RNG with uniformly distributed integer values in a range
+    public void uniformRange(int min, int max, int step) {
+        // Fills the RNG with uniformly distributed integer values in a range
         // labels are values as strings
 
         int length = ((max - min) / step) + 1;
@@ -120,30 +114,28 @@ public class RNG {
             j += 1;
         }
 
-        RNG.instance = new RNG(labels, values, probabilities);
-        return RNG.instance;
+        setLabelsValuesProbs(labels, values, probabilities);
     }
 
-    public static RNG uniformRange(int min, int max) {
+    public void uniformRange(int min, int max) {
         // overloads uniformRange with implicit step=1
-        return uniformRange(min, max, 1);
+        uniformRange(min, max, 1);
     }
 
-    public static RNG d6() {
-        return uniformRange(1, 6);
+    public void d6() {
+        uniformRange(1, 6);
     }
 
-    public static RNG d20() {
-        return uniformRange(1, 20);
+    public void d20() {
+        uniformRange(1, 20);
     }
 
-    public static RNG grades() {
-        RNG.instance = new RNG(
-                new String[]{"F", "E", "D", "C", "B", "A"},
-                new float[]{0, 41, 53, 65, 77, 89},
-                new float[]{41/101f, 12/101f, 12/101f, 12/101f, 12/101f, 12/101f}
+    public void grades() {
+        setLabelsValuesProbs(
+            new String[]{"F", "E", "D", "C", "B", "A"},
+            new float[]{0, 41, 53, 65, 77, 89},
+            new float[]{41/101f, 12/101f, 12/101f, 12/101f, 12/101f, 12/101f}
         );
-        return RNG.instance;
     }
 
     // --- END useful instances ---

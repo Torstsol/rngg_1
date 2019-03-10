@@ -31,7 +31,8 @@ public class SettingsView extends View {
         batch.begin();
         font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         font.draw(batch, ">Settings View<", 50, 250);
-        font.draw(batch, "Press 'b' to go back", 50, 150);
+        font.draw(batch, "Press 'c' to go color settings", 50, 150);
+        font.draw(batch, "Press 'b' to go back", 50, 50);
         batch.end();
     }
 

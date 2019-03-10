@@ -1,14 +1,13 @@
 package com.rngg.views;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
-public class View implements Screen {
+abstract public class View implements Screen {
+
     private OrthographicCamera camera;
-    protected Game game;
 
     public View() {
         super();
@@ -17,9 +16,7 @@ public class View implements Screen {
         camera.setToOrtho(false, 800, 400);
     }
 
-    public void update(float delta) {
-
-    }
+    //abstract public void update(float delta);
 
     @Override
     public void show() {
@@ -28,8 +25,6 @@ public class View implements Screen {
 
     @Override
     public void render(float delta) {
-        update(delta);
-
         Gdx.gl.glClearColor(0, 1, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -60,4 +55,5 @@ public class View implements Screen {
     public void dispose() {
 
     }
+
 }

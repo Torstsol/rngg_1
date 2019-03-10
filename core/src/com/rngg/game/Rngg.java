@@ -8,6 +8,9 @@ import com.rngg.views.MenuView;
 
 public class Rngg extends Game {
 
+	public static final int HEIGHT = 720;
+	public static final int WIDTH = 1280;
+
 	@Override
 	public void create () {
         Gdx.app.setLogLevel(Application.LOG_INFO);

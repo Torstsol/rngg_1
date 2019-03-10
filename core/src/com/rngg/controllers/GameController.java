@@ -18,7 +18,7 @@ public class GameController extends Controller {
 
     @Override
     public void update(float delta) {
-        Gdx.app.log(this.getClass().getSimpleName(), "update");
+        Gdx.app.debug(this.getClass().getSimpleName(), "update");
 
         gameModel.playerScore++;
 

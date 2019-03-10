@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.rngg.game.Rngg;
 
 abstract public class View implements Screen {
 
@@ -13,7 +14,7 @@ abstract public class View implements Screen {
         super();
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 400);
+        camera.setToOrtho(false, Rngg.WIDTH, Rngg.HEIGHT);
     }
 
     //abstract public void update(float delta);

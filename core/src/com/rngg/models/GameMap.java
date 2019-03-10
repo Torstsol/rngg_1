@@ -1,23 +1,22 @@
 package com.rngg.models;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.Gdx;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class GameMap {
-    private HashMap<Zone, ArrayList<Zone>> zones;
+public abstract class GameMap<Z extends Zone> {
 
-    public GameMap(HashMap<Zone, ArrayList<Zone>> zones) {
-        this.zones = zones;
-    }
+    protected HashMap<Z, ArrayList<Z>> neighbors;
+    protected ShapeRenderer.ShapeType shapetype;
 
-    abstract public Zone screenCoordToZone(Vector2 coords);
+    abstract public Z screenCoordToZone(Vector2 coords);
 
-    public ArrayList<Zone> getPlayerZones(Player player) {
-        ArrayList<Zone> ret = new ArrayList<Zone>();
-        for (Zone zone : zones.keySet()) {
+    public ArrayList<Z> getPlayerZones(Player player) {
+        ArrayList<Z> ret = new ArrayList<Z>();
+        for (Z zone : neighbors.keySet()) {
             if (zone.getPlayer().equals(player)) {
                 ret.add(zone);
             }
@@ -25,21 +24,23 @@ public abstract class GameMap {
         return ret;
     }
 
-    public ArrayList<Zone> getNeighbors(Zone zone) {
-        return zones.get(zone);
+    public ArrayList<Z> getNeighbors(Z zone) {
+        return neighbors.get(zone);
     }
 
-    private boolean isNeighbors(Zone zone1, Zone zone2) {
+    private boolean isNeighbors(Z zone1, Z zone2) {
         return getNeighbors(zone1).contains(zone2);
     }
 
-    public void draw() {
-        for (Zone zone : zones.keySet()) {
-            zone.draw();
+    public void draw(ShapeRenderer sr) {
+        sr.begin(shapetype);
+        for (Z zone : neighbors.keySet()) {
+            zone.draw(sr);
         }
+        sr.end();
     }
 
-    public int attack(Zone attacker, Zone defender) {
+    public int attack(Z attacker, Z defender) {
         // TODO move this to another class
         /*
         Returns
@@ -51,7 +52,7 @@ public abstract class GameMap {
             String.format("%s is attacking %s", attacker.getPlayer().toString(), defender.getPlayer().toString())
         );
         if (isNeighbors(attacker, defender)) {
-            Gdx.app.log(this.getClass().getSimpleName(), "Attacker and defender zones were not neighbors");
+            Gdx.app.log(this.getClass().getSimpleName(), "Attacker and defender neighbors were not neighbors");
             return 0;
         }
         if (attacker.getPlayer().equals(defender.getPlayer())) {

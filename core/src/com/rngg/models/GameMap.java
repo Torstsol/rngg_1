@@ -1,8 +1,9 @@
 package com.rngg.models;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.Gdx;
+import com.rngg.views.GameView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,12 +33,19 @@ public abstract class GameMap<Z extends Zone> {
         return getNeighbors(zone1).contains(zone2);
     }
 
-    public void draw(ShapeRenderer sr) {
-        sr.begin(shapetype);
+    public void draw(GameView view) {
+
+        view.getSR().begin(shapetype);
         for (Z zone : neighbors.keySet()) {
-            zone.draw(sr);
+            zone.draw(view);
         }
-        sr.end();
+        view.getSR().end();
+
+        view.getBatch().begin();
+        for (Z zone : neighbors.keySet()) {
+            zone.drawText(view);
+        }
+        view.getBatch().end();
     }
 
     public int attack(Z attacker, Z defender) {
@@ -49,7 +57,7 @@ public abstract class GameMap<Z extends Zone> {
              1 if attacker wins
         */
         Gdx.app.log(this.getClass().getSimpleName(),
-            String.format("%s is attacking %s", attacker.getPlayer().toString(), defender.getPlayer().toString())
+                String.format("%s is attacking %s", attacker.getPlayer().toString(), defender.getPlayer().toString())
         );
         if (isNeighbors(attacker, defender)) {
             Gdx.app.log(this.getClass().getSimpleName(), "Attacker and defender neighbors were not neighbors");

@@ -1,6 +1,6 @@
 package com.rngg.models;
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.rngg.views.GameView;
 
 public abstract class Zone {
     protected Player player;
@@ -22,5 +22,7 @@ public abstract class Zone {
         this.units = units;
     }
 
-    abstract public void draw(ShapeRenderer sr);
+    abstract public void draw(GameView view);
+
+    abstract public void drawText(GameView view);
 }

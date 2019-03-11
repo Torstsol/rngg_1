@@ -1,19 +1,11 @@
 package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.rngg.controllers.ColorController;
-import com.rngg.controllers.MenuController;
-
-import java.awt.Color;
-import java.awt.image.ColorConvertOp;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import com.rngg.models.ColorModel;
 
 public class ColorView extends View {
 
@@ -21,12 +13,7 @@ public class ColorView extends View {
 
     private SpriteBatch batch;
     private BitmapFont font;
-    Preferences prefs;
-    private Texture pmapTexture1;
-    private Texture pmapTexture2;
-    private Texture pmapTexture3;
-    private Texture pmapTexture4;
-    private ArrayList<Integer> colorArray;
+    private ColorModel colorModel;
 
     public ColorView(ColorController controller) {
         this.controller = controller;
@@ -35,12 +22,7 @@ public class ColorView extends View {
         font = new BitmapFont(Gdx.files.internal("minecraftia.fnt"),
                 Gdx.files.internal("minecraftia.png"), false);
 
-
-        prefs = Gdx.app.getPreferences("color-preferences");
-        pmapTexture1 = this.setCustomColor("red");
-        pmapTexture2 = this.setCustomColor("yellow");
-        pmapTexture3 = this.setCustomColor("blue");
-        pmapTexture4 = this.setCustomColor("sky blue");
+        this.colorModel = new ColorModel();
 
     }
 
@@ -54,11 +36,12 @@ public class ColorView extends View {
         batch.begin();
         font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         font.draw(batch, ">Color Settings View<", 50, 250);
-        font.draw(batch, "Press 'b' to go back", 50, 150);
-        batch.draw(pmapTexture1,50,350);
-        batch.draw(pmapTexture2,150,350);
-        batch.draw(pmapTexture3,250,350);
-        batch.draw(pmapTexture4,350,350);
+        font.draw(batch, "Protanopia 'p'", 50, 150);
+        font.draw(batch, "Deuteranopia 'd'", 150, 150);
+        font.draw(batch, "Tritanopia 't'", 50, 100);
+        font.draw(batch, "Normal colors 'n'", 150, 150);
+        font.draw(batch, "Press 'b' to go back", 50, 50);
+        colorModel.draw(batch);
         batch.end();
     }
 
@@ -67,19 +50,6 @@ public class ColorView extends View {
         batch.dispose();
 
 
-    }
-
-    private Texture setCustomColor(String color){
-        colorArray = new ArrayList<Integer>();
-        for(String c : prefs.getString(color).split(",")) {
-            colorArray.add(Integer.parseInt(c));
-        }
-
-        Pixmap pmap = new Pixmap(100,100, Pixmap.Format.RGB888);
-        pmap.setColor(colorArray.get(0), colorArray.get(1), colorArray.get(2),1);
-        pmap.fill();
-
-        return new Texture(pmap);
     }
 
 

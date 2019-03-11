@@ -1,26 +1,28 @@
 package com.rngg.game;
 
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.rngg.controllers.MenuController;
-import com.rngg.services.API;
+import com.rngg.services.IPlayServices;
 import com.rngg.views.MenuView;
 
 public class Rngg extends Game {
 
-	public final API api;
+	public final IPlayServices playServices;
 
-	public Rngg(API api) {
-		this.api = api;
+	public Rngg(IPlayServices playServices) {
+		this.playServices = playServices;
+		playServices.signIn();
 	}
 
-	public API getAPI(){
-		return api;
+	public IPlayServices getAPI(){
+		return playServices;
 	}
 
 	@Override
 	public void create () {
-		this.setScreen(new MenuView(new MenuController(this)));
+		this.setScreen(new MenuView(new MenuController(this), this));
 	}
 
 	@Override

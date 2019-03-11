@@ -21,9 +21,9 @@ public class LobbyController extends Controller {
         if(Gdx.input.isKeyPressed(Input.Keys.G))
             game.setScreen(new GameView(new GameController(game, new GameModel())));
         else if(Gdx.input.isKeyPressed(Input.Keys.B))
-            game.setScreen(new MenuView(new MenuController(game)));
+            game.setScreen(new MenuView(new MenuController(game), game));
         else if(Gdx.input.isKeyPressed(Input.Keys.L)){
-            ((Rngg) game).api.startSignInIntent();
+            //((Rngg) game).IPlayServices.startSignInIntent();
         }
     }
 

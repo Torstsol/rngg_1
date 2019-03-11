@@ -3,6 +3,7 @@ package GmsServices;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -18,10 +19,17 @@ public class AndroidAPI extends Activity implements API {
      * Start a sign in activity.  To properly handle the result, call tryHandleSignInResult from
      * your Activity's onActivityResult function
      */
-    public void startSignInIntent() {
-        GoogleSignInClient signInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
-        Intent intent = signInClient.getSignInIntent();
-        startActivityForResult(intent, RC_SIGN_IN);
+
+    private GoogleSignInClient signInClient = null;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        signInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
     }
 
+    public void startSignInIntent() {
+        startActivityForResult(signInClient.getSignInIntent(), RC_SIGN_IN);
+    }
 }

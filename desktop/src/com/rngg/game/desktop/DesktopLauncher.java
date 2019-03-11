@@ -7,6 +7,6 @@ import com.rngg.game.Rngg;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new Rngg(), config);
+		new LwjglApplication(new Rngg(null), config);
 	}
 }

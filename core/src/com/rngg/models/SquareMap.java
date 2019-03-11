@@ -30,44 +30,44 @@ public class SquareMap extends GameMap<SquareZone> {
 
         HashMap<SquareZone, ArrayList<SquareZone>> zones = new HashMap<SquareZone, ArrayList<SquareZone>>();
 
-        for(int row = 0; row<rows; row++){
-            for(int col = 0; col<cols; col++) {
-                SquareZone zone = new SquareZone(col, row, zoneWidth, zoneHeight);
+        for (int row = 0; row < rows; row++){
+            for (int col = 0; col < cols; col++) {
+                SquareZone zone = new SquareZone(row, col, zoneWidth, zoneHeight);
                 this.zones[row][col] = zone;
                 Gdx.app.log(this.getClass().getSimpleName(),"generated: " + zone.toString());
             }
         }
-        for(int row = 0; row<rows; row++){
-            for(int col = 0; col<cols; col++) {
-                SquareZone zone = getZone(col, row);
+        for (int row = 0; row < rows; row++){
+            for (int col = 0; col < cols; col++) {
+                SquareZone zone = getZone(row, col);
                 zones.put(zone, generateNeighbors(zone));
             }
         }
         this.neighbors = zones;
     }
 
-    private SquareZone getZone(int x, int y) {
-        return this.zones[y][x];
+    private SquareZone getZone(int row, int col) {
+        return this.zones[row][col];
     }
 
     private ArrayList<SquareZone> generateNeighbors(SquareZone zone) {
         ArrayList<SquareZone> ret = new ArrayList<SquareZone>();
 
-        int x = zone.getX();
-        int y = zone.getY();
+        int row = zone.getRow();
+        int col = zone.getCol();
 
-        if(x-1 >= 0) {
-            ret.add(getZone(x-1, y));
+        if(row-1 >= 0) {
+            ret.add(getZone(row-1, col));
         }
-        if(x+1 < cols) {
-            ret.add(getZone(x+1, y));
+        if(row+1 < rows) {
+            ret.add(getZone(row+1, col));
         }
 
-        if(y-1 >= 0) {
-            ret.add(getZone(x, y-1));
+        if(col-1 >= 0) {
+            ret.add(getZone(row, col-1));
         }
-        if(y+1 < rows) {
-            ret.add(getZone(x, y+1));
+        if(col+1 < cols) {
+            ret.add(getZone(row, col+1));
         }
 
         return ret;

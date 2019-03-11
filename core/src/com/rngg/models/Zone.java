@@ -3,8 +3,8 @@ package com.rngg.models;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public abstract class Zone {
-    private Player player;
-    private int units;
+    protected Player player;
+    protected int units;
 
     public Player getPlayer() {
         return player;

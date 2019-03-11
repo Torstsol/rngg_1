@@ -8,7 +8,7 @@ import com.rngg.game.Rngg;
 
 abstract public class View implements Screen {
 
-    private OrthographicCamera camera;
+    protected OrthographicCamera camera;
 
     public View() {
         super();

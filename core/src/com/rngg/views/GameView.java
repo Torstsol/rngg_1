@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.rngg.controllers.GameController;
+import com.rngg.game.Rngg;
 
 public class GameView extends View {
 
@@ -25,20 +26,20 @@ public class GameView extends View {
         font.setColor(Color.WHITE);
 
         this.sr = new ShapeRenderer();
-
     }
 
     @Override
     public void render(float delta) {
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+        sr.setProjectionMatrix(camera.combined);
         controller.update(delta);
+        controller.setCamera(camera);
 
         Gdx.gl.glClearColor(1f, 1f, 1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         controller.gameModel.draw(this);
-        batch.begin();
-
-        batch.end();
     }
 
     public ShapeRenderer getSR() {

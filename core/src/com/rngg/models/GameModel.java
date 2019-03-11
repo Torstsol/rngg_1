@@ -8,7 +8,7 @@ public class GameModel {
     private SquareMap map;
 
     public GameModel() {
-        this.map = new SquareMap(2, 2);
+        this.map = new SquareMap(9, 16);
     }
 
     public void draw(GameView view) {

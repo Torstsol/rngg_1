@@ -18,7 +18,7 @@ public class LobbyController extends Controller {
         Gdx.app.debug(this.getClass().getSimpleName(), "update");
 
         if(Gdx.input.isKeyPressed(Input.Keys.G))
-            game.setScreen(new GameView(new GameController(game, new GameModel())));
+            game.setScreen(new GameView(new GameController(game, new GameModel(4))));
         else if(Gdx.input.isKeyPressed(Input.Keys.B))
             game.setScreen(new MenuView(new MenuController(game)));
     }

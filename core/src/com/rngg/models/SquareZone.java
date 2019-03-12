@@ -6,21 +6,20 @@ import com.rngg.views.GameView;
 public class SquareZone extends Zone {
 
     private int row, col, zoneWidth, zoneHeight;
-    private Color color;
     private boolean clicked = false;
 
-    public SquareZone(int row, int col, int zoneWidth, int zoneHeight) {
+    public SquareZone(Player player, int row, int col, int zoneWidth, int zoneHeight) {
         this.row = row;
         this.col = col;
         this.zoneWidth = zoneWidth;
         this.zoneHeight = zoneHeight;
-        this.color = new Color((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
-
+        this.player = player;
+        this.units = (int) ((Math.random() * 7) + 1);
     }
 
     @Override
     public void draw(GameView view) {
-        view.getSR().setColor((this.clicked) ? Color.BLACK : this.color);
+        view.getSR().setColor((this.clicked) ? Color.BLACK : this.player.getColor());
         view.getSR().rect(this.col * this.zoneWidth, this.row * this.zoneHeight, this.zoneWidth, this.zoneHeight);
     }
 
@@ -31,7 +30,7 @@ public class SquareZone extends Zone {
     }
 
     public void click() {
-        this.units++;
+        // TODO move this and unClick to Zone?
         this.clicked = true;
     }
 

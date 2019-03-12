@@ -13,7 +13,7 @@ public class SquareMap extends GameMap<SquareZone> {
     private int zoneWidth, zoneHeight, rows, cols;
     private SquareZone[][] zones;
 
-    public SquareMap(int rows, int cols) {
+    public SquareMap(int rows, int cols, Player[] players) {
         super();
 
         Gdx.app.log(this.getClass().getSimpleName(),
@@ -32,7 +32,8 @@ public class SquareMap extends GameMap<SquareZone> {
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                SquareZone zone = new SquareZone(row, col, zoneWidth, zoneHeight);
+                // TODO look at another way to distribute zones
+                SquareZone zone = new SquareZone(players[(int) (Math.random() * (players.length))], row, col, zoneWidth, zoneHeight);
                 this.zones[row][col] = zone;
                 Gdx.app.log(this.getClass().getSimpleName(), "generated: " + zone.toString());
             }

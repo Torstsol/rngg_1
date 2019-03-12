@@ -4,17 +4,13 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
-import com.rngg.models.SquareZone;
 import com.rngg.views.MenuView;
 
 public class GameController extends Controller {
 
     public GameModel gameModel;
-    private SquareZone clickedZone = null;
 
     public GameController(Game game, final GameModel gameModel) {
         super(game);
@@ -23,15 +19,10 @@ public class GameController extends Controller {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if (clickedZone != null) {
-                    clickedZone.unClick();
-                }
                 Vector3 unprojectedCoords = new Vector3(screenX, screenY, 0);
                 camera.unproject(unprojectedCoords);
 
-                clickedZone = gameModel.getMap().screenCoordToZone(new Vector2(unprojectedCoords.x, unprojectedCoords.y));
-                clickedZone.click();
-                Gdx.app.log(this.getClass().getSimpleName(), "Clicked " + clickedZone.toString());
+                gameModel.click(unprojectedCoords);
                 return true;
             }
         });

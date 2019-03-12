@@ -3,9 +3,7 @@ package com.rngg.controllers;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Preferences;
 import com.rngg.configuration.ColorPrefs;
-import com.rngg.views.ColorView;
 import com.rngg.views.SettingsView;
 
 
@@ -17,13 +15,14 @@ public class ColorController extends Controller {
         super(game);
 
         pref = new ColorPrefs();
-        pref.setTrueColors();
+        if(!pref.hasColors()){
+            pref.setTrueColors();
+        }
 
     }
 
     @Override
     public void update(float delta) {
-        //Gdx.app.log(this.getClass().getSimpleName(), "update");
 
         if(Gdx.input.isKeyPressed(Input.Keys.B)) {
             game.setScreen(new SettingsView(new SettingsController(game)));

@@ -24,5 +24,7 @@ public class ColorPrefs {
         prefs.flush();
     }
 
-
+    public boolean hasColors(){
+        return prefs.contains("red");
+    }
 }

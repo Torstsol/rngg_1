@@ -36,10 +36,10 @@ public class ColorView extends View {
         batch.begin();
         font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         font.draw(batch, ">Color Settings View<", 50, 250);
-        font.draw(batch, "Protanopia 'p'", 50, 150);
-        font.draw(batch, "Deuteranopia 'd'", 150, 150);
+        font.draw(batch, "Protanopia 'p'", 450, 100);
+        font.draw(batch, "Deuteranopia 'd'", 450, 150);
         font.draw(batch, "Tritanopia 't'", 50, 100);
-        font.draw(batch, "Normal colors 'n'", 150, 150);
+        font.draw(batch, "Normal colors 'n'", 50, 150);
         font.draw(batch, "Press 'b' to go back", 50, 50);
         colorModel.draw(batch);
         batch.end();

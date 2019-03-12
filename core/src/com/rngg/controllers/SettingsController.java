@@ -14,7 +14,7 @@ public class SettingsController extends Controller {
 
     @Override
     public void update(float delta) {
-        Gdx.app.log(this.getClass().getSimpleName(), "update");
+        Gdx.app.debug(this.getClass().getSimpleName(), "update");
 
         if(Gdx.input.isKeyPressed(Input.Keys.B))
             game.setScreen(new MenuView(new MenuController(game)));

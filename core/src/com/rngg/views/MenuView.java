@@ -14,11 +14,9 @@ public class MenuView extends View {
 
     private SpriteBatch batch;
     private BitmapFont font;
-    private boolean bool;
 
-    public MenuView(MenuController controller, Game game) {
+    public MenuView(MenuController controller) {
         this.controller = controller;
-        bool = ((Rngg) game).playServices.isSignedIn();
         batch = new SpriteBatch();
         font = new BitmapFont(Gdx.files.internal("minecraftia.fnt"),
                 Gdx.files.internal("minecraftia.png"), false);
@@ -36,7 +34,6 @@ public class MenuView extends View {
         font.draw(batch, ">Menu View<", 50, 250);
         font.draw(batch, "Press 'l' to go to lobby view", 50, 150);
         font.draw(batch, "Press 's' to go to settings view", 50, 50);
-        font.draw(batch, "Login-status: "+bool, 50, 300);
         batch.end();
     }
 

@@ -23,7 +23,7 @@ public class GameController extends Controller {
         gameModel.playerScore++;
 
         if(Gdx.input.isKeyPressed(Input.Keys.B))
-            game.setScreen(new MenuView(new MenuController(game), game));
+            game.setScreen(new MenuView(new MenuController(game)));
     }
 
     public int getPlayerScore() {

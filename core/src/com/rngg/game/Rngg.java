@@ -17,17 +17,20 @@ public class Rngg extends Game {
 	}
 
 	public IPlayServices getAPI(){
+
 		return playServices;
 	}
 
 	@Override
 	public void create () {
-		this.setScreen(new MenuView(new MenuController(this), this));
+
+		this.setScreen(new MenuView(new MenuController(this)));
 	}
 
 	@Override
 	public void render () {
-	    screen.render(Gdx.graphics.getDeltaTime());
+
+		screen.render(Gdx.graphics.getDeltaTime());
 	}
 
 }

@@ -2,25 +2,24 @@ package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.rngg.controllers.ColorController;
 import com.rngg.models.ColorModel;
+import com.rngg.utils.GameAssetManager;
 
 public class ColorView extends View {
 
     ColorController controller;
 
     private SpriteBatch batch;
-    private BitmapFont font;
     private ColorModel colorModel;
 
-    public ColorView(ColorController controller) {
+    public ColorView(GameAssetManager assetManager, ColorController controller) {
+        super(assetManager);
+
         this.controller = controller;
 
         batch = new SpriteBatch();
-        font = new BitmapFont(Gdx.files.internal("minecraftia.fnt"),
-                Gdx.files.internal("minecraftia.png"), false);
 
         this.colorModel = new ColorModel();
 
@@ -51,6 +50,5 @@ public class ColorView extends View {
 
 
     }
-
 
 }

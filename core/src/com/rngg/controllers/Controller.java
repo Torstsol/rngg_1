@@ -1,14 +1,12 @@
 package com.rngg.controllers;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Input;
+import com.rngg.game.Rngg;
 
 abstract public class Controller {
 
-    Game game;
-    Controller controller;
+    Rngg game;
 
-    public Controller(Game game) {
+    public Controller(Rngg game) {
         this.game = game;
     }
 

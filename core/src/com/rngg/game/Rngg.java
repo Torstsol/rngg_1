@@ -1,17 +1,19 @@
 package com.rngg.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.rngg.controllers.MenuController;
 import com.rngg.services.IPlayServices;
+import com.rngg.utils.GameAssetManager;
 import com.rngg.views.MenuView;
 
 public class Rngg extends Game {
 
 	public static final int HEIGHT = 720;
 	public static final int WIDTH = 1280;
+
+	public GameAssetManager assetManager;
 
 	public final IPlayServices playServices;
 
@@ -21,14 +23,19 @@ public class Rngg extends Game {
 	}
 
 	public IPlayServices getAPI(){
-
 		return playServices;
 	}
 
 	@Override
 	public void create () {
         Gdx.app.setLogLevel(Application.LOG_INFO);
-		this.setScreen(new MenuView(new MenuController(this)));
+
+        assetManager = new GameAssetManager();
+        assetManager.loadImages();
+        assetManager.loadFonts();
+        assetManager.manager.finishLoading();
+
+		this.setScreen(new MenuView(assetManager, new MenuController(this)));
 	}
 
 	@Override

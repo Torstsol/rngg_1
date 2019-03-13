@@ -4,8 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
-import com.rngg.views.GameView;
-import com.rngg.views.MenuView;
 
 public class LobbyController extends Controller {
 
@@ -16,9 +14,9 @@ public class LobbyController extends Controller {
     @Override
     public void update(float delta) {
         if(Gdx.input.isKeyPressed(Input.Keys.G))
-            game.setScreen(new GameView(game.assetManager, new GameController(game, new GameModel())));
+            game.screenManager.setGameScreen(new GameModel());
         else if(Gdx.input.isKeyPressed(Input.Keys.B))
-            game.setScreen(new MenuView(game.assetManager, new MenuController(game)));
+            game.screenManager.setMenuScreen();
         else if(Gdx.input.isKeyPressed(Input.Keys.L)){
             //((Rngg) game).IPlayServices.startSignInIntent();
         }

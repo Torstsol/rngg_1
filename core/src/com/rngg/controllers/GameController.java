@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
-import com.rngg.views.MenuView;
 
 public class GameController extends Controller {
 
@@ -20,7 +19,7 @@ public class GameController extends Controller {
         gameModel.playerScore++;
 
         if(Gdx.input.isKeyPressed(Input.Keys.B))
-            game.setScreen(new MenuView(game.assetManager, new MenuController(game)));
+            game.screenManager.setMenuScreen();
     }
 
     public int getPlayerScore() {

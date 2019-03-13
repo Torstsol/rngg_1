@@ -3,10 +3,9 @@ package com.rngg.game;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.rngg.controllers.MenuController;
 import com.rngg.services.IPlayServices;
 import com.rngg.utils.GameAssetManager;
-import com.rngg.views.MenuView;
+import com.rngg.utils.ScreenManager;
 
 public class Rngg extends Game {
 
@@ -14,12 +13,13 @@ public class Rngg extends Game {
 	public static final int WIDTH = 1280;
 
 	public GameAssetManager assetManager;
+	public ScreenManager screenManager;
 
 	public final IPlayServices playServices;
 
 	public Rngg(IPlayServices playServices) {
 		this.playServices = playServices;
-		playServices.signIn();
+		//playServices.signIn();
 	}
 
 	public IPlayServices getAPI(){
@@ -35,7 +35,8 @@ public class Rngg extends Game {
         assetManager.loadFonts();
         assetManager.manager.finishLoading();
 
-		this.setScreen(new MenuView(assetManager, new MenuController(this)));
+        screenManager = new ScreenManager(this);
+        screenManager.setMenuScreen();
 	}
 
 	@Override

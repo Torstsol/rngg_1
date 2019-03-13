@@ -17,9 +17,11 @@ public class Rngg extends Game {
 
 	public final IPlayServices playServices;
 
+	private final boolean RUN_DESKTOP = true;
+
 	public Rngg(IPlayServices playServices) {
 		this.playServices = playServices;
-		//playServices.signIn();
+		if(!RUN_DESKTOP) playServices.signIn();
 	}
 
 	public IPlayServices getAPI(){
@@ -33,6 +35,7 @@ public class Rngg extends Game {
         assetManager = new GameAssetManager();
         assetManager.loadImages();
         assetManager.loadFonts();
+        assetManager.loadSkin();
         assetManager.manager.finishLoading();
 
         screenManager = new ScreenManager(this);

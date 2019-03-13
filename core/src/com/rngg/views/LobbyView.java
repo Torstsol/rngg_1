@@ -2,23 +2,22 @@ package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.rngg.controllers.LobbyController;
+import com.rngg.utils.GameAssetManager;
 
 public class LobbyView extends View {
 
     LobbyController controller;
 
     private SpriteBatch batch;
-    private BitmapFont font;
 
-    public LobbyView(LobbyController controller) {
+    public LobbyView(GameAssetManager assetManager, LobbyController controller) {
+        super(assetManager);
+
         this.controller = controller;
 
         batch = new SpriteBatch();
-        font = new BitmapFont(Gdx.files.internal("minecraftia.fnt"),
-                Gdx.files.internal("minecraftia.png"), false);
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.rngg.controllers;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.rngg.configuration.ColorPrefs;
+import com.rngg.game.Rngg;
 import com.rngg.views.SettingsView;
 
 
@@ -11,21 +11,20 @@ public class ColorController extends Controller {
 
     private ColorPrefs pref;
 
-    public ColorController(Game game) {
+    public ColorController(Rngg game) {
         super(game);
 
         pref = new ColorPrefs();
         if(!pref.hasColors()){
             pref.setTrueColors();
         }
-
     }
 
     @Override
     public void update(float delta) {
 
         if(Gdx.input.isKeyPressed(Input.Keys.B)) {
-            game.setScreen(new SettingsView(new SettingsController(game)));
+            game.setScreen(new SettingsView(game.assetManager, new SettingsController(game)));
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.N)) {
             Gdx.app.log(this.getClass().getSimpleName(), "colors updated");

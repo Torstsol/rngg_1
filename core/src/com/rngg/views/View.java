@@ -4,20 +4,25 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.rngg.game.Rngg;
+import com.rngg.utils.Assets;
+import com.rngg.utils.GameAssetManager;
 
 abstract public class View implements Screen {
 
+    protected GameAssetManager assetManager;
     private OrthographicCamera camera;
+    protected BitmapFont font; // default font
 
-    public View() {
-        super();
+    public View(GameAssetManager assetManager) {
+        this.assetManager = assetManager;
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Rngg.WIDTH, Rngg.HEIGHT);
-    }
 
-    //abstract public void update(float delta);
+        font = assetManager.manager.get(Assets.MINECRAFTIA);
+    }
 
     @Override
     public void show() {

@@ -1,25 +1,23 @@
 package com.rngg.views;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.rngg.controllers.MenuController;
-import com.rngg.game.Rngg;
+import com.rngg.utils.GameAssetManager;
 
 public class MenuView extends View {
 
     MenuController controller;
 
     private SpriteBatch batch;
-    private BitmapFont font;
 
-    public MenuView(MenuController controller) {
+    public MenuView(GameAssetManager assetManager, MenuController controller) {
+        super(assetManager);
+
         this.controller = controller;
+
         batch = new SpriteBatch();
-        font = new BitmapFont(Gdx.files.internal("minecraftia.fnt"),
-                Gdx.files.internal("minecraftia.png"), false);
     }
 
     @Override

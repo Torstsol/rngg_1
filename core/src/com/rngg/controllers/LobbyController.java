@@ -16,15 +16,7 @@ public class LobbyController extends Controller {
     }
 
     @Override
-    public void update(float delta) {
-        if(Gdx.input.isKeyPressed(Input.Keys.G))
-            game.screenManager.setGameScreen(new GameModel());
-        else if(Gdx.input.isKeyPressed(Input.Keys.B))
-            game.screenManager.setMenuScreen();
-        else if(Gdx.input.isKeyPressed(Input.Keys.L)){
-            //((Rngg) game).IPlayServices.startSignInIntent();
-        }
-    }
+    public void update(float delta) {}
 
     public void setInputProcessor(Stage stage) {
         Gdx.input.setInputProcessor(stage);

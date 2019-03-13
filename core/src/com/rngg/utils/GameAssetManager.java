@@ -9,7 +9,7 @@ public class GameAssetManager {
     public final AssetManager manager = new AssetManager();
 
     public void loadImages() {
-        // TODO: add images here
+        manager.load(Assets.LOGO);
     }
 
     public void loadFonts() {
@@ -18,13 +18,6 @@ public class GameAssetManager {
 
     public void loadSkin() {
         manager.load(Assets.SKIN);
-
-
-        // TODO: implement skin here
-        /*
-        SkinParameter params = new SkinParameter(skinAtlasPath);
-        manager.load(Assets.SKIN,  params);
-        */
     }
 
 }

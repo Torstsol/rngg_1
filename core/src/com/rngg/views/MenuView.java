@@ -2,11 +2,16 @@ package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.rngg.controllers.MenuController;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
@@ -39,6 +44,13 @@ public class MenuView extends View {
 
         stage.addActor(table);
 
+        final Texture logoTexture = assetManager.manager.get(Assets.LOGO);
+        final Image logoImage = new Image(logoTexture);
+
+        group.addActor(logoImage);
+
+        final Label label = new Label("Are you ready to expand your empire?", assetManager.manager.get(Assets.SKIN));
+        group.addActor(label);
 
         final TextButton lobbyButton = new TextButton("Create lobby", assetManager.manager.get(Assets.SKIN));
         group.addActor(lobbyButton);

@@ -3,7 +3,7 @@ package com.rngg.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.rngg.singletons.RNG;
+import com.rngg.utils.RNG;
 import com.rngg.views.GameView;
 
 import java.util.Arrays;

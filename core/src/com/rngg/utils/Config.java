@@ -1,4 +1,4 @@
-package com.rngg.singletons;
+package com.rngg.utils;
 
 public class Config {
     private static class LazyHolder {

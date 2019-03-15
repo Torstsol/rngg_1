@@ -1,4 +1,4 @@
-package com.rngg.singletons;
+package com.rngg.utils;
 
 // TODO only used for Arrays.toString() in main, remove before merging
 import java.util.Arrays;

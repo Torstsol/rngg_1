@@ -1,18 +1,17 @@
 package com.rngg.controllers;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector3;
+import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
-import com.rngg.views.MenuView;
 
 public class GameController extends Controller {
 
-    public GameModel gameModel;
+    public final GameModel gameModel;
 
-    public GameController(Game game, final GameModel gameModel) {
+    public GameController(Rngg game, GameModel gameModel) {
         super(game);
         this.gameModel = gameModel;
 
@@ -22,7 +21,7 @@ public class GameController extends Controller {
                 Vector3 unprojectedCoords = new Vector3(screenX, screenY, 0);
                 camera.unproject(unprojectedCoords);
 
-                gameModel.click(unprojectedCoords);
+                GameController.this.gameModel.click(unprojectedCoords);
                 return true;
             }
         });
@@ -30,12 +29,10 @@ public class GameController extends Controller {
 
     @Override
     public void update(float delta) {
-        Gdx.app.debug(this.getClass().getSimpleName(), "update");
-
         gameModel.playerScore++;
 
-        if (Gdx.input.isKeyPressed(Input.Keys.B))
-            game.setScreen(new MenuView(new MenuController(game)));
+        if(Gdx.input.isKeyPressed(Input.Keys.B))
+            game.screenManager.setMenuScreen();
     }
 
     public int getPlayerScore() {

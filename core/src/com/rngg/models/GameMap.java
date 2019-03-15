@@ -1,5 +1,6 @@
 package com.rngg.models;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.rngg.views.GameView;
@@ -46,29 +47,4 @@ public abstract class GameMap<Z extends Zone> {
         }
         view.getBatch().end();
     }
-}
-
-abstract class Zone {
-    protected Player player;
-    protected int units;
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public int getUnits() {
-        return units;
-    }
-
-    public void setUnits(int units) {
-        this.units = units;
-    }
-
-    abstract public void draw(GameView view);
-
-    abstract public void drawText(GameView view);
 }

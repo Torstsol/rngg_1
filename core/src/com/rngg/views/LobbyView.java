@@ -7,7 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.rngg.controllers.LobbyController;
+import com.rngg.game.Rngg;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
 
@@ -26,7 +28,8 @@ public class LobbyView extends View {
 
         batch = new SpriteBatch();
 
-        stage = new Stage();
+        FitViewport fitViewport = new FitViewport(Rngg.WIDTH, Rngg.HEIGHT, camera);
+        stage = new Stage(fitViewport, batch);
         controller.setInputProcessor(stage);
 
         Table table = new Table();

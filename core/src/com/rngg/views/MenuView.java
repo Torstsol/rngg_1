@@ -3,7 +3,6 @@ package com.rngg.views;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -11,8 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.rngg.controllers.MenuController;
+import com.rngg.game.Rngg;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
 
@@ -31,7 +31,8 @@ public class MenuView extends View {
 
         batch = new SpriteBatch();
 
-        stage = new Stage();
+        FitViewport fitViewport = new FitViewport(Rngg.WIDTH, Rngg.HEIGHT, camera);
+        stage = new Stage(fitViewport, batch);
         controller.setInputProcessor(stage);
 
         Table table = new Table();
@@ -72,9 +73,7 @@ public class MenuView extends View {
 
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         stage.draw();
-
     }
 
     @Override

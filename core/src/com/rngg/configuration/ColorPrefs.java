@@ -20,7 +20,7 @@ public class ColorPrefs {
         prefs.putString("red", r);
         prefs.putString("yellow", y);
         prefs.putString("blue", b);
-        prefs.putString("sky blue", sb);
+        prefs.putString("skyblue", sb);
         prefs.flush();
     }
 

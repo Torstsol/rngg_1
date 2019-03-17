@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.rngg.controllers.SettingsController;
+import com.rngg.models.SettingsModel;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
 
@@ -18,6 +19,8 @@ public class SettingsView extends View {
     private SpriteBatch batch;
 
     private Stage stage;
+
+    private SettingsModel settingsModel;
 
     public SettingsView(GameAssetManager assetManager, SettingsController controller) {
         super(assetManager);
@@ -39,14 +42,24 @@ public class SettingsView extends View {
 
         stage.addActor(table);
 
+        settingsModel = new SettingsModel();
 
-        final TextButton colorSettingsButton = new TextButton("Color settings", assetManager.manager.get(Assets.SKIN));
-        group.addActor(colorSettingsButton);
+        final TextButton tcSettingsButton = new TextButton("True colors", assetManager.manager.get(Assets.SKIN));
+        group.addActor(tcSettingsButton);
+
+        final TextButton protSettingsButton = new TextButton("Prot colors", assetManager.manager.get(Assets.SKIN));
+        group.addActor(protSettingsButton);
+
+        final TextButton deutSettingsButton = new TextButton("Deut colors", assetManager.manager.get(Assets.SKIN));
+        group.addActor(deutSettingsButton);
+
+        final TextButton tritSettingsButton = new TextButton("Trit colors", assetManager.manager.get(Assets.SKIN));
+        group.addActor(tritSettingsButton);
 
         final TextButton menuButton = new TextButton("Cancel", assetManager.manager.get(Assets.SKIN));
         group.addActor(menuButton);
 
-        controller.addActorListeners(colorSettingsButton, menuButton); // handle input
+        controller.addActorListeners(tcSettingsButton, protSettingsButton, deutSettingsButton, tritSettingsButton, menuButton); // handle input
     }
 
     @Override
@@ -56,6 +69,12 @@ public class SettingsView extends View {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        batch.begin();
+        batch.draw(settingsModel.setCustomColor("red"),150,450);
+        batch.draw(settingsModel.setCustomColor("yellow"),150,350);
+        batch.draw(settingsModel.setCustomColor("blue"),150,250);
+        batch.draw(settingsModel.setCustomColor("skyblue"),150,150);
+        batch.end();
         stage.draw();
     }
 

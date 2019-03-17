@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.rngg.utils.RNG;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GameModel {
@@ -18,6 +19,7 @@ public class GameModel {
     private Player[] players;
     private int playerIndex;
     private SquareZone attacker;
+    private int[] contiguousAreas;
     private RNG rng;
 
     public GameModel(int numPlayers) {
@@ -26,7 +28,9 @@ public class GameModel {
             players[i] = new Player("Player" + i);
         }
         this.playerIndex = 0;
-        this.map = new SquareMap(9, 16, players);
+        this.contiguousAreas = new int[numPlayers];
+        this.map = new SquareMap(3, 6, players);
+        this.updateAreas();
         this.rng = RNG.getInstance();
     }
 
@@ -96,6 +100,7 @@ public class GameModel {
             Gdx.app.log(this.getClass().getSimpleName(), "Attacker won");
             defender.setUnits(attacker.getUnits() - 1);
             defender.setPlayer(attacker.getPlayer());
+            this.updateAreas();
             // TODO check if defender is alive
             // TODO check if game is over
         } else {
@@ -121,5 +126,60 @@ public class GameModel {
                     this.getClass().getSimpleName(),
                     "Illegal player index given (" + playerIndex + " is not in [0, " + this.players.length + "])");
         }
+    }
+
+
+    public void updateAreas() {
+        /*
+        Method for calculating contiguous areas per player
+        Kinda funky with lots of loops, but it does at least work
+         */
+        // for each player
+        for (int i = 0; i < this.players.length; i++) {
+            Player player = this.players[i];
+            int max = 0;
+            // TODO hardcoded for SquareZone
+            // total graph for this player
+            ArrayList<SquareZone> graph = map.getPlayerZones(player);
+            // subgraph for search
+            ArrayList<SquareZone> subgraph = new ArrayList<SquareZone>();
+            // while the graph is not fully explored
+            while (!graph.isEmpty()) {
+                boolean changed;
+                // choose the next node in the list as the start of a new search
+                subgraph.add(graph.get(0));
+                // while this subgraph is not fully explored
+                do {
+                    // remember where to start next loop to avoid redundant checks
+                    int start = subgraph.size() - 1;
+                    // assume we found nothing new
+                    changed = false;
+                    // for each member of the subgraph
+                    for (int j = start; j < subgraph.size(); j++) {
+                        SquareZone subgraphNode = subgraph.get(j);
+                        // for each neighbor of that member
+                        for (SquareZone neighbor : map.getNeighbors(subgraphNode)) {
+                            // if the neighbor should be a part of the subgraph but isn't yet
+                            if (neighbor.getPlayer().equals(player) && !subgraph.contains(neighbor)) {
+                                // add the neighbor, note that we found a change
+                                subgraph.add(neighbor);
+                                changed = true;
+                            }
+                        }
+                    }
+                } while (changed);
+                // update max
+                max = Math.max(max, subgraph.size());
+                // remove subgraph from graph
+                graph.removeAll(subgraph);
+                // reset subgraph
+                subgraph.clear();
+            }
+            this.contiguousAreas[i] = max;
+        }
+        Gdx.app.log(
+                this.getClass().getSimpleName(),
+                "Updated contiguous area count: " + Arrays.toString(this.contiguousAreas)
+        );
     }
 }

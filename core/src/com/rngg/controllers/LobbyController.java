@@ -26,7 +26,7 @@ public class LobbyController extends Controller {
         gameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.screenManager.setGameScreen(new GameModel());
+                game.screenManager.setGameScreen(new GameModel(4));
             }
         });
 

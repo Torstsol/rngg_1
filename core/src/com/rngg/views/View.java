@@ -11,8 +11,8 @@ import com.rngg.utils.GameAssetManager;
 
 abstract public class View implements Screen {
 
+    protected OrthographicCamera camera;
     protected GameAssetManager assetManager;
-    private OrthographicCamera camera;
     protected BitmapFont font; // default font
 
     public View(GameAssetManager assetManager) {

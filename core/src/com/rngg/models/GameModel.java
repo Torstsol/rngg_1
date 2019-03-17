@@ -16,6 +16,7 @@ public class GameModel {
     public int playerScore = 0;
     private SquareMap map;
     private Player[] players;
+    private int playerIndex;
     private SquareZone attacker;
     private RNG rng;
 
@@ -24,6 +25,7 @@ public class GameModel {
         for (int i = 0; i < numPlayers; i++) {
             players[i] = new Player("Player" + i);
         }
+        this.playerIndex = 0;
         this.map = new SquareMap(9, 16, players);
         this.rng = RNG.getInstance();
     }
@@ -34,7 +36,7 @@ public class GameModel {
 
     public void click(Vector3 coords) {
         SquareZone temp = map.screenCoordToZone(new Vector2(coords.x, coords.y));
-        if (temp.getPlayer() == this.players[0]) {
+        if (temp.getPlayer() == this.currentPlayer()) {
             if (temp.getUnits() <= 1) {
                 Gdx.app.log(this.getClass().getSimpleName(), temp.toString() + " has too few units to attack");
                 return;
@@ -51,7 +53,7 @@ public class GameModel {
             Gdx.app.log(this.getClass().getSimpleName(), "Set " + this.attacker.toString() + " as attacker");
         } else {
             if (attacker == null) {
-                Gdx.app.log(this.getClass().getSimpleName(), temp.toString() + " does not belong to " + this.players[0]);
+                Gdx.app.log(this.getClass().getSimpleName(), temp.toString() + " does not belong to " + this.currentPlayer());
                 return;
             }
             if (!map.isNeighbors(this.attacker, temp)) {
@@ -63,7 +65,6 @@ public class GameModel {
     }
 
     public int attack(SquareZone attacker, SquareZone defender) {
-        // TODO move this to another class
         /*
         Returns
             -1 if defender defends
@@ -102,5 +103,23 @@ public class GameModel {
         }
         attacker.setUnits(1);
         return attackerWon ? 1 : -1;
+    }
+
+    public Player currentPlayer() {
+        return this.players[playerIndex];
+    }
+
+    public void setPlayer(int playerIndex) {
+        if (playerIndex >= 0 && playerIndex < this.players.length) {
+            this.playerIndex = playerIndex;
+            Gdx.app.log(
+                    this.getClass().getSimpleName(),
+                    "Set playerIndex to " + playerIndex + ", currentPlayer is " + currentPlayer()
+            );
+        } else {
+            Gdx.app.error(
+                    this.getClass().getSimpleName(),
+                    "Illegal player index given (" + playerIndex + " is not in [0, " + this.players.length + "])");
+        }
     }
 }

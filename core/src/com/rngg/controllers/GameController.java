@@ -24,6 +24,27 @@ public class GameController extends Controller {
                 GameController.this.gameModel.click(unprojectedCoords);
                 return true;
             }
+
+            // Switch current player, for debugging purposes
+            @Override public boolean keyDown(int keycode) {
+                switch (keycode) {
+                    case Input.Keys.NUM_1:
+                        GameController.this.gameModel.setPlayer(0);
+                        break;
+                    case Input.Keys.NUM_2:
+                        GameController.this.gameModel.setPlayer(1);
+                        break;
+                    case Input.Keys.NUM_3:
+                        GameController.this.gameModel.setPlayer(2);
+                        break;
+                    case Input.Keys.NUM_4:
+                        GameController.this.gameModel.setPlayer(3);
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
         });
     }
 

@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.rngg.controllers.GameController;
-import com.rngg.models.GameMap;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
 
@@ -17,7 +16,7 @@ public class GameView extends View {
 
     private SpriteBatch batch;
     private BitmapFont font;
-    private GameMap map;
+    private MapRenderer mapRenderer;
     private ShapeRenderer sr;
 
     public GameView(GameAssetManager assetManager, GameController controller) {
@@ -28,6 +27,7 @@ public class GameView extends View {
         batch = new SpriteBatch();
         font = assetManager.manager.get(Assets.MINECRAFTIA);
         font.setColor(Color.WHITE);
+        mapRenderer = new SquareMapRenderer(controller.gameModel.getMap(), font);
 
         this.sr = new ShapeRenderer();
     }
@@ -43,7 +43,7 @@ public class GameView extends View {
         Gdx.gl.glClearColor(1f, 1f, 1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        controller.gameModel.draw(this);
+        mapRenderer.draw();
     }
 
     public ShapeRenderer getSR() {

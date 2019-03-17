@@ -1,9 +1,7 @@
 package com.rngg.models;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.rngg.views.GameView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +12,10 @@ public abstract class GameMap<Z extends Zone> {
     protected ShapeRenderer.ShapeType shapetype;
 
     abstract public Z screenCoordToZone(Vector2 coords);
+
+    public ArrayList<Z> getZones() {
+        return new ArrayList<Z>(neighbors.keySet());
+    }
 
     public ArrayList<Z> getPlayerZones(Player player) {
         ArrayList<Z> ret = new ArrayList<Z>();
@@ -31,20 +33,5 @@ public abstract class GameMap<Z extends Zone> {
 
     public boolean isNeighbors(Z zone1, Z zone2) {
         return getNeighbors(zone1).contains(zone2);
-    }
-
-    public void draw(GameView view) {
-
-        view.getSR().begin(shapetype);
-        for (Z zone : neighbors.keySet()) {
-            zone.draw(view);
-        }
-        view.getSR().end();
-
-        view.getBatch().begin();
-        for (Z zone : neighbors.keySet()) {
-            zone.drawText(view);
-        }
-        view.getBatch().end();
     }
 }

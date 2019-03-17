@@ -1,7 +1,5 @@
 package com.rngg.models;
 
-import com.rngg.views.GameView;
-
 public abstract class Zone {
     protected Player player;
     protected int units;
@@ -21,8 +19,4 @@ public abstract class Zone {
     public void setUnits(int units) {
         this.units = units;
     }
-
-    abstract public void draw(GameView view);
-
-    abstract public void drawText(GameView view);
 }

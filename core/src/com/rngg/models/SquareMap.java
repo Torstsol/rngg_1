@@ -33,7 +33,7 @@ public class SquareMap extends GameMap<SquareZone> {
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 // TODO look at another way to distribute zones
-                SquareZone zone = new SquareZone(players[(int) (Math.random() * (players.length))], row, col, zoneWidth, zoneHeight);
+                SquareZone zone = new SquareZone(players[(int) (Math.random() * (players.length))], row, col);
                 this.zones[row][col] = zone;
                 Gdx.app.log(this.getClass().getSimpleName(), "generated: " + zone.toString());
             }
@@ -77,5 +77,13 @@ public class SquareMap extends GameMap<SquareZone> {
     @Override
     public SquareZone screenCoordToZone(Vector2 coords) {
         return getZone((int) coords.y / this.zoneHeight, (int) coords.x / zoneWidth);
+    }
+
+    public int getZoneWidth() {
+        return zoneWidth;
+    }
+
+    public int getZoneHeight() {
+        return zoneHeight;
     }
 }

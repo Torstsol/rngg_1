@@ -16,6 +16,7 @@ import com.rngg.views.WaitingRoomView;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Random;
 
 public class WaitingRoomController extends Controller implements RoomListener, RealtimeListener {
 
@@ -93,12 +94,43 @@ public class WaitingRoomController extends Controller implements RoomListener, R
 
     @Override
     public void setSender(IPlayServices playServices) {
-
+        this.sender = playServices;
     }
 
     @Override
     public void roomConnected() {
+        System.out.println("roomconnected callback in waiting room controller");
+        IPlayServices playServices = game.getAPI();
 
+        leftToReady = playServices.getRemotePlayers().size();
+
+        NetworkManager networkManager = new NetworkManager();
+        playServices.setRealTimeListener(networkManager);
+
+        for(String playerId : playServices.getRemotePlayers()){
+            playerInfo.put(playerId, new Player(playerId, playerId, false));
+        }
+        localPlayer = new Player("bob", playServices.getLocalID(), true);
+        playerInfo.put(localPlayer.playerId, localPlayer);
+
+        networkManager.openChannel(this, 10);
+
+
+
+        pingRemote();
+    }
+
+    public void pingRemote() {
+        Message message = new Message(new byte[512],"",0);
+        Random random = new Random();
+        int randomNumber = random.nextInt() & Integer.MAX_VALUE;
+        message.putString("RAN_NUM");
+        message.getBuffer().putInt(randomNumber);
+        sender.sendToAllReliably(message.getData());
+        System.out.println("Sending to others");
+        System.out.println("Random number");
+
+        localPlayer.randomNumber = randomNumber;
     }
 
     @Override

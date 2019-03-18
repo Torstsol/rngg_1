@@ -5,6 +5,7 @@ import com.rngg.controllers.GameController;
 import com.rngg.controllers.LobbyController;
 import com.rngg.controllers.MenuController;
 import com.rngg.controllers.SettingsController;
+import com.rngg.controllers.WaitingRoomController;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
 import com.rngg.views.ColorView;
@@ -12,6 +13,7 @@ import com.rngg.views.GameView;
 import com.rngg.views.LobbyView;
 import com.rngg.views.MenuView;
 import com.rngg.views.SettingsView;
+import com.rngg.views.WaitingRoomView;
 
 public class ScreenManager {
 
@@ -39,6 +41,10 @@ public class ScreenManager {
 
     public void setColorScreen() {
         game.setScreen(new ColorView(game.assetManager, new ColorController(game)));
+    }
+
+    public void setWaitingRoomScreen() {
+        game.setScreen(new WaitingRoomView(game.assetManager, new WaitingRoomController(game)));
     }
 
 }

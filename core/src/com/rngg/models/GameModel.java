@@ -22,7 +22,7 @@ public class GameModel {
     public GameModel(int numPlayers) {
         this.players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player("Player" + i);
+            players[i] = new Player("Player" + i, "90238049", true);
         }
         this.map = new SquareMap(9, 16, players);
         this.rng = RNG.getInstance();

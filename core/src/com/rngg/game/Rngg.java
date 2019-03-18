@@ -17,7 +17,7 @@ public class Rngg extends Game {
 
 	public final IPlayServices playServices;
 
-	private final boolean RUN_DESKTOP = true;
+	private final boolean RUN_DESKTOP = false;
 
 	public Rngg(IPlayServices playServices) {
 		this.playServices = playServices;

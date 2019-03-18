@@ -102,6 +102,17 @@ public class AndroidAPI implements IPlayServices {
 
 
 
+    private OnRealTimeMessageReceivedListener mMessageReceivedHandler =
+            new OnRealTimeMessageReceivedListener() {
+                @Override
+                public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
+                    Message message = new Message(realTimeMessage.getMessageData(), realTimeMessage.getSenderParticipantId(), realTimeMessage.describeContents());
+                    liveListener.handleDataReceived(message);
+                }
+            };
+
+
+
 
 
     // --------- creating multiplayer rooms ------------------
@@ -120,9 +131,8 @@ public class AndroidAPI implements IPlayServices {
                 RoomConfig.builder(roomUpdateCallback)
                         .setRoomStatusUpdateCallback(mRoomStatusCallbackHandler)
                         .setAutoMatchCriteria(autoMatchCriteria)
+                        .setOnMessageReceivedListener(mMessageReceivedHandler)
                         .build();
-
-        //.setOnMessageReceivedListener(mMessageReceivedHandler) may need to add this back at some point
         // prevent screen from sleeping during handshake
         //androidLauncher.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -145,7 +155,7 @@ public class AndroidAPI implements IPlayServices {
                 showWaitingRoom(room, 4);
             } else {
                 System.out.println("Error creating room: " + code);
-                String message = "google play service is dead :)";
+                String message = "Error creating room: " + code ;
                 new AlertDialog.Builder(androidLauncher).setMessage(message)
                         .setNeutralButton(android.R.string.ok, null).show();
 

@@ -1,31 +1,31 @@
 package com.rngg.views;
 
 import com.rngg.controllers.WaitingRoomController;
+import com.rngg.models.WaitingRoomModel;
 import com.rngg.utils.GameAssetManager;
 
 public class WaitingRoomView extends View{
 
-    public boolean created = false;
-    public boolean leftRoom = false;
-    public boolean joinedRoom = false;
     private WaitingRoomController controller;
+    private WaitingRoomModel model;
 
-    public WaitingRoomView(GameAssetManager assetManager, WaitingRoomController controller) {
+    public WaitingRoomView(GameAssetManager assetManager, WaitingRoomController controller, WaitingRoomModel model) {
         super(assetManager);
         this.controller = controller;
+        this.model = model;
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-        if(!created){
+        if(!model.created){
             createRoom();
-            created = true;
+            model.created = true;
         }
-        if(leftRoom){
+        if(model.leftRoom){
             controller.getGame().screenManager.setMenuScreen();
         }
-        if(joinedRoom){
+        if(model.joinedRoom){
             controller.getGame().screenManager.setMenuScreen();
         }
     }

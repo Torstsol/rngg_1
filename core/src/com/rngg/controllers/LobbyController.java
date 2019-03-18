@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
+import com.rngg.models.WaitingRoomModel;
 
 public class LobbyController extends Controller {
 
@@ -26,7 +27,7 @@ public class LobbyController extends Controller {
         gameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.screenManager.setWaitingRoomScreen();
+                game.screenManager.setWaitingRoomScreen(new WaitingRoomModel());
             }
         });
 

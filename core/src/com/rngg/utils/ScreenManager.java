@@ -9,6 +9,7 @@ import com.rngg.controllers.WaitingRoomController;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
 import com.rngg.models.Player;
+import com.rngg.models.WaitingRoomModel;
 import com.rngg.views.ColorView;
 import com.rngg.views.GameView;
 import com.rngg.views.LobbyView;
@@ -47,8 +48,8 @@ public class ScreenManager {
         game.setScreen(new ColorView(game.assetManager, new ColorController(game)));
     }
 
-    public void setWaitingRoomScreen() {
-        game.setScreen(new WaitingRoomView(game.assetManager, new WaitingRoomController(game)));
+    public void setWaitingRoomScreen(WaitingRoomModel model) {
+        game.setScreen(new WaitingRoomView(game.assetManager, new WaitingRoomController(game, model), model));
     }
 
 }

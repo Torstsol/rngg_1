@@ -22,7 +22,7 @@ public class SettingsModel {
 
     public SettingsModel(){
 
-        prefs = Gdx.app.getPreferences("color-preferences");
+        prefs = Gdx.app.getPreferences("game-preferences");
 
     }
 

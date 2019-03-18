@@ -44,22 +44,16 @@ public class SettingsView extends View {
 
         settingsModel = new SettingsModel();
 
-        final TextButton tcSettingsButton = new TextButton("True colors", assetManager.manager.get(Assets.SKIN));
-        group.addActor(tcSettingsButton);
+        final TextButton ncSettingsButton = new TextButton("Normal colors", assetManager.manager.get(Assets.SKIN));
+        group.addActor(ncSettingsButton);
 
-        final TextButton protSettingsButton = new TextButton("Prot colors", assetManager.manager.get(Assets.SKIN));
-        group.addActor(protSettingsButton);
-
-        final TextButton deutSettingsButton = new TextButton("Deut colors", assetManager.manager.get(Assets.SKIN));
-        group.addActor(deutSettingsButton);
-
-        final TextButton tritSettingsButton = new TextButton("Trit colors", assetManager.manager.get(Assets.SKIN));
-        group.addActor(tritSettingsButton);
+        final TextButton cbSettingsButton = new TextButton("Colorblind mode", assetManager.manager.get(Assets.SKIN));
+        group.addActor(cbSettingsButton);
 
         final TextButton menuButton = new TextButton("Cancel", assetManager.manager.get(Assets.SKIN));
         group.addActor(menuButton);
 
-        controller.addActorListeners(tcSettingsButton, protSettingsButton, deutSettingsButton, tritSettingsButton, menuButton); // handle input
+        controller.addActorListeners(ncSettingsButton, cbSettingsButton, menuButton); // handle input
     }
 
     @Override
@@ -70,10 +64,10 @@ public class SettingsView extends View {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        batch.draw(settingsModel.setCustomColor("red"),150,450);
-        batch.draw(settingsModel.setCustomColor("yellow"),150,350);
-        batch.draw(settingsModel.setCustomColor("blue"),150,250);
-        batch.draw(settingsModel.setCustomColor("skyblue"),150,150);
+        batch.draw(settingsModel.setCustomColor("color 1"),150,450);
+        batch.draw(settingsModel.setCustomColor("color 2"),150,350);
+        batch.draw(settingsModel.setCustomColor("color 3"),150,250);
+        batch.draw(settingsModel.setCustomColor("color 4"),150,150);
         batch.end();
         stage.draw();
     }

@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.rngg.utils.RNG;
-import com.rngg.views.GameView;
 
 import java.util.Arrays;
 
@@ -27,10 +26,6 @@ public class GameModel {
         }
         this.map = new SquareMap(9, 16, players);
         this.rng = RNG.getInstance();
-    }
-
-    public void draw(GameView view) {
-        map.draw(view);
     }
 
     public SquareMap getMap() {

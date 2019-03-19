@@ -11,13 +11,14 @@ public abstract class GameMap<Z extends Zone> {
     protected HashMap<Z, ArrayList<Z>> neighbors;
     protected ShapeRenderer.ShapeType shapetype;
 
-    abstract public Z screenCoordToZone(Vector2 coords);
+    // Underscore methods returns Z's, for use in Map and MapRenderer
+    abstract public Z _screenCoordToZone(Vector2 coords);
 
-    public ArrayList<Z> getZones() {
+    public ArrayList<Z> _getZones() {
         return new ArrayList<Z>(neighbors.keySet());
     }
 
-    public ArrayList<Z> getPlayerZones(Player player) {
+    public ArrayList<Z> _getPlayerZones(Player player) {
         ArrayList<Z> ret = new ArrayList<Z>();
         for (Z zone : neighbors.keySet()) {
             if (zone.getPlayer().equals(player)) {
@@ -27,11 +28,32 @@ public abstract class GameMap<Z extends Zone> {
         return ret;
     }
 
-    public ArrayList<Z> getNeighbors(Z zone) {
+    public ArrayList<Z> _getNeighbors(Z zone) {
         return neighbors.get(zone);
     }
 
-    public boolean isNeighbors(Z zone1, Z zone2) {
+    public boolean _isNeighbors(Z zone1, Z zone2) {
         return getNeighbors(zone1).contains(zone2);
+    }
+
+    // Non-underscore methods cast Z up to Zone, and are used in the gameModel (and gameController)
+    public Zone screenCoordToZone(Vector2 coords) {
+        return _screenCoordToZone(coords);
+    }
+
+    public ArrayList<Zone> getZones() {
+        return new ArrayList<Zone>(neighbors.keySet());
+    }
+
+    public ArrayList<Zone> getPlayerZones(Player player) {
+        return new ArrayList<Zone>(_getPlayerZones(player));
+    }
+
+    public ArrayList<Zone> getNeighbors(Zone zone) {
+        return new ArrayList<Zone>(neighbors.get(zone));
+    }
+
+    public boolean isNeighbors(Zone zone1, Zone zone2) {
+        return _isNeighbors((Z) zone1, (Z) zone2);
     }
 }

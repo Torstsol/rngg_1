@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.rngg.controllers.GameController;
+import com.rngg.models.SquareMap;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
 
@@ -27,7 +28,7 @@ public class GameView extends View {
         batch = new SpriteBatch();
         font = assetManager.manager.get(Assets.MINECRAFTIA);
         font.setColor(Color.WHITE);
-        mapRenderer = new SquareMapRenderer(controller.gameModel.getMap(), font);
+        mapRenderer = new SquareMapRenderer((SquareMap) controller.gameModel.getMap(), font);
 
         this.sr = new ShapeRenderer();
     }

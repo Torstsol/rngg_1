@@ -11,47 +11,38 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
-public class GameModel {
-    /*
-        TODO this is "hardcoded" in a lot of ways, for instance using SquareMap and SquareZone.
-        This should be changed
-    */
-
+public class GameModel<M extends GameMap<Z>, Z extends Zone> {
     public int playerScore = 0;
-    private SquareMap map;
+    private M map;
     private Player[] players;
     private int playerIndex;
-    private SquareZone attacker;
+    private Zone attacker;
     private int[] contiguousAreas;
     private RNG rng;
     private int maxUnits = 8;
 
     // defense strategies
-    public String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
+    public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
 
-    public GameModel(int numPlayers) {
+    public GameModel(int numPlayers, M map) {
         this.players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
             players[i] = new Player("Player" + i);
         }
         this.playerIndex = 0;
         this.contiguousAreas = new int[numPlayers];
-        this.map = new SquareMap(9, 16, players);
+        this.map = (M) new SquareMap(9, 16, players);
         this.updateAreas();
         this.rng = RNG.getInstance();
     }
 
-    public SquareMap getMap() {
+    public GameMap getMap() {
         return this.map;
     }
 
     public void click(Vector3 coords) {
-        SquareZone temp = map.screenCoordToZone(new Vector2(coords.x, coords.y));
+        Zone temp = map.screenCoordToZone(new Vector2(coords.x, coords.y));
         if (temp.getPlayer() == this.currentPlayer()) {
-            if (temp.getUnits() <= 1) {
-                Gdx.app.log(this.getClass().getSimpleName(), temp.toString() + " has too few units to attack");
-                return;
-            }
             if (temp.getUnits() <= 1) {
                 Gdx.app.log(this.getClass().getSimpleName(), temp.toString() + " has too few units to attack");
                 return;
@@ -75,7 +66,7 @@ public class GameModel {
         }
     }
 
-    public int attack(SquareZone attacker, SquareZone defender) {
+    public int attack(Zone attacker, Zone defender) {
         /*
         Returns
             -1 if defender defends
@@ -149,11 +140,10 @@ public class GameModel {
         for (int i = 0; i < this.players.length; i++) {
             Player player = this.players[i];
             int max = 0;
-            // TODO hardcoded for SquareZone
             // total graph for this player
-            ArrayList<SquareZone> graph = map.getPlayerZones(player);
+            ArrayList<Zone> graph = new ArrayList<Zone>(map.getPlayerZones(player));
             // subgraph for search
-            ArrayList<SquareZone> subgraph = new ArrayList<SquareZone>();
+            ArrayList<Zone> subgraph = new ArrayList<Zone>();
             // while the graph is not fully explored
             while (!graph.isEmpty()) {
                 boolean changed;
@@ -167,9 +157,9 @@ public class GameModel {
                     changed = false;
                     // for each member of the subgraph
                     for (int j = start; j < subgraph.size(); j++) {
-                        SquareZone subgraphNode = subgraph.get(j);
+                        Zone subgraphNode = subgraph.get(j);
                         // for each neighbor of that member
-                        for (SquareZone neighbor : map.getNeighbors(subgraphNode)) {
+                        for (Zone neighbor : map.getNeighbors(subgraphNode)) {
                             // if the neighbor should be a part of the subgraph but isn't yet
                             if (neighbor.getPlayer().equals(player) && !subgraph.contains(neighbor)) {
                                 // add the neighbor, note that we found a change
@@ -198,12 +188,11 @@ public class GameModel {
         // generate a list of lists
         // take from the first list until it is exhausted or units are empty
         // continue until no lists remain or no units remain
-        // TODO hard-coded for squarezone
         // total number of units to distribute
         int units = this.contiguousAreas[playerIndex];
         Player player = this.players[playerIndex];
         // this is the list of lists from which to get zones
-        ArrayList<ArrayList<SquareZone>> zones = new ArrayList<ArrayList<SquareZone>>();
+        ArrayList<ArrayList<Zone>> zones = new ArrayList<ArrayList<Zone>>();
         if (strategy.equals(DEFEND_ALL)) {
             // defend all = no ordering, one sublist
             zones.add(map.getPlayerZones(player));
@@ -211,18 +200,18 @@ public class GameModel {
             // sublists are based on ratio of friendly neighbors
             // 1 = all 4 neighbors are same player, 0 = all are enemy
             // first, create a hashmap of the ratio
-            HashMap<Float, ArrayList<SquareZone>> hashMap = new HashMap<Float, ArrayList<SquareZone>>();
-            for (SquareZone z : map.getPlayerZones(player)) {
-                ArrayList<SquareZone> neighbors = map.getNeighbors(z);
+            HashMap<Float, ArrayList<Zone>> hashMap = new HashMap<Float, ArrayList<Zone>>();
+            for (Zone z : map.getPlayerZones(player)) {
+                ArrayList<Zone> neighbors = map.getNeighbors(z);
                 float friendlyNeighborRatio = 0;
-                for (SquareZone neighbor : neighbors) {
+                for (Zone neighbor : neighbors) {
                     if (neighbor.getPlayer().equals(player)) {
                         friendlyNeighborRatio++;
                     }
                 }
                 friendlyNeighborRatio /= neighbors.size();
                 if (!hashMap.containsKey(friendlyNeighborRatio)) {
-                    hashMap.put(friendlyNeighborRatio, new ArrayList<SquareZone>());
+                    hashMap.put(friendlyNeighborRatio, new ArrayList<Zone>());
                 }
                 hashMap.get(friendlyNeighborRatio).add(z);
             }
@@ -239,13 +228,13 @@ public class GameModel {
             }
         }
         Random rand = new Random();
-        ArrayList<SquareZone> currentList = null;
+        ArrayList<Zone> currentList = null;
         while (units > 0 && !zones.isEmpty()) {
             if (currentList == null) {
                 // get a new sublist
                 currentList = zones.get(0);
             }
-            SquareZone zone = currentList.get(rand.nextInt(currentList.size()));
+            Zone zone = currentList.get(rand.nextInt(currentList.size()));
             // if the zone is saturated, remove it from the sublist
             // if the sublist is empty, remove it from the list
             if (zone.getUnits() >= this.maxUnits) {

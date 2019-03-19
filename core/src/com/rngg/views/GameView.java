@@ -27,9 +27,8 @@ public class GameView extends View {
         batch = new SpriteBatch();
         font = assetManager.manager.get(Assets.MINECRAFTIA);
         font.setColor(Color.WHITE);
-        mapRenderer = new SquareMapRenderer(controller.gameModel.getMap(), font);
-
         this.sr = new ShapeRenderer();
+        mapRenderer = new SquareMapRenderer(controller.gameModel.getMap(),sr , batch, font);
     }
 
     @Override

@@ -261,4 +261,9 @@ public class GameModel {
             units--;
         }
     }
+
+    public void nextPlayer(){
+        this.playerIndex = (this.playerIndex + 1)%(players.length);
+        Gdx.app.debug(this.getClass().getSimpleName(), "Player " + playerIndex + " is now playing");
+    }
 }

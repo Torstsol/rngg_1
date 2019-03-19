@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.rngg.configuration.GamePreferences;
 import com.rngg.controllers.SettingsController;
 import com.rngg.models.SettingsModel;
 import com.rngg.utils.Assets;
@@ -15,6 +16,8 @@ import com.rngg.utils.GameAssetManager;
 public class SettingsView extends View {
 
     SettingsController controller;
+
+    private GamePreferences pref;
 
     private SpriteBatch batch;
 
@@ -26,6 +29,8 @@ public class SettingsView extends View {
         super(assetManager);
 
         this.controller = controller;
+
+        pref = new GamePreferences();
 
         batch = new SpriteBatch();
 

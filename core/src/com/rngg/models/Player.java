@@ -7,10 +7,11 @@ public class Player {
     private Color color;
     private String name;
 
-    public Player(String name) {
+    public Player(String name, Color color) {
         this.name = name;
         // TODO get colors from config
-        this.color = new Color((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
+        //this.color = new Color((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
+        this.color = color;
     }
 
     public Color getColor() {

@@ -3,6 +3,7 @@ package com.rngg.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.rngg.configuration.GamePreferences;
 import com.rngg.utils.RNG;
 
 import java.util.Arrays;
@@ -18,11 +19,13 @@ public class GameModel {
     private Player[] players;
     private SquareZone attacker;
     private RNG rng;
+    private GamePreferences pref;
 
     public GameModel(int numPlayers) {
+        pref = new GamePreferences();
         this.players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player("Player" + i);
+            players[i] = new Player("Player" + i, pref.getColorArray().get(i)); // Get individual colors with pref.COLOR1, pref.COLOR2 etc.
         }
         this.map = new SquareMap(9, 16, players);
         this.rng = RNG.getInstance();

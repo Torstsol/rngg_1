@@ -19,4 +19,8 @@ public abstract class Zone {
     public void setUnits(int units) {
         this.units = units;
     }
+
+    public void incrementUnits() {
+        this.units++;
+    }
 }

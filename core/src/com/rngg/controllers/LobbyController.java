@@ -10,6 +10,8 @@ import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
 import com.rngg.models.WaitingRoomModel;
 
+import javax.xml.soap.Text;
+
 public class LobbyController extends Controller {
 
     public LobbyController(Rngg game) {
@@ -23,8 +25,15 @@ public class LobbyController extends Controller {
         Gdx.input.setInputProcessor(stage);
     }
 
-    public void addActorListeners(final TextButton gameButton, final TextButton menuButton) {
-        gameButton.addListener(new ChangeListener() {
+    public void addActorListeners(final TextButton quickGameButton, final TextButton localGameButton, final TextButton menuButton) {
+        localGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.screenManager.setGameScreen(new GameModel(4), null);
+            }
+        });
+
+        quickGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.screenManager.setWaitingRoomScreen(new WaitingRoomModel());

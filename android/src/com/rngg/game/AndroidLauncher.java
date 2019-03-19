@@ -24,6 +24,7 @@ public class AndroidLauncher extends AndroidApplication {
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
+		Rngg.RUN_DESKTOP = false;
 		super.onCreate(savedInstanceState);
 		androidAPI = new AndroidAPI(this);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();

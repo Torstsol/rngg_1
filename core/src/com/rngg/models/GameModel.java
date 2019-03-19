@@ -11,9 +11,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
-public class GameModel<M extends GameMap<Z>, Z extends Zone> {
+public class GameModel {
     public int playerScore = 0;
-    private M map;
+    private GameMap map;
     private Player[] players;
     private int playerIndex;
     private Zone attacker;
@@ -24,14 +24,14 @@ public class GameModel<M extends GameMap<Z>, Z extends Zone> {
     // defense strategies
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
 
-    public GameModel(int numPlayers, M map) {
+    public GameModel(int numPlayers) {
         this.players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player("Player" + i);
+            players[i] = new Player("Player" + i, "90238049", true);
         }
         this.playerIndex = 0;
         this.contiguousAreas = new int[numPlayers];
-        this.map = (M) new SquareMap(9, 16, players);
+        this.map = new SquareMap(9, 16, players);
         this.updateAreas();
         this.rng = RNG.getInstance();
     }
@@ -159,7 +159,7 @@ public class GameModel<M extends GameMap<Z>, Z extends Zone> {
                     for (int j = start; j < subgraph.size(); j++) {
                         Zone subgraphNode = subgraph.get(j);
                         // for each neighbor of that member
-                        for (Zone neighbor : map.getNeighbors(subgraphNode)) {
+                        for (Zone neighbor : (ArrayList<Zone>) map.getNeighbors(subgraphNode)) {
                             // if the neighbor should be a part of the subgraph but isn't yet
                             if (neighbor.getPlayer().equals(player) && !subgraph.contains(neighbor)) {
                                 // add the neighbor, note that we found a change
@@ -201,7 +201,7 @@ public class GameModel<M extends GameMap<Z>, Z extends Zone> {
             // 1 = all 4 neighbors are same player, 0 = all are enemy
             // first, create a hashmap of the ratio
             HashMap<Float, ArrayList<Zone>> hashMap = new HashMap<Float, ArrayList<Zone>>();
-            for (Zone z : map.getPlayerZones(player)) {
+            for (Zone z : (ArrayList<Zone>) map.getPlayerZones(player)) {
                 ArrayList<Zone> neighbors = map.getNeighbors(z);
                 float friendlyNeighborRatio = 0;
                 for (Zone neighbor : neighbors) {
@@ -249,5 +249,10 @@ public class GameModel<M extends GameMap<Z>, Z extends Zone> {
             zone.incrementUnits();
             units--;
         }
+    }
+
+    public void nextPlayer(){
+        this.playerIndex = (this.playerIndex + 1)%(players.length);
+        Gdx.app.debug(this.getClass().getSimpleName(), "Player " + playerIndex + " is now playing");
     }
 }

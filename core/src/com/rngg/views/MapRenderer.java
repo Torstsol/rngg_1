@@ -1,5 +1,6 @@
 package com.rngg.views;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -13,10 +14,10 @@ public abstract class MapRenderer<M extends GameMap<Z>, Z extends Zone> {
     protected BitmapFont font;
     protected ShapeRenderer.ShapeType shapeType;
 
-    public MapRenderer(M map, BitmapFont font) {
+    public MapRenderer(M map,ShapeRenderer sr, SpriteBatch batch, BitmapFont font) {
         this.map = map;
-        this.sr = new ShapeRenderer();
-        this.batch = new SpriteBatch();
+        this.sr = sr;
+        this.batch = batch;
         this.font = font;
     }
 

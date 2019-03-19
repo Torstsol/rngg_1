@@ -11,7 +11,7 @@ public class GameController extends Controller {
 
     public final GameModel gameModel;
 
-    public GameController(Rngg game, GameModel gameModel) {
+    public GameController(final Rngg game, final GameModel gameModel) {
         super(game);
         this.gameModel = gameModel;
 
@@ -22,6 +22,39 @@ public class GameController extends Controller {
                 camera.unproject(unprojectedCoords);
 
                 GameController.this.gameModel.click(unprojectedCoords);
+                return true;
+            }
+
+            // Switch current player, for debugging purposes
+            @Override public boolean keyDown(int keycode) {
+                switch (keycode) {
+                    case Input.Keys.NUM_1:
+                        gameModel.setPlayer(0);
+                        break;
+                    case Input.Keys.NUM_2:
+                        gameModel.setPlayer(1);
+                        break;
+                    case Input.Keys.NUM_3:
+                        gameModel.setPlayer(2);
+                        break;
+                    case Input.Keys.NUM_4:
+                        gameModel.setPlayer(3);
+                        break;
+                    case Input.Keys.A:
+                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_ALL);
+                        gameModel.nextPlayer();
+                        break;
+                    case Input.Keys.F:
+                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_FRONTIER);
+                        gameModel.nextPlayer();
+                        break;
+                    case Input.Keys.C:
+                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_CORE);
+                        gameModel.nextPlayer();
+                        break;
+                    default:
+                        break;
+                }
                 return true;
             }
         });

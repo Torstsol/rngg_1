@@ -7,8 +7,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.rngg.controllers.GameController;
+import com.rngg.models.Player;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameView extends View {
 
@@ -18,11 +22,13 @@ public class GameView extends View {
     private BitmapFont font;
     private MapRenderer mapRenderer;
     private ShapeRenderer sr;
+    private List<Player> players;
 
-    public GameView(GameAssetManager assetManager, GameController controller) {
+    public GameView(GameAssetManager assetManager, GameController controller, List<Player> players) {
         super(assetManager);
 
         this.controller = controller;
+        this.players = players;
 
         batch = new SpriteBatch();
         font = assetManager.manager.get(Assets.MINECRAFTIA);

@@ -32,7 +32,7 @@ public class GameModel {
     public GameModel(int numPlayers) {
         this.players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player("Player" + i);
+            players[i] = new Player("Player" + i, "90238049", true);
         }
         this.playerIndex = 0;
         this.contiguousAreas = new int[numPlayers];

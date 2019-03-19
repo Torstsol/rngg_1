@@ -42,10 +42,16 @@ public class GameController extends Controller {
                         break;
                     case Input.Keys.A:
                         gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_ALL);
+                        gameModel.nextPlayer();
+                        break;
                     case Input.Keys.F:
                         gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_FRONTIER);
+                        gameModel.nextPlayer();
+                        break;
                     case Input.Keys.C:
                         gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_CORE);
+                        gameModel.nextPlayer();
+                        break;
                     default:
                         break;
                 }

@@ -70,13 +70,13 @@ public class WaitingRoomController extends Controller implements RoomListener, R
             player.randomNumber = num;
 
             // Do a check to see if ready
-            boolean gotall = true;
+            boolean gotAll = true;
             for (Player p : playerInfo.values()) {
                 if (p.randomNumber <= 0) {
-                    gotall = false;
+                    gotAll = false;
                 }
             }
-            if (gotall) {
+            if (gotAll) {
                 Message readyMessage = new Message(new byte[512], "", 0);
                 readyMessage.putString("READY");
                 sender.sendToAllReliably(readyMessage.getData());

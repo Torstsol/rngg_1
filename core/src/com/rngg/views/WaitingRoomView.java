@@ -8,19 +8,27 @@ public class WaitingRoomView extends View{
 
     private WaitingRoomController controller;
     private WaitingRoomModel model;
+    private boolean isQuickGame;
 
-    public WaitingRoomView(GameAssetManager assetManager, WaitingRoomController controller, WaitingRoomModel model) {
+    public WaitingRoomView(GameAssetManager assetManager, WaitingRoomController controller, boolean isQuickGame, WaitingRoomModel model) {
         super(assetManager);
         this.controller = controller;
         this.model = model;
+        this.isQuickGame = isQuickGame;
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
         if(!model.created){
-            createRoom();
-            model.created = true;
+            if(isQuickGame) {
+                createQuickRoom();
+                model.created = true;
+            }
+            else{
+                createInvitePlayersRoom();
+                model.created = true;
+            }
         }
         if(model.leftRoom){
             controller.getGame().screenManager.setMenuScreen();
@@ -30,10 +38,16 @@ public class WaitingRoomView extends View{
         }
     }
 
-    private void createRoom(){
+    private void createQuickRoom(){
 
         controller.getGame().getAPI().setRoomListener(controller);
-        controller.getGame().getAPI().startMatchMaking();
+        controller.getGame().getAPI().startQuickGame();
+    }
+
+    private void createInvitePlayersRoom(){
+
+        controller.getGame().getAPI().setRoomListener(controller);
+        controller.getGame().getAPI().startInvitePlayersRoom();
     }
 
 

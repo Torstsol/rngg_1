@@ -14,7 +14,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesActivityResultCodes;
+import com.google.android.gms.games.multiplayer.Multiplayer;
+import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 
+
+import java.util.ArrayList;
 
 import GmsServices.AndroidAPI;
 
@@ -83,6 +87,34 @@ public class AndroidLauncher extends AndroidApplication {
 						.leave(androidAPI.mJoinedRoomConfig, androidAPI.mRoom.getRoomId());
 				this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			}
+		}
+		else if (requestCode == androidAPI.RC_SELECT_PLAYERS) {
+			if (resultCode != Activity.RESULT_OK) {
+				// Canceled or some other error.
+				return;
+			}
+
+			// Get the invitee list.
+			final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
+
+			// Get Automatch criteria.
+			int minAutoPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
+			int maxAutoPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
+
+			// Create the room configuration.
+			RoomConfig.Builder roomBuilder = RoomConfig.builder(androidAPI.roomUpdateCallback)
+					.setOnMessageReceivedListener(androidAPI.mMessageReceivedHandler)
+					.setRoomStatusUpdateCallback(androidAPI.mRoomStatusCallbackHandler)
+					.addPlayersToInvite(invitees);
+			if (minAutoPlayers > 0) {
+				roomBuilder.setAutoMatchCriteria(
+						RoomConfig.createAutoMatchCriteria(minAutoPlayers, maxAutoPlayers, 0));
+			}
+
+			// Save the roomConfig so we can use it if we call leave().
+			androidAPI.mJoinedRoomConfig = roomBuilder.build();
+			Games.getRealTimeMultiplayerClient(this, GoogleSignIn.getLastSignedInAccount(this))
+					.create(androidAPI.mJoinedRoomConfig);
 		}
 	}
 }

@@ -45,6 +45,9 @@ public class Bot extends Player {
             // remove all visited zones
             zones.removeAll(deleteList);
         } while (changed);
+        // bots only act when it is their turn, thus we defend using the current playerIndex
+        // TODO bots always defend using DEFEND_ALL
+        model.defend(model.getPlayerIndex(), GameModel.DEFEND_ALL);
         model.nextPlayer();
     }
 

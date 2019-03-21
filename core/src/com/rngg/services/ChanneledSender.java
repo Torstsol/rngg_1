@@ -34,6 +34,17 @@ public class ChanneledSender implements IPlayServices{
 
     }
 
+    @Override
+    public void checkForInvitation() {
+        this.playServices.checkForInvitation();
+
+    }
+
+    @Override
+    public void showInvitationInbox() {
+        this.playServices.showInvitationInbox();
+    }
+
     private byte[] appendChannel(byte[] message){
         byte[] nMessage = new byte[message.length + 1];
         nMessage[0] = (byte)(this.channel & 0xFF);

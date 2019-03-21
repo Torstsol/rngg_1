@@ -9,12 +9,14 @@ public class WaitingRoomView extends View{
     private WaitingRoomController controller;
     private WaitingRoomModel model;
     private boolean isQuickGame;
+    private boolean isInviteRoom;
 
-    public WaitingRoomView(GameAssetManager assetManager, WaitingRoomController controller, boolean isQuickGame, WaitingRoomModel model) {
+    public WaitingRoomView(GameAssetManager assetManager, WaitingRoomController controller, boolean isQuickGame, boolean isInviteRoom, WaitingRoomModel model) {
         super(assetManager);
         this.controller = controller;
         this.model = model;
         this.isQuickGame = isQuickGame;
+        this.isInviteRoom = isInviteRoom;
     }
 
     @Override
@@ -23,6 +25,11 @@ public class WaitingRoomView extends View{
         if(!model.created){
             if(isQuickGame) {
                 createQuickRoom();
+                model.created = true;
+            }
+            else if (isInviteRoom){
+                controller.getGame().getAPI().setRoomListener(controller);
+                controller.getGame().getAPI().showInvitationInbox();
                 model.created = true;
             }
             else{

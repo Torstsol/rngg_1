@@ -86,6 +86,7 @@ public class WaitingRoomController extends Controller implements RoomListener, R
             leftToReady--;
 
             if(leftToReady <= 0){
+                System.out.println("Model.joinedRoom set to true");
                 model.joinedRoom = true;
             }
         }
@@ -103,6 +104,10 @@ public class WaitingRoomController extends Controller implements RoomListener, R
         IPlayServices playServices = game.getAPI();
 
         leftToReady = playServices.getRemotePlayers().size();
+        //some hardcoded hoogabooga in order to get the game to launch
+        //for now people have to join at the same time, need to implement a better starter method
+        leftToReady = 1;
+        System.out.println("LeftToReady: " + leftToReady);
 
         NetworkManager networkManager = new NetworkManager();
         playServices.setRealTimeListener(networkManager);

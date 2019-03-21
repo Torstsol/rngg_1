@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.WindowManager;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
@@ -14,8 +15,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesActivityResultCodes;
+import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
+import com.google.android.gms.games.multiplayer.realtime.OnRealTimeMessageReceivedListener;
+import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
+import com.rngg.services.Message;
 
 
 import java.util.ArrayList;
@@ -116,5 +121,35 @@ public class AndroidLauncher extends AndroidApplication {
 			Games.getRealTimeMultiplayerClient(this, GoogleSignIn.getLastSignedInAccount(this))
 					.create(androidAPI.mJoinedRoomConfig);
 		}
+		else if (requestCode == androidAPI.RC_INVITATION_INBOX) {
+			if (resultCode != Activity.RESULT_OK) {
+				// Canceled or some error.
+				return;
+			}
+			Invitation invitation = data.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
+			if (invitation != null) {
+				// build the room config:
+				androidAPI.mJoinedRoomConfig =
+						RoomConfig.builder(androidAPI.roomUpdateCallback)
+								.setRoomStatusUpdateCallback(androidAPI.mRoomStatusCallbackHandler)
+								.setOnMessageReceivedListener(mMessageReceivedHandler)
+								.setInvitationIdToAccept(invitation.getInvitationId())
+								.build();
+				Games.getRealTimeMultiplayerClient(this,
+						GoogleSignIn.getLastSignedInAccount(this))
+						.join(androidAPI.mJoinedRoomConfig);
+				// prevent screen from sleeping during handshake
+				getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			}
+		}
 	}
+	public OnRealTimeMessageReceivedListener mMessageReceivedHandler =
+			new OnRealTimeMessageReceivedListener() {
+				@Override
+				public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
+					Message message = new Message(realTimeMessage.getMessageData(), realTimeMessage.getSenderParticipantId(), realTimeMessage.describeContents());
+					androidAPI.liveListener.handleDataReceived(message);
+				}
+			};
+
 }

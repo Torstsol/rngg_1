@@ -16,4 +16,6 @@ public interface IPlayServices {
     public void setRoomListener(RoomListener listener);
     public void startQuickGame();
     public void startInvitePlayersRoom();
+    public void checkForInvitation();
+    public void showInvitationInbox();
 }

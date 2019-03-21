@@ -3,14 +3,13 @@ package com.rngg.views;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-
 import com.rngg.controllers.GameController;
 import com.rngg.game.Rngg;
 import com.rngg.models.Player;
+import com.rngg.models.SquareMap;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
 
@@ -30,7 +29,7 @@ public class GameView extends View {
 
     public GameView(GameAssetManager assetManager, GameController controller, List<Player> players) {
         super(assetManager);
-        camera.viewportHeight = Rngg.HEIGHT*10/8;
+        camera.viewportHeight = Rngg.HEIGHT * 10 / 8;
 
         this.controller = controller;
         this.players = players;
@@ -39,7 +38,7 @@ public class GameView extends View {
         font = assetManager.manager.get(Assets.MINECRAFTIA);
         font.setColor(Color.WHITE);
         this.sr = new ShapeRenderer();
-        mapRenderer = new SquareMapRenderer(controller.gameModel.getMap(), sr, batch, font);
+        mapRenderer = new SquareMapRenderer((SquareMap) controller.gameModel.getMap(), sr, batch, font);
         hudRenderer = new HUDRenderer(controller.gameModel, font, assetManager, controller);
     }
 

@@ -21,9 +21,6 @@ public class LobbyController extends Controller {
     @Override
     public void update(float delta) {}
 
-    public void setInputProcessor(Stage stage) {
-        Gdx.input.setInputProcessor(stage);
-    }
 
     public void addActorListeners(final TextButton quickGameButton, final TextButton invitePlayersButton, final TextButton seeInvitationsButton, final TextButton localGameButton, final TextButton menuButton) {
         localGameButton.addListener(new ChangeListener() {

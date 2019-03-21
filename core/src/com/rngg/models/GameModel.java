@@ -21,6 +21,8 @@ public class GameModel {
     private RNG rng;
     private int maxUnits = 8;
 
+    private float attackRoll, defendRoll;
+
     // defense strategies
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
 
@@ -34,6 +36,8 @@ public class GameModel {
         this.map = new SquareMap(9, 16, players);
         this.updateAreas();
         this.rng = RNG.getInstance();
+        this.attackRoll = 0;
+        this.defendRoll = 0;
     }
 
     public GameMap getMap() {
@@ -83,12 +87,12 @@ public class GameModel {
         );
 
         this.rng.roll(attacker.getUnits());
-        float attackRoll = rng.valueFromRoll();
+        attackRoll = rng.valueFromRoll();
         Gdx.app.log(this.getClass().getSimpleName(),
                 attacker.toString() + " rolled " + attackRoll + " (" + Arrays.toString(rng.labelFromRoll()) + ")");
 
         this.rng.roll(defender.getUnits());
-        float defendRoll = rng.valueFromRoll();
+        defendRoll = rng.valueFromRoll();
         Gdx.app.log(this.getClass().getSimpleName(),
                 defender.toString() + " rolled " + defendRoll + " (" + Arrays.toString(rng.labelFromRoll()) + ")");
 
@@ -252,7 +256,21 @@ public class GameModel {
     }
 
     public void nextPlayer(){
+        this.attackRoll = 0;
+        this.defendRoll = 0;
+
+        if (this.attacker != null) {
+            this.attacker.unClick();
+        }
         this.playerIndex = (this.playerIndex + 1)%(players.length);
         Gdx.app.debug(this.getClass().getSimpleName(), "Player " + playerIndex + " is now playing");
+    }
+
+    public int getAttackRoll() {
+        return (int) attackRoll;
+    }
+
+    public int getDefendRoll() {
+        return (int) defendRoll;
     }
 }

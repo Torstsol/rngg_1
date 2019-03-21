@@ -98,7 +98,7 @@ public class GameController extends Controller {
         defendCoreButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_FRONTIER);
+                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_CORE);
                 gameModel.nextPlayer();
             }
         });
@@ -106,7 +106,7 @@ public class GameController extends Controller {
         defendFrontierButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_CORE);
+                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_FRONTIER);
                 gameModel.nextPlayer();
             }
         });

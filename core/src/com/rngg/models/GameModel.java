@@ -28,9 +28,12 @@ public class GameModel {
 
     public GameModel(int numPlayers) {
         this.players = new Player[numPlayers];
-        for (int i = 0; i < numPlayers; i++) {
+
+        // TODO currently the last player is hardcoded as bot for testing
+        for (int i = 0; i < numPlayers-1; i++) {
             players[i] = new Player("Player" + i, "90238049", true);
         }
+        players[3] = new Bot("Player3", "90238049", true, this);
         this.playerIndex = 0;
         this.contiguousAreas = new int[numPlayers];
         this.map = new SquareMap(9, 16, players);
@@ -263,6 +266,9 @@ public class GameModel {
             this.attacker.unClick();
         }
         this.playerIndex = (this.playerIndex + 1)%(players.length);
+        if (this.currentPlayer() instanceof Bot) {
+            ((Bot) this.currentPlayer()).act();
+        }
         Gdx.app.debug(this.getClass().getSimpleName(), "Player " + playerIndex + " is now playing");
     }
 

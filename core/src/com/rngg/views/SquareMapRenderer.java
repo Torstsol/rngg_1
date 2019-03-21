@@ -2,14 +2,15 @@ package com.rngg.views;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.rngg.models.SquareMap;
 import com.rngg.models.SquareZone;
 
 public class SquareMapRenderer extends MapRenderer<SquareMap, SquareZone> {
 
-    public SquareMapRenderer(SquareMap map, BitmapFont font) {
-        super(map, font);
+    public SquareMapRenderer(SquareMap map, ShapeRenderer sr, SpriteBatch batch, BitmapFont font) {
+        super(map, sr, batch, font);
         this.shapeType = ShapeRenderer.ShapeType.Filled;
     }
 

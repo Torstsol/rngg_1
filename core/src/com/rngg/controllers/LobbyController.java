@@ -8,6 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
+import com.rngg.models.WaitingRoomModel;
+
+import javax.xml.soap.Text;
 
 public class LobbyController extends Controller {
 
@@ -18,15 +21,18 @@ public class LobbyController extends Controller {
     @Override
     public void update(float delta) {}
 
-    public void setInputProcessor(Stage stage) {
-        Gdx.input.setInputProcessor(stage);
-    }
-
-    public void addActorListeners(final TextButton gameButton, final TextButton menuButton) {
-        gameButton.addListener(new ChangeListener() {
+    public void addActorListeners(final TextButton quickGameButton, final TextButton localGameButton, final TextButton menuButton) {
+        localGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.screenManager.setGameScreen(new GameModel(4));
+                game.screenManager.setGameScreen(new GameModel(4), null);
+            }
+        });
+
+        quickGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.screenManager.setWaitingRoomScreen(new WaitingRoomModel());
             }
         });
 
@@ -37,5 +43,6 @@ public class LobbyController extends Controller {
             }
         });
     }
+
 
 }

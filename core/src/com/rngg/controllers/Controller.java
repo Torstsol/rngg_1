@@ -1,8 +1,10 @@
 package com.rngg.controllers;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.rngg.game.Rngg;
 
 abstract public class Controller {
@@ -19,6 +21,10 @@ abstract public class Controller {
 
     public void setCamera(OrthographicCamera camera) {
         this.camera = camera;
+    }
+
+    public void setInputProcessor(Stage stage) {
+        Gdx.input.setInputProcessor(stage);
     }
 
 }

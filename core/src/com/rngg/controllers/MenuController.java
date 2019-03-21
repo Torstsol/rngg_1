@@ -18,10 +18,6 @@ public class MenuController extends Controller {
     @Override
     public void update(float delta) {}
 
-    public void setInputProcessor(Stage stage) {
-        Gdx.input.setInputProcessor(stage);
-    }
-
     public void addActorListeners(final TextButton lobbyButton, final TextButton settingsButton) {
         lobbyButton.addListener(new ChangeListener() {
             @Override

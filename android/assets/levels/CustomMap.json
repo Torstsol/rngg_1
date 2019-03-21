@@ -1,0 +1,20 @@
+{
+  "mapType": 0,
+  "totalCols": 20,
+  "totalRows": 10,
+  "maxPlayers": 2,
+  "minPlayers": 2,
+  "randomPlayers": false,
+  "zones": [
+    {
+      "row": 5,
+      "col": 5,
+      "player": 1
+    },
+    {
+      "row": 6,
+      "col": 5,
+      "player": 2
+    }
+  ]
+}

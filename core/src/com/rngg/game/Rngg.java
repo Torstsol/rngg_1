@@ -30,7 +30,7 @@ public class Rngg extends Game {
 
 	@Override
 	public void create () {
-        Gdx.app.setLogLevel(Application.LOG_INFO);
+        Gdx.app.setLogLevel(Application.LOG_NONE);
 
         assetManager = new GameAssetManager();
         assetManager.loadImages();

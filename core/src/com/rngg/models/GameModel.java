@@ -1,14 +1,18 @@
 package com.rngg.models;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.rngg.utils.RNG;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 public class GameModel {
@@ -20,24 +24,100 @@ public class GameModel {
     private int[] contiguousAreas;
     private RNG rng;
     private int maxUnits = 8;
+    private int numPlayers;
 
     private float attackRoll, defendRoll;
 
     // defense strategies
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
 
+    public GameModel(int numPlayers, String mapFileName) {
+        this.playerIndex = 0;
+        this.attackRoll = 0;
+        this.defendRoll = 0;
+
+        this.numPlayers = numPlayers;
+        this.rng = RNG.getInstance();
+        this.setMap(mapFileName);
+    }
+
     public GameModel(int numPlayers) {
+        this(numPlayers, "");
+    }
+
+    public void setMap(String fileName) {
+        if (fileName.length() > 0) {
+            this.map = loadMap(fileName);
+        } else {
+            initializePlayerAndAreas();
+            this.map = new SquareMap(9, 16, players);
+        }
+
+        this.updateAreas();
+    }
+
+    private void initializePlayerAndAreas() {
         this.players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
             players[i] = new Player("Player" + i, "90238049", true);
         }
-        this.playerIndex = 0;
+
         this.contiguousAreas = new int[numPlayers];
-        this.map = new SquareMap(9, 16, players);
-        this.updateAreas();
-        this.rng = RNG.getInstance();
-        this.attackRoll = 0;
-        this.defendRoll = 0;
+    }
+
+    private GameMap loadMap(String fileName) {
+        String mapType = null;
+        int totalCols = -1;
+        int totalRows = -1;
+        int maxPlayers = -1;
+        boolean randomPlayers = false;
+        List<List<int[]>> zones = null;
+
+        JsonValue json = new JsonReader().parse(Gdx.files.internal(fileName).readString());
+
+        for (JsonValue value : json) {
+            if (value.name.equals("mapType")) {
+                mapType = value.asString();
+            } else if (value.name.equals("totalCols")) {
+                totalCols = value.asInt();
+            } else if (value.name.equals("totalRows")) {
+                totalRows = value.asInt();
+            } else if (value.name.equals("maxPlayers")) {
+                maxPlayers = value.asInt();
+            }else if (value.name.equals("randomPlayers")) {
+                randomPlayers = value.asBoolean();
+            } else if (value.name.equals("zones")) {
+                zones = decodeZoneJSON(value);
+            }
+        }
+
+        if (!randomPlayers || this.numPlayers > maxPlayers) {
+            this.numPlayers = maxPlayers;
+        }
+
+        initializePlayerAndAreas();
+
+        if (mapType.equals("SquareMap")) {
+            return new SquareMap(totalRows, totalCols, this.players);
+        }
+
+        return new SquareMap(9, 16, this.players);
+    }
+
+    private List<List<int[]>> decodeZoneJSON(JsonValue zones) {
+        List<List<int[]>> playersWithZones = new ArrayList<List<int[]>>();
+
+        for (JsonValue player : zones) {
+            List<int[]> playerZones = new ArrayList<int[]>();
+
+            for (JsonValue row : player) {
+                playerZones.add(row.asIntArray());
+            }
+
+            playersWithZones.add(playerZones);
+        }
+
+        return playersWithZones;
     }
 
     public GameMap getMap() {

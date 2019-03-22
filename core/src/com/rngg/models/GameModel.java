@@ -98,7 +98,7 @@ public class GameModel {
         initializePlayerAndAreas();
 
         if (mapType.equals("SquareMap")) {
-            return new SquareMap(totalRows, totalCols, this.players);
+            return new SquareMap(totalRows, totalCols, this.players, randomPlayers, zones);
         }
 
         return new SquareMap(9, 16, this.players);
@@ -126,6 +126,9 @@ public class GameModel {
 
     public void click(Vector3 coords) {
         Zone temp = map.screenCoordToZone(new Vector2(coords.x, coords.y));
+
+        if (temp == null) return;
+
         if (temp.getPlayer() == this.currentPlayer()) {
             if (temp.getUnits() <= 1) {
                 Gdx.app.log(this.getClass().getSimpleName(), temp.toString() + " has too few units to attack");
@@ -245,6 +248,8 @@ public class GameModel {
                         // for each neighbor of that member
                         for (Zone neighbor : (ArrayList<Zone>) map.getNeighbors(subgraphNode)) {
                             // if the neighbor should be a part of the subgraph but isn't yet
+                            if (neighbor == null) continue;
+
                             if (neighbor.getPlayer().equals(player) && !subgraph.contains(neighbor)) {
                                 // add the neighbor, note that we found a change
                                 subgraph.add(neighbor);

@@ -23,13 +23,13 @@ public abstract class MapRenderer<M extends GameMap<Z>, Z extends Zone> {
 
     public void draw() {
         sr.begin(shapeType);
-        for (Z zone : map.getZones()) {
+        for (Z zone : map._getZones()) {
             drawZone(zone);
         }
         sr.end();
 
         batch.begin();
-        for (Z zone : map.getZones()) {
+        for (Z zone : map._getZones()) {
             drawZoneText(zone);
         }
         batch.end();

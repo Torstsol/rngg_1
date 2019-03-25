@@ -46,13 +46,19 @@ public class LobbyView extends View {
         final TextButton quickGameButton = new TextButton("Quick Game", assetManager.manager.get(Assets.SKIN));
         group.addActor(quickGameButton);
 
+        final TextButton invitePlayersButton = new TextButton("Invite Players", assetManager.manager.get(Assets.SKIN));
+        group.addActor(invitePlayersButton);
+
+        final TextButton seeInvitationButton = new TextButton("Invitations", assetManager.manager.get(Assets.SKIN));
+        group.addActor(seeInvitationButton);
+
         final TextButton localGameButton = new TextButton("Local Game", assetManager.manager.get(Assets.SKIN));
         group.addActor(localGameButton);
 
         final TextButton menuButton = new TextButton("Cancel", assetManager.manager.get(Assets.SKIN));
         group.addActor(menuButton);
 
-        controller.addActorListeners(quickGameButton, localGameButton, menuButton); // handle input
+        controller.addActorListeners(quickGameButton, invitePlayersButton, seeInvitationButton, localGameButton, menuButton); // handle input
     }
 
     @Override

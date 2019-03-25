@@ -21,7 +21,9 @@ public class Rngg extends Game {
 
 	public Rngg(IPlayServices playServices) {
 		this.playServices = playServices;
-		if(!RUN_DESKTOP) playServices.signIn();
+		if(!RUN_DESKTOP){
+			playServices.signIn();
+		}
 	}
 
 	public IPlayServices getAPI(){

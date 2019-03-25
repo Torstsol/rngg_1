@@ -15,7 +15,6 @@ public class ChanneledSender implements IPlayServices{
     }
     public void signIn(){this.playServices.signIn();}
     public void signOut(){this.playServices.signOut();}
-    public void startMatchMaking(){this.playServices.startMatchMaking();}
     public boolean isSignedIn(){return this.playServices.isSignedIn();}
     public String getLocalID(){return this.playServices.getLocalID();}
     public ArrayList<String> getRemotePlayers(){return new ArrayList<String>();}
@@ -23,6 +22,27 @@ public class ChanneledSender implements IPlayServices{
     @Override
     public void setRoomListener(RoomListener listener) {
         this.playServices.setRoomListener(listener);
+    }
+
+    @Override
+    public void startQuickGame() {
+        this.playServices.startQuickGame();
+    }
+
+    @Override
+    public void startInvitePlayersRoom() {
+
+    }
+
+    @Override
+    public void checkForInvitation() {
+        this.playServices.checkForInvitation();
+
+    }
+
+    @Override
+    public void showInvitationInbox() {
+        this.playServices.showInvitationInbox();
     }
 
     private byte[] appendChannel(byte[] message){

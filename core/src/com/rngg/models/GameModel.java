@@ -1,7 +1,6 @@
 package com.rngg.models;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonReader;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 public class GameModel {
@@ -66,12 +64,12 @@ public class GameModel {
     }
 
     private GameMap loadMap(String fileName) {
-        String mapType = null;
+        String mapType = "";
         int totalCols = -1;
         int totalRows = -1;
         int maxPlayers = -1;
         boolean randomPlayers = false;
-        List<List<int[]>> zones = null;
+        JsonValue zones = null;
 
         JsonValue json = new JsonReader().parse(Gdx.files.internal(fileName).readString());
 
@@ -87,7 +85,7 @@ public class GameModel {
             }else if (value.name.equals("randomPlayers")) {
                 randomPlayers = value.asBoolean();
             } else if (value.name.equals("zones")) {
-                zones = decodeZoneJSON(value);
+                zones = value;
             }
         }
 
@@ -102,22 +100,6 @@ public class GameModel {
         }
 
         return new SquareMap(9, 16, this.players);
-    }
-
-    private List<List<int[]>> decodeZoneJSON(JsonValue zones) {
-        List<List<int[]>> playersWithZones = new ArrayList<List<int[]>>();
-
-        for (JsonValue player : zones) {
-            List<int[]> playerZones = new ArrayList<int[]>();
-
-            for (JsonValue row : player) {
-                playerZones.add(row.asIntArray());
-            }
-
-            playersWithZones.add(playerZones);
-        }
-
-        return playersWithZones;
     }
 
     public GameMap getMap() {

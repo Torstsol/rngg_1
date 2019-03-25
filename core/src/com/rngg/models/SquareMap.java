@@ -3,18 +3,18 @@ package com.rngg.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.JsonValue;
 import com.rngg.game.Rngg;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class SquareMap extends GameMap<SquareZone> {
-
+public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
     private int zoneWidth, zoneHeight, rows, cols;
     private SquareZone[][] zones;
 
-    public SquareMap(int rows, int cols, Player[] players, boolean randomPlayers, List<List<int[]>> customZones) {
+    public SquareMap(int rows, int cols, Player[] players, boolean randomPlayers, JsonValue zoneJSON) {
         super();
 
         Gdx.app.log(this.getClass().getSimpleName(),
@@ -27,7 +27,26 @@ public class SquareMap extends GameMap<SquareZone> {
         this.rows = rows;
         this.cols = cols;
         this.zones = new SquareZone[rows][cols];
-        this.initializeZones(players, randomPlayers, customZones);
+        this.initializeZones(players, randomPlayers, decodeZoneJSON(zoneJSON));
+    }
+
+    @Override
+    public List<List<int[]>> decodeZoneJSON(JsonValue zones) {
+        if (zones == null) return null;
+
+        List<List<int[]>> playersWithZones = new ArrayList<List<int[]>>();
+
+        for (JsonValue player : zones) {
+            List<int[]> playerZones = new ArrayList<int[]>();
+
+            for (JsonValue row : player) {
+                playerZones.add(row.asIntArray());
+            }
+
+            playersWithZones.add(playerZones);
+        }
+
+        return playersWithZones;
     }
 
     private void initializeZones(Player[] players, boolean randomPlayers, List<List<int[]>> customZones) {
@@ -103,6 +122,8 @@ public class SquareMap extends GameMap<SquareZone> {
 
     private ArrayList<SquareZone> generateNeighbors(SquareZone zone) {
         ArrayList<SquareZone> ret = new ArrayList<SquareZone>();
+
+        if (zone == null) return ret;
 
         int row = zone.getRow();
         int col = zone.getCol();

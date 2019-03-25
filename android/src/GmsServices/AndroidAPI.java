@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.WindowManager;
 
+import com.google.android.gms.games.multiplayer.Invitation;
+import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.rngg.game.AndroidLauncher;
 import com.rngg.services.IPlayServices;
 import com.rngg.services.Message;
@@ -39,7 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Created by erlin on 23.03.2018.
+ * Created by torstein on 23.03.2018.
  */
 
 public class AndroidAPI implements IPlayServices {
@@ -102,7 +104,7 @@ public class AndroidAPI implements IPlayServices {
 
 
 
-    private OnRealTimeMessageReceivedListener mMessageReceivedHandler =
+    public OnRealTimeMessageReceivedListener mMessageReceivedHandler =
             new OnRealTimeMessageReceivedListener() {
                 @Override
                 public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
@@ -121,10 +123,10 @@ public class AndroidAPI implements IPlayServices {
     private static final long ROLE_ARCHER = 0x2; // 010 in binary
     private static final long ROLE_WIZARD = 0x4; // 100 in binary
 
-    private void startQuickGame(long role) {
+    public void startQuickGame() {
         // auto-match criteria to invite one random automatch opponent.
         // You can also specify more opponents (up to 3).
-        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, role);
+        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(2, 3, 0x0);
 
         // build the room config:
         RoomConfig roomConfig =
@@ -145,7 +147,8 @@ public class AndroidAPI implements IPlayServices {
         System.out.println("Room created");
     }
 
-    private RoomUpdateCallback roomUpdateCallback = new RoomUpdateCallback() {
+
+    public RoomUpdateCallback roomUpdateCallback = new RoomUpdateCallback() {
         @Override
         public void onRoomCreated(int code, @Nullable Room room) {
             // Update UI and internal state based on room updates.
@@ -223,7 +226,7 @@ public class AndroidAPI implements IPlayServices {
     }
 
     public Room mRoom;
-    private RoomStatusUpdateCallback mRoomStatusCallbackHandler = new RoomStatusUpdateCallback() {
+    public RoomStatusUpdateCallback mRoomStatusCallbackHandler = new RoomStatusUpdateCallback() {
         @Override
         public void onRoomConnecting(@Nullable Room room) {
             // Update the UI status since we are in the process of connecting to a specific room.
@@ -289,11 +292,11 @@ public class AndroidAPI implements IPlayServices {
 
         @Override
         public void onPeersConnected(@Nullable Room room, @NonNull List<String> list) {
-            if (mPlaying) {
+            /*if (mPlaying) {
                 // add new player to an ongoing game
             } else if (shouldStartGame(room)) {
                 // start game!
-            }
+            }*/
         }
 
         @Override
@@ -400,7 +403,7 @@ public class AndroidAPI implements IPlayServices {
 
 
 
-    private RealtimeListener liveListener;
+    public RealtimeListener liveListener;
     private RoomListener roomListener;
     @Override
     public void setRealTimeListener(RealtimeListener listener){
@@ -441,11 +444,6 @@ public class AndroidAPI implements IPlayServices {
     }
 
     @Override
-    public void startMatchMaking() {
-        startQuickGame(ROLE_ANY);
-    }
-
-    @Override
     public boolean isSignedIn() {
         return googleSignInAccount != null;
     }
@@ -465,6 +463,60 @@ public class AndroidAPI implements IPlayServices {
             }
         }
         return participants;
+    }
+
+    public static final int RC_SELECT_PLAYERS = 9006;
+
+    public void startInvitePlayersRoom() {
+        // launch the player selection screen
+        // minimum: 1 other player; maximum: 3 other players
+        Games.getRealTimeMultiplayerClient(androidLauncher, GoogleSignIn.getLastSignedInAccount(androidLauncher))
+                .getSelectOpponentsIntent(2, 3, true)
+                .addOnSuccessListener(new OnSuccessListener<Intent>() {
+                    @Override
+                    public void onSuccess(Intent intent) {
+                        androidLauncher.startActivityForResult(intent, RC_SELECT_PLAYERS);
+                    }
+                });
+    }
+    public void checkForInvitation() {
+        Games.getGamesClient(androidLauncher, GoogleSignIn.getLastSignedInAccount(androidLauncher))
+                .getActivationHint()
+                .addOnSuccessListener(
+                        new OnSuccessListener<Bundle>() {
+                            @Override
+                            public void onSuccess(Bundle bundle) {
+                                if(bundle == null){
+                                    System.out.println("is the bundle == null?");
+                                    return;
+                                }
+                                Invitation invitation = bundle.getParcelable(Multiplayer.EXTRA_INVITATION);
+                                if (invitation != null) {
+                                    RoomConfig.Builder builder = RoomConfig.builder(roomUpdateCallback)
+                                            .setInvitationIdToAccept(invitation.getInvitationId());
+                                    mJoinedRoomConfig = builder.build();
+                                    Games.getRealTimeMultiplayerClient(thisActivity,
+                                            GoogleSignIn.getLastSignedInAccount(thisActivity))
+                                            .join(mJoinedRoomConfig);
+                                    // prevent screen from sleeping during handshake
+                                    androidLauncher.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                                }
+                            }
+                        }
+                );
+
+    }
+    public static final int RC_INVITATION_INBOX = 9008;
+
+    public void showInvitationInbox() {
+        Games.getInvitationsClient(androidLauncher, GoogleSignIn.getLastSignedInAccount(androidLauncher))
+                .getInvitationInboxIntent()
+                .addOnSuccessListener(new OnSuccessListener<Intent>() {
+                    @Override
+                    public void onSuccess(Intent intent) {
+                        androidLauncher.startActivityForResult(intent, RC_INVITATION_INBOX);
+                    }
+                });
     }
 
 }

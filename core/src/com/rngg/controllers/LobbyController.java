@@ -21,7 +21,8 @@ public class LobbyController extends Controller {
     @Override
     public void update(float delta) {}
 
-    public void addActorListeners(final TextButton quickGameButton, final TextButton localGameButton, final TextButton menuButton) {
+
+    public void addActorListeners(final TextButton quickGameButton, final TextButton invitePlayersButton, final TextButton seeInvitationsButton, final TextButton localGameButton, final TextButton menuButton) {
         localGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -32,7 +33,21 @@ public class LobbyController extends Controller {
         quickGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.screenManager.setWaitingRoomScreen(new WaitingRoomModel());
+                game.screenManager.setWaitingRoomScreen(new WaitingRoomModel(), true, false);
+            }
+        });
+
+        seeInvitationsButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.screenManager.setWaitingRoomScreen(new WaitingRoomModel(), false, true);
+            }
+        });
+
+        invitePlayersButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.screenManager.setWaitingRoomScreen(new WaitingRoomModel(), false, false);
             }
         });
 

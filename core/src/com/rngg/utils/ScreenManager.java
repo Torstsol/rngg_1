@@ -43,8 +43,8 @@ public class ScreenManager {
     }
 
 
-    public void setWaitingRoomScreen(WaitingRoomModel model) {
-        game.setScreen(new WaitingRoomView(game.assetManager, new WaitingRoomController(game, model), model));
+    public void setWaitingRoomScreen(WaitingRoomModel model, boolean isQuickGame, boolean isInviteRoom) {
+        game.setScreen(new WaitingRoomView(game.assetManager, new WaitingRoomController(game, model), isQuickGame, isInviteRoom, model));
     }
 
 }

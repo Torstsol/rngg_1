@@ -38,6 +38,9 @@ public class HUDRenderer {
 
         final TextButton defendFrontierButton = new TextButton("Defend Frontier", assetManager.manager.get(Assets.SKIN));
 
+        final TextButton testButton = new TextButton("SEND FAX", assetManager.manager.get(Assets.SKIN));
+
+
         FitViewport fitViewport = new FitViewport(Rngg.WIDTH, Rngg.HEIGHT, HUDCamera);
 
         stage = new Stage(fitViewport, HUDBatch);
@@ -54,9 +57,10 @@ public class HUDRenderer {
         group.addActor(defendAllButton);
         group.addActor(defendCoreButton);
         group.addActor(defendFrontierButton);
+        group.addActor(testButton);
         group.padTop(Rngg.HEIGHT*8/9); //Ghetto positioning
         controller.addInputProcessor(stage);
-        controller.addActorListeners(defendAllButton, defendCoreButton, defendFrontierButton);
+        controller.addActorListeners(defendAllButton, defendCoreButton, defendFrontierButton, testButton);
     }
 
     public void draw() {

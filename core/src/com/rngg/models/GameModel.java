@@ -3,6 +3,9 @@ package com.rngg.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.rngg.services.IPlayServices;
+import com.rngg.services.Message;
+import com.rngg.services.RealtimeListener;
 import com.rngg.utils.RNG;
 
 import java.util.ArrayList;
@@ -11,7 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
-public class GameModel {
+public class GameModel implements RealtimeListener{
     public int playerScore = 0;
     private GameMap map;
     private Player[] players;
@@ -20,6 +23,7 @@ public class GameModel {
     private int[] contiguousAreas;
     private RNG rng;
     private int maxUnits = 8;
+    private IPlayServices sender;
 
     private float attackRoll, defendRoll;
 
@@ -272,5 +276,27 @@ public class GameModel {
 
     public int getDefendRoll() {
         return (int) defendRoll;
+    }
+
+    public void sendMessage(){
+        Gdx.app.log(this.getClass().getSimpleName(), "Sending FAX");
+        Message message = new Message(new byte[512],"",0);
+        message.putString("FAX");
+        sender.sendToAllReliably(message.getData());
+    }
+
+    @Override
+    public void handleDataReceived(Message message) {
+        String contents = message.getString();
+        if(true || contents.equals("FAX")){
+            for (Zone z : (ArrayList<Zone>) map.getZones()) {
+                z.setUnits(-1);
+            }
+        }
+    }
+
+    @Override
+    public void setSender(IPlayServices playServices) {
+        this.sender = playServices;
     }
 }

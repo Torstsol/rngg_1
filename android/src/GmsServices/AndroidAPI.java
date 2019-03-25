@@ -126,7 +126,7 @@ public class AndroidAPI implements IPlayServices {
     public void startQuickGame() {
         // auto-match criteria to invite one random automatch opponent.
         // You can also specify more opponents (up to 3).
-        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(2, 3, 0x0);
+        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(2, 2, 0x0);
 
         // build the room config:
         RoomConfig roomConfig =

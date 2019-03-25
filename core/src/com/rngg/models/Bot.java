@@ -30,6 +30,10 @@ public class Bot extends Player {
             for (int i = 0; i < zones.size(); i++) {
                 Zone zone = zones.get(i);
                 deleteList.add(zone);
+                // no need to check neighbors if zone cannot attack
+                if (zone.getUnits() <= 1) {
+                    continue;
+                }
                 ArrayList<Zone> neighbors = model.getMap().getNeighbors(zone);
                 for (Zone neighbor : neighbors) {
                     if (!neighbor.getPlayer().equals(this) && shouldAttack(zone, neighbor)) {

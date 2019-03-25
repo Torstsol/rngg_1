@@ -25,6 +25,8 @@ public class SettingsView extends View {
 
     private SettingsModel settingsModel;
 
+    private TextButton cbSettingsButton;
+
     public SettingsView(GameAssetManager assetManager, SettingsController controller) {
         super(assetManager);
 
@@ -43,22 +45,19 @@ public class SettingsView extends View {
         VerticalGroup group = new VerticalGroup();
         group.grow();
         group.space(8);
-        table.add(group);
+        table.add(group).width(500);
 
         stage.addActor(table);
 
         settingsModel = new SettingsModel();
 
-        final TextButton ncSettingsButton = new TextButton("Normal colors", assetManager.manager.get(Assets.SKIN));
-        group.addActor(ncSettingsButton);
-
-        final TextButton cbSettingsButton = new TextButton("Colorblind mode", assetManager.manager.get(Assets.SKIN));
+        cbSettingsButton = new TextButton("Colorblind mode [" + pref.getCbModeString() + "]", assetManager.manager.get(Assets.SKIN));
         group.addActor(cbSettingsButton);
 
         final TextButton menuButton = new TextButton("Cancel", assetManager.manager.get(Assets.SKIN));
         group.addActor(menuButton);
 
-        controller.addActorListeners(ncSettingsButton, cbSettingsButton, menuButton); // handle input
+        controller.addActorListeners(cbSettingsButton, menuButton); // handle input
     }
 
     @Override

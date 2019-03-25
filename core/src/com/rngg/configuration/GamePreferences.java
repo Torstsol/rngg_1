@@ -54,6 +54,22 @@ public class GamePreferences {
         return list;
     }
 
+    public boolean getCbMode(){
+        return prefs.getBoolean("colorblind mode");
+    }
+
+    public String getCbModeString(){
+        if (getCbMode()){
+            return "enabled";
+        } else {
+            return "disabled";
+        }
+    }
+
+    public void setCbMode(boolean b) {
+        prefs.putBoolean("colorblind mode", b);
+    }
+
     public boolean hasColors(){
         return prefs.contains("color 1");
     }

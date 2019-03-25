@@ -50,6 +50,7 @@ public class SquareMap extends GameMap<SquareZone> {
                     zones.put(zone, generateNeighbors(zone));
                 }
             }
+
         } else {
             int playerNum = 0;
             for (List<int[]> playerZones : customZones) {
@@ -87,8 +88,6 @@ public class SquareMap extends GameMap<SquareZone> {
             }
         }
 
-
-
         this.neighbors = zones;
     }
 
@@ -97,6 +96,8 @@ public class SquareMap extends GameMap<SquareZone> {
     }
 
     private SquareZone getZone(int row, int col) {
+        if (row > rows - 1 || col > cols - 1 || row < 0 || col < 0) return null;
+
         return this.zones[row][col];
     }
 

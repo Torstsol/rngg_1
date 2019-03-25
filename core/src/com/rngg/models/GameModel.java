@@ -294,6 +294,8 @@ public class GameModel {
                 ArrayList<Zone> neighbors = map.getNeighbors(z);
                 float friendlyNeighborRatio = 0;
                 for (Zone neighbor : neighbors) {
+                    if (neighbor == null) continue;
+
                     if (neighbor.getPlayer().equals(player)) {
                         friendlyNeighborRatio++;
                     }

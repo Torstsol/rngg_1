@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.WindowManager;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
@@ -14,7 +15,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesActivityResultCodes;
+import com.google.android.gms.games.multiplayer.Invitation;
+import com.google.android.gms.games.multiplayer.Multiplayer;
+import com.google.android.gms.games.multiplayer.realtime.OnRealTimeMessageReceivedListener;
+import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
+import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
+import com.rngg.services.Message;
 
+
+import java.util.ArrayList;
 
 import GmsServices.AndroidAPI;
 
@@ -84,5 +93,63 @@ public class AndroidLauncher extends AndroidApplication {
 				this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			}
 		}
+		else if (requestCode == androidAPI.RC_SELECT_PLAYERS) {
+			if (resultCode != Activity.RESULT_OK) {
+				// Canceled or some other error.
+				return;
+			}
+
+			// Get the invitee list.
+			final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
+
+			// Get Automatch criteria.
+			int minAutoPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
+			int maxAutoPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
+
+			// Create the room configuration.
+			RoomConfig.Builder roomBuilder = RoomConfig.builder(androidAPI.roomUpdateCallback)
+					.setOnMessageReceivedListener(androidAPI.mMessageReceivedHandler)
+					.setRoomStatusUpdateCallback(androidAPI.mRoomStatusCallbackHandler)
+					.addPlayersToInvite(invitees);
+			if (minAutoPlayers > 0) {
+				roomBuilder.setAutoMatchCriteria(
+						RoomConfig.createAutoMatchCriteria(minAutoPlayers, maxAutoPlayers, 0));
+			}
+
+			// Save the roomConfig so we can use it if we call leave().
+			androidAPI.mJoinedRoomConfig = roomBuilder.build();
+			Games.getRealTimeMultiplayerClient(this, GoogleSignIn.getLastSignedInAccount(this))
+					.create(androidAPI.mJoinedRoomConfig);
+		}
+		else if (requestCode == androidAPI.RC_INVITATION_INBOX) {
+			if (resultCode != Activity.RESULT_OK) {
+				// Canceled or some error.
+				return;
+			}
+			Invitation invitation = data.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
+			if (invitation != null) {
+				// build the room config:
+				androidAPI.mJoinedRoomConfig =
+						RoomConfig.builder(androidAPI.roomUpdateCallback)
+								.setRoomStatusUpdateCallback(androidAPI.mRoomStatusCallbackHandler)
+								.setOnMessageReceivedListener(mMessageReceivedHandler)
+								.setInvitationIdToAccept(invitation.getInvitationId())
+								.build();
+				Games.getRealTimeMultiplayerClient(this,
+						GoogleSignIn.getLastSignedInAccount(this))
+						.join(androidAPI.mJoinedRoomConfig);
+				// prevent screen from sleeping during handshake
+				getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			}
+		}
 	}
+	public OnRealTimeMessageReceivedListener mMessageReceivedHandler =
+			new OnRealTimeMessageReceivedListener() {
+				@Override
+				public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
+					Message message = new Message(realTimeMessage.getMessageData(), realTimeMessage.getSenderParticipantId(), realTimeMessage.describeContents());
+					androidAPI.liveListener.handleDataReceived(message);
+				}
+			};
+
 }

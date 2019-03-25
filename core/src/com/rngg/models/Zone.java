@@ -3,6 +3,7 @@ package com.rngg.models;
 public abstract class Zone {
     protected Player player;
     protected int units;
+    protected boolean clicked = false;
 
     public Player getPlayer() {
         return player;
@@ -22,5 +23,17 @@ public abstract class Zone {
 
     public void incrementUnits() {
         this.units++;
+    }
+
+    public void click() {
+        this.clicked = true;
+    }
+
+    public void unClick() {
+        this.clicked = false;
+    }
+
+    public boolean getClicked() {
+        return this.clicked;
     }
 }

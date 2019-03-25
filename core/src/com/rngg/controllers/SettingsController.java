@@ -26,10 +26,6 @@ public class SettingsController extends Controller {
     @Override
     public void update(float delta) {}
 
-    public void setInputProcessor(Stage stage) {
-        Gdx.input.setInputProcessor(stage);
-    }
-
     public void addActorListeners(final TextButton ncSettingsButton,
                                   final TextButton cbSettingsButton,
                                   final TextButton menuButton) {

@@ -75,7 +75,7 @@ public class SquareMap extends GameMap<SquareZone> {
     }
 
     @Override
-    public SquareZone screenCoordToZone(Vector2 coords) {
+    public SquareZone _screenCoordToZone(Vector2 coords) {
         return getZone((int) coords.y / this.zoneHeight, (int) coords.x / zoneWidth);
     }
 

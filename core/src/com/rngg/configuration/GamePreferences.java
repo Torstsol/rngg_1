@@ -27,6 +27,7 @@ public class GamePreferences {
         if(!prefs.contains("colorblind mode")){
             setCbMode(false);
         }
+        updateColors();
     }
 
     public static GamePreferences getInstance() {
@@ -36,7 +37,6 @@ public class GamePreferences {
     public void setTrueColors(){
         this.setColors("255,0,0", "0,255,0", "0,0,255", "255,255,0");
         prefs.flush();
-        updateColors();
     }
 
     public void setColors(String c1, String c2, String c3, String c4){

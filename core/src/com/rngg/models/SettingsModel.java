@@ -9,12 +9,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.rngg.configuration.GamePreferences;
 
 import java.util.ArrayList;
 
 public class SettingsModel {
 
-    Preferences prefs;
+    private GamePreferences pref;
     private Texture pmapTexture;
     private ArrayList<Float> colorArray;
     private Drawable drawable;
@@ -22,18 +23,14 @@ public class SettingsModel {
 
     public SettingsModel(){
 
-        prefs = Gdx.app.getPreferences("game-preferences");
+        pref = GamePreferences.getInstance();
 
     }
 
     public Texture setCustomColor(String color){
-        colorArray = new ArrayList<Float>();
-        for(String c : prefs.getString(color).split(",")) {
-            colorArray.add(Float.parseFloat(c) / 255f);
-        }
 
         Pixmap pmap = new Pixmap(100,100, Pixmap.Format.RGB888);
-        pmap.setColor(colorArray.get(0), colorArray.get(1), colorArray.get(2),1);
+        pmap.setColor(pref.getColor(color));
         pmap.fill();
 
         return new Texture(pmap);

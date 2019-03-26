@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.rngg.configuration.GamePreferences;
 import com.rngg.utils.RNG;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class GameModel {
     private RNG rng;
     private int maxUnits = 8;
     private int numPlayers;
+    private GamePreferences pref;
 
     private float attackRoll, defendRoll;
 
@@ -55,9 +57,10 @@ public class GameModel {
     }
 
     private void initializePlayerAndAreas() {
+        pref = GamePreferences.getInstance();
         this.players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player("Player" + i, "90238049", true);
+            players[i] = new Player("Player" + i, "90238049", true, pref.getColorArray().get(i));
         }
 
         this.contiguousAreas = new int[numPlayers];

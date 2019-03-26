@@ -23,7 +23,7 @@ public class SettingsModel {
 
     public SettingsModel(){
 
-        pref = new GamePreferences();
+        pref = GamePreferences.getInstance();
 
     }
 

@@ -32,7 +32,7 @@ public class SettingsView extends View {
 
         this.controller = controller;
 
-        pref = new GamePreferences();
+        pref = GamePreferences.getInstance();
 
         batch = new SpriteBatch();
 

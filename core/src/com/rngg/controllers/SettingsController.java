@@ -17,13 +17,7 @@ public class SettingsController extends Controller {
     public SettingsController(Rngg game) {
         super(game);
 
-        pref = new GamePreferences();
-        if(!pref.hasColors()){
-            pref.setTrueColors();
-        }
-        if(!pref.getCbMode()){
-            pref.setCbMode(false);
-        }
+        pref = GamePreferences.getInstance();
     }
 
     @Override

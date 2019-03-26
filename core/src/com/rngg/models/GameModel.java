@@ -29,7 +29,7 @@ public class GameModel {
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
 
     public GameModel(int numPlayers) {
-        pref = new GamePreferences();
+        pref = GamePreferences.getInstance();
         this.players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
             players[i] = new Player("Player" + i, "90238049", true, pref.getColorArray().get(i));

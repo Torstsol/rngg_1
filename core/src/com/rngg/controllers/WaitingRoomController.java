@@ -34,7 +34,7 @@ public class WaitingRoomController extends Controller implements RoomListener, R
         super(game);
         this.model = model;
 
-        pref = new GamePreferences();
+        pref = GamePreferences.getInstance();
     }
 
     @Override

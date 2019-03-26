@@ -8,18 +8,33 @@ import java.util.ArrayList;
 
 public class GamePreferences {
 
+    private static class LazyHolder {
+        static final GamePreferences INSTANCE = new GamePreferences();
+    }
+
+    public static Color COLOR1, COLOR2, COLOR3, COLOR4;
+
     private Preferences prefs;
     private ArrayList<Float> colorArray;
     private ArrayList<Color> list;
 
-    public static Color COLOR1, COLOR2, COLOR3, COLOR4;
 
-    public GamePreferences(){
+    private GamePreferences(){
         prefs = Gdx.app.getPreferences("game-preferences");
+        if(!hasColors()){
+            setTrueColors();
+        }
+        if(!prefs.contains("colorblind mode")){
+            setCbMode(false);
+        }
         COLOR1 = getColor("color 1");
         COLOR2 = getColor("color 2");
         COLOR3 = getColor("color 3");
         COLOR4 = getColor("color 4");
+    }
+
+    public static GamePreferences getInstance() {
+        return LazyHolder.INSTANCE;
     }
 
     public void setTrueColors(){

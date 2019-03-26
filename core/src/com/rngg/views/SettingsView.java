@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.rngg.configuration.GamePreferences;
 import com.rngg.controllers.SettingsController;
 import com.rngg.models.SettingsModel;
 import com.rngg.utils.Assets;
@@ -16,16 +17,22 @@ public class SettingsView extends View {
 
     SettingsController controller;
 
+    private GamePreferences pref;
+
     private SpriteBatch batch;
 
     private Stage stage;
 
     private SettingsModel settingsModel;
 
+    private TextButton cbSettingsButton;
+
     public SettingsView(GameAssetManager assetManager, SettingsController controller) {
         super(assetManager);
 
         this.controller = controller;
+
+        pref = GamePreferences.getInstance();
 
         batch = new SpriteBatch();
 
@@ -38,22 +45,19 @@ public class SettingsView extends View {
         VerticalGroup group = new VerticalGroup();
         group.grow();
         group.space(8);
-        table.add(group);
+        table.add(group).width(500);
 
         stage.addActor(table);
 
         settingsModel = new SettingsModel();
 
-        final TextButton ncSettingsButton = new TextButton("Normal colors", assetManager.manager.get(Assets.SKIN));
-        group.addActor(ncSettingsButton);
-
-        final TextButton cbSettingsButton = new TextButton("Colorblind mode", assetManager.manager.get(Assets.SKIN));
+        cbSettingsButton = new TextButton("Colorblind mode [" + pref.getCbModeString() + "]", assetManager.manager.get(Assets.SKIN));
         group.addActor(cbSettingsButton);
 
         final TextButton menuButton = new TextButton("Cancel", assetManager.manager.get(Assets.SKIN));
         group.addActor(menuButton);
 
-        controller.addActorListeners(ncSettingsButton, cbSettingsButton, menuButton); // handle input
+        controller.addActorListeners(cbSettingsButton, menuButton); // handle input
     }
 
     @Override

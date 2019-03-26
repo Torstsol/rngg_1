@@ -3,6 +3,7 @@ package com.rngg.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.rngg.configuration.GamePreferences;
 import com.rngg.utils.RNG;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class GameModel {
     private int[] contiguousAreas;
     private RNG rng;
     private int maxUnits = 8;
+    private GamePreferences pref;
 
     private float attackRoll, defendRoll;
 
@@ -27,9 +29,10 @@ public class GameModel {
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
 
     public GameModel(int numPlayers) {
+        pref = GamePreferences.getInstance();
         this.players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player("Player" + i, "90238049", true);
+            players[i] = new Player("Player" + i, "90238049", true, pref.getColorArray().get(i));
         }
         this.playerIndex = 0;
         this.contiguousAreas = new int[numPlayers];

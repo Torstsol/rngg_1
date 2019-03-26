@@ -26,7 +26,7 @@ public class LobbyController extends Controller {
         localGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.screenManager.setGameScreen(new GameModel(4, "levels/StarMap.json"), null);
+                game.screenManager.setGameScreen(new GameModel(4, ""), null); // levels/StarMap.json as MapFileName to test custom map
             }
         });
 

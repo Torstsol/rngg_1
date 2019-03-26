@@ -27,10 +27,7 @@ public class GamePreferences {
         if(!prefs.contains("colorblind mode")){
             setCbMode(false);
         }
-        COLOR1 = getColor("color 1");
-        COLOR2 = getColor("color 2");
-        COLOR3 = getColor("color 3");
-        COLOR4 = getColor("color 4");
+        updateColors();
     }
 
     public static GamePreferences getInstance() {
@@ -48,6 +45,7 @@ public class GamePreferences {
         prefs.putString("color 3", c3);
         prefs.putString("color 4", c4);
         prefs.flush();
+        updateColors();
     }
 
     public Color getColor(String color){
@@ -87,5 +85,12 @@ public class GamePreferences {
 
     public boolean hasColors(){
         return prefs.contains("color 1");
+    }
+
+    public void updateColors(){
+        COLOR1 = getColor("color 1");
+        COLOR2 = getColor("color 2");
+        COLOR3 = getColor("color 3");
+        COLOR4 = getColor("color 4");
     }
 }

@@ -29,7 +29,10 @@ public class HexMapRenderer extends MapRenderer<HexMap, HexZone, List<List<int[]
 
         float[] xPoints = new float[7];
         float[] yPoints = new float[7];
-        float centerX = map.getSize() * (float) (Math.sqrt(3) * getCol(zone) + Math.sqrt(3) / 2) - (float) (Math.sqrt(3) * map.getSize() / 2);
+        float centerX = map.getSize() / 2
+                + map.getSize() * (float) (Math.sqrt(3) * getCol(zone)
+                + Math.sqrt(3) / 2) - (float) (Math.sqrt(3) * map.getSize() / 2);
+
         float centerY = map.getSize() * (3f / 2 * zone.getRow());
 
         if (zone.getRow() % 2 != 0) {
@@ -51,8 +54,8 @@ public class HexMapRenderer extends MapRenderer<HexMap, HexZone, List<List<int[]
 
         for (int i = 0; i < 6; i++) {
             sr.triangle(centerX, centerY,
-                    xPoints[i], yPoints[i],
-                    xPoints[i + 1], yPoints[i + 1]);
+                xPoints[i], yPoints[i],
+                xPoints[i + 1], yPoints[i + 1]);
         }
     }
 
@@ -60,7 +63,10 @@ public class HexMapRenderer extends MapRenderer<HexMap, HexZone, List<List<int[]
     public void drawZoneText(HexZone zone) {
         if (zone == null) return;
 
-        float centerX = map.getSize() * (float) (Math.sqrt(3) * getCol(zone) + Math.sqrt(3) / 2) - (float) (Math.sqrt(3) * map.getSize() / 2);
+        float centerX = map.getSize() / 2
+                + map.getSize() * (float) (Math.sqrt(3) * getCol(zone)
+                + Math.sqrt(3) / 2) - (float) (Math.sqrt(3) * map.getSize() / 2);
+
         float centerY = map.getSize() * (3f / 2 * zone.getRow());
 
         if (zone.getRow() % 2 != 0) {

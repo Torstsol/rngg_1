@@ -62,7 +62,7 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
 
     @Override
     public HexZone _screenCoordToZone(Vector2 coords) {
-        double q = (Math.sqrt(3)/3 * coords.x  -  1./3 * coords.y) / size;
+        double q = (Math.sqrt(3)/3 * (coords.x - size / 2)  -  1./3 * coords.y) / size;
         double r =  (2./3 * coords.y) / size;
 
         Hex hex = Hex.hexRound(new Hex(q, r));
@@ -72,8 +72,7 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
     private void initializeZones(Player[] players, boolean randomPlayers, List<List<int[]>> customZones) {
         HashMap<HexZone, ArrayList<HexZone>> zones = new HashMap<HexZone, ArrayList<HexZone>>();
 
-        // Needed for axial coord conversion
-        int skew = 0;
+        int skew = 0; // Needed for axial coord conversion
         int loopCount = 0;
         if (customZones == null) {
             for (int row = 0; row < rows; row++) {
@@ -96,7 +95,7 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
             for (int row = 0; row < rows; row++) {
                 for (int col = 0; col < cols; col++) {
                     HexZone zone = getZone(row, col);
-                    zones.put(zone, generateNeighbors(zone));
+                    zones.put(zone, generateNeighbors(zone, skew));
                 }
                 if (loopCount == 1) {
                     loopCount = 0;
@@ -134,7 +133,7 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
                 for (int[] row : playerZones) {
                     for (int col : row) {
                         HexZone zone = getZone(rowNum, col);
-                        zones.put(zone, generateNeighbors(zone));
+                        zones.put(zone, generateNeighbors(zone, 0));
                     }
 
                     rowNum++;
@@ -156,28 +155,21 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
         return this.zones[row][col];
     }
 
-    private ArrayList<HexZone> generateNeighbors(HexZone zone) {
+    private ArrayList<HexZone> generateNeighbors(HexZone zone, int skew) {
         ArrayList<HexZone> ret = new ArrayList<HexZone>();
 
         if (zone == null) return ret;
 
         int row = zone.getRow();
-        int col = zone.getCol();
+        int col = zone.getCol() + skew * -1;
 
-        if (row - 1 >= 0) {
-            ret.add(getZone(row - 1, col));
-        }
+        HexZone neighbor;
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                neighbor = getZone(row + i, col + j);
 
-        if (row + 1 < rows) {
-            ret.add(getZone(row + 1, col));
-        }
-
-        if (col - 1 >= 0) {
-            ret.add(getZone(row, col - 1));
-        }
-
-        if (col + 1 < cols) {
-            ret.add(getZone(row, col + 1));
+                if (neighbor != null) ret.add(neighbor);
+            }
         }
 
         return ret;

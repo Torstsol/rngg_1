@@ -25,6 +25,8 @@ public abstract class GameMap<Z extends Zone, ZoneFormat> {
     public ArrayList<Z> _getPlayerZones(Player player) {
         ArrayList<Z> ret = new ArrayList<Z>();
         for (Z zone : neighbors.keySet()) {
+            if (zone == null) continue;
+
             if (zone.getPlayer().equals(player)) {
                 ret.add(zone);
             }

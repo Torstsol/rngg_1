@@ -50,7 +50,7 @@ public class GameModel {
             this.map = loadMap(fileName);
         } else {
             initializePlayerAndAreas();
-            this.map = new SquareMap(9, 16, players);
+            this.map = new HexMap(8, 12, players);
         }
 
         this.updateAreas();

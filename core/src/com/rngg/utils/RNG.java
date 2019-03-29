@@ -2,10 +2,14 @@ package com.rngg.utils;
 
 // TODO only used for Arrays.toString() in main, remove before merging
 import java.util.Arrays;
+import java.util.Random;
 
 public class RNG {
     private String[] labels;
     private float[] values, probabilities;
+    // TODO change first seed
+    private static long seed = 42069420;
+    private static final Random generator = new Random(420);
 
     private int[] rollResult;
 
@@ -26,6 +30,43 @@ public class RNG {
 
     public static RNG getInstance() {
         return LazyHolder.INSTANCE;
+    }
+
+    public static long getSeed() {
+        return RNG.seed;
+    }
+
+    public static void setSeed(long seed) {
+        RNG.seed = seed;
+        RNG.generator.setSeed(seed);
+    }
+
+    public static void newSeed() {
+        RNG.setSeed(RNG.generator.nextLong());
+    }
+
+    public static int nextInt(int min, int max) {
+        int ret = RNG.generator.nextInt(max - min) + min;
+        RNG.newSeed();
+        return ret;
+    }
+
+    public static int nextInt(int max) {
+        return RNG.nextInt(0, max);
+    }
+
+    public static float nextFloat(float min, float max) {
+        float ret = RNG.generator.nextFloat() * (max - min) + min;
+        RNG.newSeed();
+        return ret;
+    }
+
+    public static float nextFloat(float max) {
+        return RNG.nextFloat(0, max);
+    }
+
+    public static float nextFloat() {
+        return RNG.nextFloat(1);
     }
 
     private void setLabelsValuesProbs(String[] labels, float[] values, float[] probabilities) {
@@ -51,7 +92,7 @@ public class RNG {
 
     public int roll() {
         // rolls the dice once, returns index rolled
-        double roll = Math.random();
+        double roll = RNG.nextFloat();
         double sum = 0;
         for (int i = 0; i < probabilities.length; i++) {
             sum += probabilities[i];
@@ -60,7 +101,7 @@ public class RNG {
             }
         }
         // only gets here if sum of probabilities is slightly less than 1,
-        // and Math.random() returns between that sum and 1.
+        // and RNG.random() returns between that sum and 1.
         // This is fairly unlikely, but entirely possible
         return probabilities.length - 1;
     }

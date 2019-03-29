@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.rngg.game.Rngg;
+import com.rngg.utils.RNG;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class SquareMap extends GameMap<SquareZone> {
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 // TODO look at another way to distribute zones
-                SquareZone zone = new SquareZone(players[(int) (Math.random() * (players.length))], row, col);
+                SquareZone zone = new SquareZone(players[RNG.nextInt(players.length)], row, col);
                 this.zones[row][col] = zone;
                 Gdx.app.log(this.getClass().getSimpleName(), "generated: " + zone.toString());
             }

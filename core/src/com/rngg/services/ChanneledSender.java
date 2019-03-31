@@ -34,11 +34,6 @@ public class ChanneledSender implements IPlayServices{
 
     }
 
-    @Override
-    public void checkForInvitation() {
-        this.playServices.checkForInvitation();
-
-    }
 
     @Override
     public void showInvitationInbox() {
@@ -56,13 +51,6 @@ public class ChanneledSender implements IPlayServices{
         this.playServices.sendToAllReliably(appendChannel(message));
     }
 
-    public void sendToAllUnreliably(byte[] message) {
-        this.playServices.sendToAllUnreliably(message);
-    }
-
-    public void sendToOneReliably(byte[] message, String userID){
-        this.playServices.sendToOneReliably(appendChannel(message), userID);
-    }
     public void setRealTimeListener(RealtimeListener listener){
     }
 }

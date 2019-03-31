@@ -58,7 +58,8 @@ public class AndroidLauncher extends AndroidApplication {
 			} else {
 				String message = result.getStatus().getStatusMessage();
 				if (message == null || message.isEmpty()) {
-					message = "error displaying signin " + String.valueOf(GooglePlayServicesUtil.isGooglePlayServicesAvailable(this.getContext()));
+					int errorInt = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this.getContext());
+					message = GooglePlayServicesUtil.getErrorString(errorInt);
 				}
 				new AlertDialog.Builder(this).setMessage(message)
 						.setNeutralButton(android.R.string.ok, null).show();

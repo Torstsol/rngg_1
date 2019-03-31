@@ -1,6 +1,7 @@
 package com.rngg.controllers;
 
 import com.badlogic.gdx.utils.Sort;
+import com.rngg.configuration.GamePreferences;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
 import com.rngg.models.Player;
@@ -26,11 +27,14 @@ public class WaitingRoomController extends Controller implements RoomListener, R
     int leftToReady = 4;
     private Player localPlayer;
     private WaitingRoomModel model;
+    private GamePreferences pref;
 
     public WaitingRoomController(Rngg game, WaitingRoomModel model) {
 
         super(game);
         this.model = model;
+
+        pref = GamePreferences.getInstance();
     }
 
     @Override
@@ -113,9 +117,9 @@ public class WaitingRoomController extends Controller implements RoomListener, R
         playServices.setRealTimeListener(networkManager);
 
         for(String playerId : playServices.getRemotePlayers()){
-            playerInfo.put(playerId, new Player(playerId, playerId, false));
+            playerInfo.put(playerId, new Player(playerId, playerId, false, pref.COLOR2));
         }
-        localPlayer = new Player("bob", playServices.getLocalID(), true);
+        localPlayer = new Player("bob", playServices.getLocalID(), true, pref.COLOR1);
         playerInfo.put(localPlayer.playerId, localPlayer);
 
         networkManager.openChannel(this, 10);

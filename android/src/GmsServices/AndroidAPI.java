@@ -53,7 +53,7 @@ public class AndroidAPI implements IPlayServices {
     public Room mRoom;
     HashSet<Integer> pendingMessageSet = new HashSet<>();
     public RealtimeListener liveListener;
-    private RoomListener roomListener;
+    public RoomListener roomListener;
 
     private AndroidLauncher androidLauncher;
     private Activity thisActivity;
@@ -70,7 +70,7 @@ public class AndroidAPI implements IPlayServices {
     final static int MAX_PLAYERS = 4;
 
     // are we already playing?
-    boolean mPlaying = false;
+    public boolean mPlaying = false;
 
 
     public AndroidAPI(AndroidLauncher androidLauncher) {
@@ -162,6 +162,17 @@ public class AndroidAPI implements IPlayServices {
                         androidLauncher.startActivityForResult(intent, RC_INVITATION_INBOX);
                     }
                 });
+    }
+
+    @Override
+    public void setMPlaying(boolean bool) {
+        this.mPlaying = bool;
+    }
+
+    @Override
+    public void onStartGameMessageRecieved() {
+        mPlaying = true;
+        androidLauncher.finishActivity(RC_WAITING_ROOM);
     }
 
 
@@ -403,10 +414,6 @@ public class AndroidAPI implements IPlayServices {
 
     //-------Unused methods as of now--------------------------
 
-    private void onStartGameMessageReceived() {
-        mWaitingRoomFinishedFromCode = true;
-        androidLauncher.finishActivity(RC_WAITING_ROOM);
-    }
 
     private String mMyParticipantId;
 

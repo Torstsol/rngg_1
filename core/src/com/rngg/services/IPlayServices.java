@@ -15,4 +15,6 @@ public interface IPlayServices {
     public void startQuickGame();
     public void startInvitePlayersRoom();
     public void showInvitationInbox();
+    public void setMPlaying(boolean bool);
+    public void onStartGameMessageRecieved();
 }

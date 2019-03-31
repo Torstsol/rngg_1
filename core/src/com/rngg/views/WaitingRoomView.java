@@ -41,7 +41,7 @@ public class WaitingRoomView extends View{
             controller.getGame().screenManager.setMenuScreen();
         }
         if(model.joinedRoom){
-            controller.enterGameScreen();
+            controller.enterGameScreen2();
         }
     }
 

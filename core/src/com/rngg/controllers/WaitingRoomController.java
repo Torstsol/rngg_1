@@ -8,7 +8,6 @@ import com.rngg.models.Player;
 import com.rngg.models.WaitingRoomModel;
 import com.rngg.services.IPlayServices;
 import com.rngg.services.Message;
-import com.rngg.services.NetworkManager;
 import com.rngg.services.RealtimeListener;
 import com.rngg.services.RoomListener;
 import com.rngg.views.GameView;
@@ -21,13 +20,13 @@ import java.util.Random;
 
 public class WaitingRoomController extends Controller implements RoomListener, RealtimeListener {
 
-    private IPlayServices sender;
     private WaitingRoomView waitingRoomView;
     private HashMap<String, Player> playerInfo = new HashMap<String, Player>(4);
     int leftToReady = 4;
     private Player localPlayer;
     private WaitingRoomModel model;
     private GamePreferences pref;
+    private IPlayServices sender = game.getAPI();
 
     public WaitingRoomController(Rngg game, WaitingRoomModel model) {
 
@@ -55,8 +54,6 @@ public class WaitingRoomController extends Controller implements RoomListener, R
         for(int i = 0; i < players.length; i++){
             players[i].playerIndex = i;
         }
-        NetworkManager netManager = NetworkManager.getInstance();
-        netManager.setPlayers(Arrays.asList(players));
         game.screenManager.setGameScreen(new GameModel(4), Arrays.asList(players));;
     }
 
@@ -91,7 +88,7 @@ public class WaitingRoomController extends Controller implements RoomListener, R
 
             if(leftToReady <= 0){
                 System.out.println("Model.joinedRoom set to true");
-                model.joinedRoom = true;
+                model.joinedRoom = false;
             }
         }
 
@@ -113,8 +110,6 @@ public class WaitingRoomController extends Controller implements RoomListener, R
         leftToReady = 1;
         System.out.println("LeftToReady: " + leftToReady);
 
-        NetworkManager networkManager = new NetworkManager();
-        playServices.setRealTimeListener(networkManager);
 
         for(String playerId : playServices.getRemotePlayers()){
             playerInfo.put(playerId, new Player(playerId, playerId, false, pref.COLOR2));
@@ -122,25 +117,8 @@ public class WaitingRoomController extends Controller implements RoomListener, R
         localPlayer = new Player("bob", playServices.getLocalID(), true, pref.COLOR1);
         playerInfo.put(localPlayer.playerId, localPlayer);
 
-        networkManager.openChannel(this, 10);
-
-
-
-        pingRemote();
     }
 
-    public void pingRemote() {
-        Message message = new Message(new byte[512],"",0);
-        Random random = new Random();
-        int randomNumber = random.nextInt() & Integer.MAX_VALUE;
-        message.putString("RAN_NUM");
-        message.getBuffer().putInt(randomNumber);
-        sender.sendToAllReliably(message.getData());
-        System.out.println("Sending to others");
-        System.out.println("Random number");
-
-        localPlayer.randomNumber = randomNumber;
-    }
 
     @Override
     public void leftRoom() {

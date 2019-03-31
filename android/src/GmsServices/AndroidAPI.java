@@ -65,6 +65,14 @@ public class AndroidAPI implements IPlayServices {
     public static final int RC_SELECT_PLAYERS = 9006;
     public static final int RC_INVITATION_INBOX = 9008;
 
+    // minimum and maximum amount of players
+    final static int MIN_PLAYERS = 2;
+    final static int MAX_PLAYERS = 4;
+
+    // are we already playing?
+    boolean mPlaying = false;
+
+
     public AndroidAPI(AndroidLauncher androidLauncher) {
 
         this.androidLauncher = androidLauncher;
@@ -109,7 +117,7 @@ public class AndroidAPI implements IPlayServices {
     public void startQuickGame() {
         // auto-match criteria to invite one random automatch opponent.
         // You can also specify more opponents (up to 3).
-        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(2, 3, 0x0);
+        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(3, 3, 0x0);
 
         // build the room config:
         RoomConfig roomConfig =
@@ -135,7 +143,7 @@ public class AndroidAPI implements IPlayServices {
         // launch the player selection screen
         // minimum: 1 other player; maximum: 3 other players
         Games.getRealTimeMultiplayerClient(androidLauncher, GoogleSignIn.getLastSignedInAccount(androidLauncher))
-                .getSelectOpponentsIntent(2, 3, true)
+                .getSelectOpponentsIntent(MIN_PLAYERS-1, MAX_PLAYERS-1, true)
                 .addOnSuccessListener(new OnSuccessListener<Intent>() {
                     @Override
                     public void onSuccess(Intent intent) {
@@ -190,7 +198,9 @@ public class AndroidAPI implements IPlayServices {
 
     @Override
     public void setRoomListener(RoomListener listener) {
+
         this.roomListener = listener;
+        this.liveListener = (RealtimeListener) listener;
     }
 
     @Override
@@ -245,7 +255,7 @@ public class AndroidAPI implements IPlayServices {
             if (code == GamesCallbackStatusCodes.OK && room != null) {
                 System.out.println("Room " + room.getRoomId() + " created.");
                 mRoom = room;
-                showWaitingRoom(room, 4);
+                showWaitingRoom(room, MIN_PLAYERS);
             } else {
                 System.out.println("Error creating room: " + code);
                 String message = "Error creating room: " + code ;
@@ -264,7 +274,7 @@ public class AndroidAPI implements IPlayServices {
             if (code == GamesCallbackStatusCodes.OK && room != null) {
                 System.out.println("Room " + room.getRoomId() + " joined.");
                 mRoom = room;
-                showWaitingRoom(room, 4);
+                showWaitingRoom(room, MIN_PLAYERS);
             } else {
                 System.out.println("Error joining room: " + code);
                 // let screen go to sleep
@@ -398,11 +408,6 @@ public class AndroidAPI implements IPlayServices {
         androidLauncher.finishActivity(RC_WAITING_ROOM);
     }
 
-    // are we already playing?
-    boolean mPlaying = false;
-
-    // at least 2 players required for our game
-    final static int MIN_PLAYERS = 2;
     private String mMyParticipantId;
 
     // returns whether there are enough players to start the game

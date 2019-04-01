@@ -93,4 +93,8 @@ public class GamePreferences {
         COLOR3 = getColor("color 3");
         COLOR4 = getColor("color 4");
     }
+
+    public void setMainColor(String color) {
+        prefs.putString("Main color", color);
+    }
 }

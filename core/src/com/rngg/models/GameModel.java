@@ -22,6 +22,7 @@ public class GameModel {
     private RNG rng;
     private int maxUnits = 8;
     private GamePreferences pref;
+    private boolean inGameMenuOpen;
 
     private float attackRoll, defendRoll;
 
@@ -41,6 +42,7 @@ public class GameModel {
         this.rng = RNG.getInstance();
         this.attackRoll = 0;
         this.defendRoll = 0;
+        this.inGameMenuOpen = false;
     }
 
     public GameMap getMap() {
@@ -275,5 +277,13 @@ public class GameModel {
 
     public int getDefendRoll() {
         return (int) defendRoll;
+    }
+
+    public boolean isInGameMenuOpen() {
+        return inGameMenuOpen;
+    }
+
+    public void updateInGameMenu() {
+        this.inGameMenuOpen = !this.inGameMenuOpen;
     }
 }

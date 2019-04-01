@@ -3,6 +3,7 @@ package com.rngg.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.rngg.configuration.GamePreferences;
 import com.rngg.services.IPlayServices;
 import com.rngg.services.Message;
 import com.rngg.services.RealtimeListener;
@@ -23,6 +24,7 @@ public class GameModel implements RealtimeListener{
     private int[] contiguousAreas;
     private RNG rng;
     private int maxUnits = 8;
+    private GamePreferences pref;
     private IPlayServices sender;
 
     private float attackRoll, defendRoll;
@@ -31,9 +33,10 @@ public class GameModel implements RealtimeListener{
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
 
     public GameModel(int numPlayers) {
+        pref = GamePreferences.getInstance();
         this.players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player("Player" + i, "90238049", true);
+            players[i] = new Player("Player" + i, "90238049", true, pref.getColorArray().get(i));
         }
         this.playerIndex = 0;
         this.contiguousAreas = new int[numPlayers];
@@ -288,6 +291,13 @@ public class GameModel implements RealtimeListener{
     @Override
     public void handleDataReceived(Message message) {
         String contents = message.getString();
+
+        //the start-message is redundant if the game is initiated from the quick-game option,
+        //the game is already in game-mode when it recieves the start-message.
+        if(contents.equals("START")){
+            return;
+        }
+
         if(true || contents.equals("FAX")){
             for (Zone z : (ArrayList<Zone>) map.getZones()) {
                 z.setUnits(-1);

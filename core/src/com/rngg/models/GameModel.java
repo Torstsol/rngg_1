@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Random;
 
 public class GameModel {
     public int playerScore = 0;
@@ -309,14 +308,13 @@ public class GameModel {
                 zones.add(hashMap.get(num));
             }
         }
-        Random rand = new Random();
         ArrayList<Zone> currentList = null;
         while (units > 0 && !zones.isEmpty()) {
             if (currentList == null) {
                 // get a new sublist
                 currentList = zones.get(0);
             }
-            Zone zone = currentList.get(rand.nextInt(currentList.size()));
+            Zone zone = RNG.choice(currentList);
             // if the zone is saturated, remove it from the sublist
             // if the sublist is empty, remove it from the list
             if (zone.getUnits() >= this.maxUnits) {

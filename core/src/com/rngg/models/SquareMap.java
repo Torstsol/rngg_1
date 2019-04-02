@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.JsonValue;
 import com.rngg.game.Rngg;
+import com.rngg.utils.RNG;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,13 +52,14 @@ public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
 
     private void initializeZones(Player[] players, boolean randomPlayers, List<List<int[]>> customZones) {
         HashMap<SquareZone, ArrayList<SquareZone>> zones = new HashMap<SquareZone, ArrayList<SquareZone>>();
-
+        // no custom level
         if (customZones == null) {
+            //
             for (int row = 0; row < rows; row++) {
                 for (int col = 0; col < cols; col++) {
                     // TODO look at another way to distribute zones
 
-                    SquareZone zone = new SquareZone(players[(int) (Math.random() * (players.length))], row, col);
+                    SquareZone zone = new SquareZone(RNG.choice(players), row, col);
                     this.zones[row][col] = zone;
                     Gdx.app.log(this.getClass().getSimpleName(), "generated: " + zone.toString());
                 }
@@ -70,6 +72,7 @@ public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
                 }
             }
 
+        // custom levels from JSON
         } else {
             int playerNum = 0;
             for (List<int[]> playerZones : customZones) {
@@ -79,7 +82,7 @@ public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
 
                         SquareZone zone;
                         if (randomPlayers) {
-                            zone = new SquareZone(players[(int) (Math.random() * (players.length))], rowNum, col);
+                            zone = new SquareZone(RNG.choice(players), rowNum, col);
                         } else {
                             zone = new SquareZone(players[playerNum], rowNum, col);
                         }

@@ -27,6 +27,9 @@ public class GamePreferences {
         if(!prefs.contains("colorblind mode")){
             setCbMode(false);
         }
+        if(!prefs.contains("Main color")){
+            setMainColor("color 1");
+        }
         updateColors();
     }
 

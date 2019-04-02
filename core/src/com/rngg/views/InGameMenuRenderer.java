@@ -1,8 +1,12 @@
 package com.rngg.views;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -23,14 +27,19 @@ public class InGameMenuRenderer {
     private Stage stage;
     private GameController controller;
     private boolean inGameMenuOpen;
+    private ShapeRenderer sr;
+    private ShapeRenderer.ShapeType shapeType;
 
-    public InGameMenuRenderer(GameModel gameModel, BitmapFont font, GameAssetManager assetManager, GameController controller) {
+
+    public InGameMenuRenderer(GameModel gameModel, BitmapFont font, GameAssetManager assetManager, GameController controller, ShapeRenderer sr) {
         InGameMenuCamera = new OrthographicCamera();
         InGameMenuCamera.setToOrtho(false, Rngg.WIDTH, Rngg.HEIGHT);
         InGameMenuBatch = new SpriteBatch();
         this.font = font;
         this.gameModel = gameModel;
         this.inGameMenuOpen = false;
+        this.sr = sr;
+        this.shapeType = ShapeRenderer.ShapeType.Filled;
 
         final TextButton backButton = new TextButton("Main Menu", assetManager.manager.get(Assets.SKIN));
 
@@ -70,6 +79,12 @@ public class InGameMenuRenderer {
         if(inGameMenuOpen){
             InGameMenuCamera.update();
             InGameMenuBatch.setProjectionMatrix(InGameMenuCamera.combined);
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            sr.begin(shapeType);
+            sr.setColor(0,0,0,0.7f);
+            sr.rect(Rngg.WIDTH / 2 - Rngg.WIDTH*1/10,Rngg.HEIGHT / 2 - Rngg.HEIGHT*1/10,Rngg.WIDTH*2/10,Rngg.HEIGHT*2/10);
+            sr.end();
             stage.draw();
         }
     }

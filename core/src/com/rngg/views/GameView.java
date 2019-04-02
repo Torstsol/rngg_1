@@ -41,7 +41,7 @@ public class GameView extends View {
         this.sr = new ShapeRenderer();
         mapRenderer = new SquareMapRenderer((SquareMap) controller.gameModel.getMap(), sr, batch, font);
         hudRenderer = new HUDRenderer(controller.gameModel, font, assetManager, controller);
-        inGameMenuRenderer = new InGameMenuRenderer(controller.gameModel, font, assetManager, controller);
+        inGameMenuRenderer = new InGameMenuRenderer(controller.gameModel, font, assetManager, controller, sr);
     }
 
     @Override
@@ -55,6 +55,7 @@ public class GameView extends View {
 
         Gdx.gl.glClearColor(0f, 0f, 0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         mapRenderer.draw();
         hudRenderer.draw();
         inGameMenuRenderer.draw();

@@ -17,7 +17,7 @@ public class GamePreferences {
     private Preferences prefs;
     private ArrayList<Float> colorArray;
     private ArrayList<Color> list;
-
+    private boolean musicEnabled = true;
 
     private GamePreferences(){
         prefs = Gdx.app.getPreferences("game-preferences");
@@ -26,6 +26,9 @@ public class GamePreferences {
         }
         if(!prefs.contains("colorblind mode")){
             setCbMode(false);
+        }
+        if(!prefs.contains("Main color")){
+            setMainColor("color 1");
         }
         updateColors();
     }
@@ -46,6 +49,16 @@ public class GamePreferences {
         prefs.putString("color 4", c4);
         prefs.flush();
         updateColors();
+    }
+
+    public void setMusic(boolean enable) {
+        musicEnabled = enable;
+        prefs.putBoolean("music", enable);
+        prefs.flush();
+    }
+
+    public boolean isMusicEnabled() {
+        return musicEnabled;
     }
 
     public Color getColor(String color){
@@ -92,5 +105,19 @@ public class GamePreferences {
         COLOR2 = getColor("color 2");
         COLOR3 = getColor("color 3");
         COLOR4 = getColor("color 4");
+    }
+
+    public void setMainColor(String color) {
+        prefs.putString("Main color", color);
+        prefs.flush();
+    }
+
+    public Color getMainColor(){
+        String color = prefs.getString("Main color");
+        return getColor(color);
+    }
+
+    public String getMainColorString(){
+        return prefs.getString("Main color");
     }
 }

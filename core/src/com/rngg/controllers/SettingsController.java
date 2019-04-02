@@ -40,7 +40,7 @@ public class SettingsController extends Controller {
                 if (pref.getCbMode()){
                     pref.setColors("213,0,0", "240,228,66", "0,114,178", "86,180,233");
                 } else {
-                    pref.setColors("255,0,0", "0,255,0", "0,0,255", "255,255,0");
+                    pref.setColors("200,0,0", "0,200,0", "0,0,200", "200,200,0");
                 }
                 cbSettingsButton.setText("Colorblind mode [" + pref.getCbModeString() + "]");
             }

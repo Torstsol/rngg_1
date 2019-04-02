@@ -82,7 +82,7 @@ public class InGameMenuRenderer {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             sr.begin(shapeType);
-            sr.setColor(0,0,0,0.7f);
+            sr.setColor((float)105/255,(float)160/255,(float)114/255,0.7f);
             sr.rect(Rngg.WIDTH / 2 - Rngg.WIDTH*1/10,Rngg.HEIGHT / 2 - Rngg.HEIGHT*1/10,Rngg.WIDTH*2/10,Rngg.HEIGHT*2/10);
             sr.end();
             stage.draw();

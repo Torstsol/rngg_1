@@ -40,7 +40,7 @@ public class GameView extends View {
         font.setColor(Color.WHITE);
         this.sr = new ShapeRenderer();
         mapRenderer = new SquareMapRenderer((SquareMap) controller.gameModel.getMap(), sr, batch, font);
-        hudRenderer = new HUDRenderer(controller.gameModel, font, assetManager, controller);
+        hudRenderer = new HUDRenderer(controller.gameModel, font, assetManager, controller, sr);
         inGameMenuRenderer = new InGameMenuRenderer(controller.gameModel, font, assetManager, controller, sr);
     }
 

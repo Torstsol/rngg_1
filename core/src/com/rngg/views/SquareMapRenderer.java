@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.rngg.models.SquareMap;
 import com.rngg.models.SquareZone;
 
-public class SquareMapRenderer extends MapRenderer<SquareMap, SquareZone> {
+import java.util.List;
+
+public class SquareMapRenderer extends MapRenderer<SquareMap, SquareZone, List<List<int[]>>> {
 
     public SquareMapRenderer(SquareMap map, ShapeRenderer sr, SpriteBatch batch, BitmapFont font) {
         super(map, sr, batch, font);

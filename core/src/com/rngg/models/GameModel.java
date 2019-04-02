@@ -3,6 +3,8 @@ package com.rngg.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.rngg.configuration.GamePreferences;
 import com.rngg.utils.RNG;
 
@@ -21,6 +23,7 @@ public class GameModel {
     private int[] contiguousAreas;
     private RNG rng;
     private int maxUnits = 8;
+    private int numPlayers;
     private GamePreferences pref;
     private boolean inGameMenuOpen;
 
@@ -29,7 +32,32 @@ public class GameModel {
     // defense strategies
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
 
+    public GameModel(int numPlayers, String mapFileName) {
+        this.playerIndex = 0;
+        this.attackRoll = 0;
+        this.defendRoll = 0;
+
+        this.numPlayers = numPlayers;
+        this.rng = RNG.getInstance();
+        this.setMap(mapFileName);
+    }
+
     public GameModel(int numPlayers) {
+        this(numPlayers, "");
+    }
+
+    public void setMap(String fileName) {
+        if (fileName.length() > 0) {
+            this.map = loadMap(fileName);
+        } else {
+            initializePlayerAndAreas();
+            this.map = new SquareMap(9, 16, players);
+        }
+
+        this.updateAreas();
+    }
+
+    private void initializePlayerAndAreas() {
         pref = GamePreferences.getInstance();
         this.players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
@@ -37,12 +65,50 @@ public class GameModel {
         }
         this.playerIndex = 0;
         this.contiguousAreas = new int[numPlayers];
-        this.map = new SquareMap(9, 16, players);
+    }
+
+    private GameMap loadMap(String fileName) {
+        String mapType = "";
+        int totalCols = -1;
+        int totalRows = -1;
+        int maxPlayers = -1;
+        boolean randomPlayers = false;
+        JsonValue zones = null;
+
+        JsonValue json = new JsonReader().parse(Gdx.files.internal(fileName).readString());
+
+        for (JsonValue value : json) {
+            if (value.name.equals("mapType")) {
+                mapType = value.asString();
+            } else if (value.name.equals("totalCols")) {
+                totalCols = value.asInt();
+            } else if (value.name.equals("totalRows")) {
+                totalRows = value.asInt();
+            } else if (value.name.equals("maxPlayers")) {
+                maxPlayers = value.asInt();
+            }else if (value.name.equals("randomPlayers")) {
+                randomPlayers = value.asBoolean();
+            } else if (value.name.equals("zones")) {
+                zones = value;
+            }
+        }
+
+        if (!randomPlayers || this.numPlayers > maxPlayers) {
+            this.numPlayers = maxPlayers;
+        }
+
+        initializePlayerAndAreas();
+
+        if (mapType.equals("SquareMap")) {
+            return new SquareMap(totalRows, totalCols, this.players, randomPlayers, zones);
+        }
+
         this.updateAreas();
         this.rng = RNG.getInstance();
         this.attackRoll = 0;
         this.defendRoll = 0;
         this.inGameMenuOpen = false;
+        return new SquareMap(9, 16, this.players);
     }
 
     public GameMap getMap() {
@@ -51,6 +117,9 @@ public class GameModel {
 
     public void click(Vector3 coords) {
         Zone temp = map.screenCoordToZone(new Vector2(coords.x, coords.y));
+
+        if (temp == null) return;
+
         if (temp.getPlayer() == this.currentPlayer()) {
             if (temp.getUnits() <= 1) {
                 Gdx.app.log(this.getClass().getSimpleName(), temp.toString() + " has too few units to attack");
@@ -170,6 +239,8 @@ public class GameModel {
                         // for each neighbor of that member
                         for (Zone neighbor : (ArrayList<Zone>) map.getNeighbors(subgraphNode)) {
                             // if the neighbor should be a part of the subgraph but isn't yet
+                            if (neighbor == null) continue;
+
                             if (neighbor.getPlayer().equals(player) && !subgraph.contains(neighbor)) {
                                 // add the neighbor, note that we found a change
                                 subgraph.add(neighbor);
@@ -214,6 +285,8 @@ public class GameModel {
                 ArrayList<Zone> neighbors = map.getNeighbors(z);
                 float friendlyNeighborRatio = 0;
                 for (Zone neighbor : neighbors) {
+                    if (neighbor == null) continue;
+
                     if (neighbor.getPlayer().equals(player)) {
                         friendlyNeighborRatio++;
                     }

@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
 import com.rngg.configuration.GamePreferences;
 import com.rngg.controllers.SettingsController;
+import com.rngg.game.Rngg;
 import com.rngg.models.SettingsModel;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
@@ -24,6 +25,8 @@ public class SettingsView extends View {
     SettingsController controller;
 
     private ShapeRenderer sr;
+
+    private ShapeRenderer.ShapeType shapeType;
 
     private GamePreferences pref;
 
@@ -52,6 +55,8 @@ public class SettingsView extends View {
         this.controller = controller;
 
         sr = new ShapeRenderer();
+
+        shapeType = ShapeRenderer.ShapeType.Filled;
 
         font = assetManager.manager.get(Assets.MINECRAFTIA);
         font.setColor(Color.WHITE);
@@ -91,7 +96,7 @@ public class SettingsView extends View {
 
         VerticalGroup group1 = new VerticalGroup();
         group1.grow();
-        group1.space(8);
+        group1.space(20);
         first_table.add(group1).width(300);
 
         VerticalGroup group2 = new VerticalGroup();
@@ -138,13 +143,20 @@ public class SettingsView extends View {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        sr.begin(shapeType);
+        settingsModel.setCustomColor("color 1", sr, 200, Rngg.HEIGHT/2 + 225);
+        settingsModel.setCustomColor("color 2", sr, 200, Rngg.HEIGHT/2 + 75);
+        settingsModel.setCustomColor("color 3", sr, 200, Rngg.HEIGHT/2 - 75);
+        settingsModel.setCustomColor("color 4", sr, 200, Rngg.HEIGHT/2 - 225);
+        sr.end();
+
         batch.begin();
-        batch.draw(settingsModel.setCustomColor("color 1"),150,450);
-        batch.draw(settingsModel.setCustomColor("color 2"),150,350);
-        batch.draw(settingsModel.setCustomColor("color 3"),150,250);
-        batch.draw(settingsModel.setCustomColor("color 4"),150,150);
-        font.draw(batch, Integer.toString(1), 150, 450);
+        settingsModel.drawText(font, batch, Integer.toString(1), 200, Rngg.HEIGHT/2 + 225);
+        settingsModel.drawText(font, batch, Integer.toString(2), 200, Rngg.HEIGHT/2 + 75);
+        settingsModel.drawText(font, batch, Integer.toString(3), 200, Rngg.HEIGHT/2 - 75);
+        settingsModel.drawText(font, batch, Integer.toString(4), 200, Rngg.HEIGHT/2 - 225);
         batch.end();
+
         stage.draw();
     }
 

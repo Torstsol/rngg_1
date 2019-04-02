@@ -68,9 +68,9 @@ public class HUDRenderer {
 
         HUDBatch.begin();
 
-        font.draw(HUDBatch,"Player " + gameModel.getPlayerIndex() + " is playing",10,Rngg.HEIGHT*19/20);
+        font.draw(HUDBatch,"Player " + gameModel.getPlayerIndex() + " is playing",10,Rngg.HEIGHT*39/40);
         if(gameModel.getAttackRoll() != 0 && gameModel.getDefendRoll() != 0){
-            font.draw(HUDBatch,"You rolled: " + gameModel.getAttackRoll() + " |  Defender rolled: " + gameModel.getDefendRoll(),500,Rngg.HEIGHT*19/20);
+            font.draw(HUDBatch,"You rolled: " + gameModel.getAttackRoll() + " |  Defender rolled: " + gameModel.getDefendRoll(),700,Rngg.HEIGHT*39/40);
         }
 
         HUDBatch.end();

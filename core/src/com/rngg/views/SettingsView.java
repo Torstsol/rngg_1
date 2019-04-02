@@ -5,10 +5,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.utils.Align;
 import com.rngg.configuration.GamePreferences;
 import com.rngg.controllers.SettingsController;
 import com.rngg.models.SettingsModel;
@@ -18,6 +22,8 @@ import com.rngg.utils.GameAssetManager;
 public class SettingsView extends View {
 
     SettingsController controller;
+
+    private ShapeRenderer sr;
 
     private GamePreferences pref;
 
@@ -31,10 +37,21 @@ public class SettingsView extends View {
 
     private TextButton cbSettingsButton;
 
+    private TextButton color1Button;
+
+    private TextButton color2Button;
+
+    private TextButton color3Button;
+
+    private TextButton color4Button;
+
+
     public SettingsView(GameAssetManager assetManager, SettingsController controller) {
         super(assetManager);
 
         this.controller = controller;
+
+        sr = new ShapeRenderer();
 
         font = assetManager.manager.get(Assets.MINECRAFTIA);
         font.setColor(Color.WHITE);
@@ -43,47 +60,72 @@ public class SettingsView extends View {
 
         batch = new SpriteBatch();
 
+        Skin skin = assetManager.manager.get(Assets.SKIN);
+
         stage = new Stage();
         controller.setInputProcessor(stage);
 
-        Table table1 = new Table();
-        table1.setFillParent(true);
+        Table table = new Table();
+        table.defaults().pad(10F);
+        table.setFillParent(true);
 
-        Table table2 = new Table();
-        table2.setFillParent(true);
+        Label label = new Label("Game Settings",skin);
+        label.setAlignment(Align.center);
+
+        Table first_table = new Table();
+        first_table.defaults().pad(10F);
+        first_table.add(new Label("Choose your color", skin)).row();
+
+        Table second_table = new Table();
+        second_table.defaults().pad(10F);
+        second_table.add(new Label("Colorblind settings", skin)).row();
+
+        Table third_table = new Table();
+        third_table.defaults().pad(10F);
+        third_table.row();
+
+        table.add(label).colspan(2).fillX().row();
+        table.add(first_table).expand().row();
+        table.add(second_table).expand().row();
+        table.add(third_table).expand().row();
 
         VerticalGroup group1 = new VerticalGroup();
         group1.grow();
         group1.space(8);
-        table1.add(group1).width(500);
+        first_table.add(group1).width(300);
 
         VerticalGroup group2 = new VerticalGroup();
         group2.grow();
         group2.space(8);
-        table2.add(group2).width(300);
+        second_table.add(group2).width(500);
 
-        stage.addActor(table1);
-        stage.addActor(table2);
+        VerticalGroup group3 = new VerticalGroup();
+        group3.grow();
+        group3.space(8);
+        third_table.add(group3);
+
+        stage.addActor(table);
 
         settingsModel = new SettingsModel();
 
-        cbSettingsButton = new TextButton("Colorblind mode [" + pref.getCbModeString() + "]", assetManager.manager.get(Assets.SKIN));
-        group1.addActor(cbSettingsButton);
+        color1Button = new TextButton("Color 1", skin);
+        group1.addActor(color1Button);
 
-        final TextButton menuButton = new TextButton("Cancel", assetManager.manager.get(Assets.SKIN));
-        group1.addActor(menuButton);
+        color2Button = new TextButton("Color 2", skin);
+        group1.addActor(color2Button);
 
-        final TextButton color1Button = new TextButton("Color 1", assetManager.manager.get(Assets.SKIN));
-        group2.addActor(color1Button);
+        color3Button = new TextButton("Color 3", skin);
+        group1.addActor(color3Button);
 
-        final TextButton color2Button = new TextButton("Color 2", assetManager.manager.get(Assets.SKIN));
-        group2.addActor(color2Button);
+        color4Button = new TextButton("Color 4", skin);
+        group1.addActor(color4Button);
 
-        final TextButton color3Button = new TextButton("Color 3", assetManager.manager.get(Assets.SKIN));
-        group2.addActor(color3Button);
+        cbSettingsButton = new TextButton("Colorblind mode [" + pref.getCbModeString() + "]", skin);
+        group2.addActor(cbSettingsButton);
 
-        final TextButton color4Button = new TextButton("Color 4", assetManager.manager.get(Assets.SKIN));
-        group2.addActor(color4Button);
+        final TextButton menuButton = new TextButton("Back", skin);
+        group3.addActor(menuButton);
+
 
 
         controller.addActorListeners(cbSettingsButton, menuButton, color1Button, color2Button, color3Button, color4Button); // handle input

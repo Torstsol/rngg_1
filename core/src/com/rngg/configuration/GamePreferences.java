@@ -17,7 +17,7 @@ public class GamePreferences {
     private Preferences prefs;
     private ArrayList<Float> colorArray;
     private ArrayList<Color> list;
-
+    private boolean musicEnabled = true;
 
     private GamePreferences(){
         prefs = Gdx.app.getPreferences("game-preferences");
@@ -46,6 +46,15 @@ public class GamePreferences {
         prefs.putString("color 4", c4);
         prefs.flush();
         updateColors();
+    }
+
+    public void toggleMusic() {
+        musicEnabled = !musicEnabled;
+        prefs.putBoolean("music", !musicEnabled);
+    }
+
+    public boolean isMusicEnabled() {
+        return musicEnabled;
     }
 
     public Color getColor(String color){

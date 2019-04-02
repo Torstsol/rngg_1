@@ -3,7 +3,10 @@ package com.rngg.game;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.rngg.services.IPlayServices;
+import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
 import com.rngg.utils.ScreenManager;
 
@@ -34,11 +37,17 @@ public class Rngg extends Game {
 	public void create () {
         Gdx.app.setLogLevel(Application.LOG_INFO);
 
-        assetManager = new GameAssetManager();
+        assetManager = GameAssetManager.getInstance();
         assetManager.loadImages();
         assetManager.loadFonts();
         assetManager.loadSkin();
+        assetManager.loadMusic();
+        assetManager.loadSounds();
         assetManager.manager.finishLoading();
+
+		if(assetManager.manager.isLoaded(Assets.MUSIC)) {
+			assetManager.manager.get(Assets.MUSIC).play();
+		}
 
         screenManager = new ScreenManager(this);
         screenManager.setMenuScreen();

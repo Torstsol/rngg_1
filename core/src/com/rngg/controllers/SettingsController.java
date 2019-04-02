@@ -24,8 +24,13 @@ public class SettingsController extends Controller {
     @Override
     public void update(float delta) {}
 
-    public void addActorListeners(final TextButton cbSettingsButton, final TextButton musicButton,
-                                  final TextButton menuButton) {
+    public void addActorListeners(final TextButton cbSettingsButton,
+                                  final TextButton musicButton,
+                                  final TextButton menuButton,
+                                  final TextButton color1Button,
+                                  final TextButton color2Button,
+                                  final TextButton color3Button,
+                                  final TextButton color4Button) {
 
         cbSettingsButton.addListener(new ChangeListener() {
             @Override
@@ -60,6 +65,34 @@ public class SettingsController extends Controller {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.screenManager.setMenuScreen();
+            }
+        });
+
+        color1Button.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                pref.setMainColor("color 1");
+            }
+        });
+
+        color2Button.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                pref.setMainColor("color 2");
+            }
+        });
+
+        color3Button.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                pref.setMainColor("color 3");
+            }
+        });
+
+        color4Button.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                pref.setMainColor("color 4");
             }
         });
     }

@@ -27,6 +27,9 @@ public class GamePreferences {
         if(!prefs.contains("colorblind mode")){
             setCbMode(false);
         }
+        if(!prefs.contains("Main color")){
+            setMainColor("color 1");
+        }
         updateColors();
     }
 
@@ -102,5 +105,19 @@ public class GamePreferences {
         COLOR2 = getColor("color 2");
         COLOR3 = getColor("color 3");
         COLOR4 = getColor("color 4");
+    }
+
+    public void setMainColor(String color) {
+        prefs.putString("Main color", color);
+        prefs.flush();
+    }
+
+    public Color getMainColor(){
+        String color = prefs.getString("Main color");
+        return getColor(color);
+    }
+
+    public String getMainColorString(){
+        return prefs.getString("Main color");
     }
 }

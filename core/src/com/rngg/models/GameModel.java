@@ -24,6 +24,7 @@ public class GameModel {
     private int maxUnits = 8;
     private int numPlayers;
     private GamePreferences pref;
+    private boolean inGameMenuOpen;
 
     private float attackRoll, defendRoll;
 
@@ -61,7 +62,7 @@ public class GameModel {
         for (int i = 0; i < numPlayers; i++) {
             players[i] = new Player("Player" + i, "90238049", true, pref.getColorArray().get(i));
         }
-
+        this.playerIndex = 0;
         this.contiguousAreas = new int[numPlayers];
     }
 
@@ -101,6 +102,11 @@ public class GameModel {
             return new SquareMap(totalRows, totalCols, this.players, randomPlayers, zones);
         }
 
+        this.updateAreas();
+        this.rng = RNG.getInstance();
+        this.attackRoll = 0;
+        this.defendRoll = 0;
+        this.inGameMenuOpen = false;
         return new SquareMap(9, 16, this.players);
     }
 
@@ -342,5 +348,13 @@ public class GameModel {
 
     public int getDefendRoll() {
         return (int) defendRoll;
+    }
+
+    public boolean isInGameMenuOpen() {
+        return inGameMenuOpen;
+    }
+
+    public void updateInGameMenu() {
+        this.inGameMenuOpen = !this.inGameMenuOpen;
     }
 }

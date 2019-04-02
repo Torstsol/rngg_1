@@ -48,9 +48,10 @@ public class GamePreferences {
         updateColors();
     }
 
-    public void toggleMusic() {
-        musicEnabled = !musicEnabled;
-        prefs.putBoolean("music", !musicEnabled);
+    public void setMusic(boolean enable) {
+        musicEnabled = enable;
+        prefs.putBoolean("music", enable);
+        prefs.flush();
     }
 
     public boolean isMusicEnabled() {

@@ -1,10 +1,7 @@
 package com.rngg.controllers;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.rngg.configuration.GamePreferences;
@@ -49,11 +46,11 @@ public class SettingsController extends Controller {
             public void changed(ChangeEvent event, Actor actor) {
                 if(pref.isMusicEnabled()) {
                     assetManager.manager.get(Assets.MUSIC).pause();
-                    pref.toggleMusic();
+                    pref.setMusic(false);
                     musicButton.setText("Music [disabled]");
                 } else {
                     assetManager.manager.get(Assets.MUSIC).play();
-                    pref.toggleMusic();
+                    pref.setMusic(true);
                     musicButton.setText("Music [enabled]");
                 }
             }

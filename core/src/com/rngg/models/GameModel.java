@@ -50,7 +50,7 @@ public class GameModel {
             this.map = loadMap(fileName);
         } else {
             initializePlayerAndAreas();
-            this.map = new HexMap(8, 12, players);
+            this.map = new HexMap(7, 7, players);
         }
 
         this.updateAreas();
@@ -72,6 +72,7 @@ public class GameModel {
         int totalRows = -1;
         int maxPlayers = -1;
         boolean randomPlayers = false;
+        int skew = 0;
         JsonValue zones = null;
 
         JsonValue json = new JsonReader().parse(Gdx.files.internal(fileName).readString());
@@ -85,8 +86,10 @@ public class GameModel {
                 totalRows = value.asInt();
             } else if (value.name.equals("maxPlayers")) {
                 maxPlayers = value.asInt();
-            }else if (value.name.equals("randomPlayers")) {
+            } else if (value.name.equals("randomPlayers")) {
                 randomPlayers = value.asBoolean();
+            } else if (value.name.equals("skew")) {
+                skew = value.asInt();
             } else if (value.name.equals("zones")) {
                 zones = value;
             }
@@ -100,6 +103,8 @@ public class GameModel {
 
         if (mapType.equals("SquareMap")) {
             return new SquareMap(totalRows, totalCols, this.players, randomPlayers, zones);
+        } else if (mapType.equals("HexMap")) {
+            return new HexMap(totalRows, totalCols, this.players, randomPlayers, zones, skew);
         }
 
         return new SquareMap(9, 16, this.players);
@@ -276,6 +281,7 @@ public class GameModel {
             // first, create a hashmap of the ratio
             HashMap<Float, ArrayList<Zone>> hashMap = new HashMap<Float, ArrayList<Zone>>();
             for (Zone z : (ArrayList<Zone>) map.getPlayerZones(player)) {
+                if (z == null) continue;
                 ArrayList<Zone> neighbors = map.getNeighbors(z);
                 float friendlyNeighborRatio = 0;
                 for (Zone neighbor : neighbors) {

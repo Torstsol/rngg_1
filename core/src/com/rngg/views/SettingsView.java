@@ -131,7 +131,7 @@ public class SettingsView extends View {
         cbSettingsButton = new TextButton("Colorblind mode [" + pref.getCbModeString() + "]", skin);
         group2.addActor(cbSettingsButton);
 
-        final TextButton toggleMusic = new TextButton("Music [" + (pref.isMusicEnabled() ? "enabled]" : "disabled") + "]", assetManager.manager.get(Assets.SKIN));
+        final TextButton toggleMusic = new TextButton("Music [" + (pref.isMusicEnabled() ? "enabled" : "disabled") + "]", assetManager.manager.get(Assets.SKIN));
         group2.addActor(toggleMusic);
 
         final TextButton menuButton = new TextButton("Cancel", assetManager.manager.get(Assets.SKIN));
@@ -159,11 +159,13 @@ public class SettingsView extends View {
         settingsModel.setCustomColor("color 4", sr, 200, Rngg.HEIGHT/2 - 225);
         sr.end();
 
+        int x_margin = 192;
+
         batch.begin();
-        settingsModel.drawText(font, batch, Integer.toString(1), 200, Rngg.HEIGHT/2 + 225);
-        settingsModel.drawText(font, batch, Integer.toString(2), 200, Rngg.HEIGHT/2 + 75);
-        settingsModel.drawText(font, batch, Integer.toString(3), 200, Rngg.HEIGHT/2 - 75);
-        settingsModel.drawText(font, batch, Integer.toString(4), 200, Rngg.HEIGHT/2 - 225);
+        settingsModel.drawText(font, batch, Integer.toString(1), x_margin, Rngg.HEIGHT/2 + 235);
+        settingsModel.drawText(font, batch, Integer.toString(2), x_margin, Rngg.HEIGHT/2 + 85);
+        settingsModel.drawText(font, batch, Integer.toString(3), x_margin, Rngg.HEIGHT/2 - 65);
+        settingsModel.drawText(font, batch, Integer.toString(4), x_margin, Rngg.HEIGHT/2 - 215);
         batch.end();
 
         stage.draw();

@@ -2,6 +2,8 @@ package com.rngg.utils;
 
 // TODO only used for Arrays.toString() in main, remove before merging
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 
 public class RNG {
@@ -66,6 +68,14 @@ public class RNG {
 
     public static float nextFloat() {
         return RNG.nextFloat(1);
+    }
+
+    public static <O> O choice(O[] arr) {
+        return arr[RNG.nextInt(arr.length)];
+    }
+
+    public static <O> O choice(List<O> list) {
+        return list.get(RNG.nextInt(list.size()));
     }
 
     private void setLabelsValuesProbs(String[] labels, float[] values, float[] probabilities) {

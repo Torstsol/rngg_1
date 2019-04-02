@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.rngg.models.GameMap;
 import com.rngg.models.Zone;
 
-public abstract class MapRenderer<M extends GameMap<Z>, Z extends Zone> {
+import java.util.List;
+
+public abstract class MapRenderer<M extends GameMap<Z, ZoneFormat>, Z extends Zone, ZoneFormat extends List> {
     protected M map;
     protected ShapeRenderer sr;
     protected SpriteBatch batch;

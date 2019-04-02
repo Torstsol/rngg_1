@@ -59,6 +59,9 @@ public class GameController extends Controller {
                         gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_CORE);
                         gameModel.nextPlayer();
                         break;
+                    case Input.Keys.I:
+                        gameModel.updateInGameMenu();
+                        break;
                     default:
                         break;
                 }
@@ -90,7 +93,11 @@ public class GameController extends Controller {
         inputMultiplexer.addProcessor(0, stage);
     }
 
-    public void addActorListeners(final TextButton defendAllButton, final TextButton defendCoreButton, final TextButton defendFrontierButton, final TextButton testButton) {
+    public void removeInputProcessor() {
+        inputMultiplexer.removeProcessor(0);
+    }
+
+    public void addActorListeners(final TextButton defendAllButton, final TextButton defendCoreButton, final TextButton defendFrontierButton, final TextButton menuButton) {
         defendAllButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -114,13 +121,29 @@ public class GameController extends Controller {
                 gameModel.nextPlayer();
             }
         });
-        testButton.addListener(new ChangeListener() {
+
+        menuButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameModel.sendMessage();
+                gameModel.updateInGameMenu();
+            }
+        });
+    }
+
+    public void addInGameMenuActorListeners(final TextButton backButton, final TextButton menuButton){
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.screenManager.setMenuScreen();
             }
         });
 
+        menuButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                gameModel.updateInGameMenu();
+            }
+        });
     }
 
 }

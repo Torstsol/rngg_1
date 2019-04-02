@@ -2,14 +2,18 @@ package com.rngg.models;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.JsonValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public abstract class GameMap<Z extends Zone> {
+public abstract class GameMap<Z extends Zone, ZoneFormat> {
 
     protected HashMap<Z, ArrayList<Z>> neighbors;
     protected ShapeRenderer.ShapeType shapetype;
+
+    abstract public ZoneFormat decodeZoneJSON(JsonValue zones);
 
     // Underscore methods returns Z's, for use in Map and MapRenderer
     abstract public Z _screenCoordToZone(Vector2 coords);

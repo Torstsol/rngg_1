@@ -1,5 +1,7 @@
 package com.rngg.models;
 
+import com.rngg.utils.RNG;
+
 public class SquareZone extends Zone {
 
     private int row, col;
@@ -8,7 +10,9 @@ public class SquareZone extends Zone {
         this.row = row;
         this.col = col;
         this.player = player;
-        this.units = (int) ((Math.random() * 7) + 1);
+        // TODO change unit distribution
+        // TODO hardcoded for max 8
+        this.units = RNG.nextInt(1, 8);
     }
 
     public int getRow() {

@@ -7,9 +7,8 @@ import java.util.Random;
 public class RNG {
     private String[] labels;
     private float[] values, probabilities;
-    // TODO change first seed
-    private static long seed = 42069420;
-    private static final Random generator = new Random(420);
+    private static final Random generator = new Random();
+    private static long seed = generator.nextLong();
 
     private int[] rollResult;
 

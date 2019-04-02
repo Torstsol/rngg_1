@@ -54,10 +54,13 @@ public class SettingsView extends View {
         cbSettingsButton = new TextButton("Colorblind mode [" + pref.getCbModeString() + "]", assetManager.manager.get(Assets.SKIN));
         group.addActor(cbSettingsButton);
 
+        final TextButton toggleMusic = new TextButton("Music [" + (pref.isMusicEnabled() ? "enabled]" : "disabled") + "]", assetManager.manager.get(Assets.SKIN));
+        group.addActor(toggleMusic);
+
         final TextButton menuButton = new TextButton("Cancel", assetManager.manager.get(Assets.SKIN));
         group.addActor(menuButton);
 
-        controller.addActorListeners(cbSettingsButton, menuButton); // handle input
+        controller.addActorListeners(cbSettingsButton, toggleMusic, menuButton); // handle input
     }
 
     @Override

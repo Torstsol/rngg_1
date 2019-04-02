@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 public class GameModel implements RealtimeListener{
@@ -32,14 +33,11 @@ public class GameModel implements RealtimeListener{
     // defense strategies
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
 
-    public GameModel(int numPlayers) {
+    public GameModel(Player[] players) {
         pref = GamePreferences.getInstance();
-        this.players = new Player[numPlayers];
-        for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player("Player" + i, "90238049", true, pref.getColorArray().get(i));
-        }
+        this.players = players;
         this.playerIndex = 0;
-        this.contiguousAreas = new int[numPlayers];
+        this.contiguousAreas = new int[players.length];
         this.map = new SquareMap(9, 16, players);
         this.updateAreas();
         this.rng = RNG.getInstance();
@@ -49,6 +47,10 @@ public class GameModel implements RealtimeListener{
 
     public GameMap getMap() {
         return this.map;
+    }
+
+    public Player getPlayer(int index){
+        return players[index];
     }
 
     public void click(Vector3 coords) {
@@ -296,6 +298,11 @@ public class GameModel implements RealtimeListener{
         //the game is already in game-mode when it recieves the start-message.
         if(contents.equals("START")){
             return;
+        }
+
+        if(contents.equals("ORDER")) {
+            System.out.println("ORDER recieved in gameModel" + message.getInt());
+
         }
 
         if(true || contents.equals("FAX")){

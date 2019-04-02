@@ -1,6 +1,8 @@
 package com.rngg.services;
 
 
+import com.rngg.models.Player;
+
 import java.util.ArrayList;
 
 public interface IPlayServices {
@@ -17,4 +19,6 @@ public interface IPlayServices {
     public void showInvitationInbox();
     public void setMPlaying(boolean bool);
     public void onStartGameMessageRecieved();
+    public boolean isHost();
+    public Player[] getPlayers();
 }

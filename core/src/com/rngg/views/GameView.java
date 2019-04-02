@@ -23,16 +23,14 @@ public class GameView extends View {
     private BitmapFont font;
     private MapRenderer mapRenderer;
     private ShapeRenderer sr;
-    private List<Player> players;
     private HUDRenderer hudRenderer;
 
 
-    public GameView(GameAssetManager assetManager, GameController controller, List<Player> players) {
+    public GameView(GameAssetManager assetManager, GameController controller) {
         super(assetManager);
         camera.viewportHeight = Rngg.HEIGHT * 10 / 8;
 
         this.controller = controller;
-        this.players = players;
 
         batch = new SpriteBatch();
         font = assetManager.manager.get(Assets.MINECRAFTIA);

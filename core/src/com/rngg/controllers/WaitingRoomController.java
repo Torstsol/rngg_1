@@ -48,18 +48,18 @@ public class WaitingRoomController extends Controller implements RoomListener, R
 
     public void enterGameScreen2() {
 
-        for(String playerId : sender.getRemotePlayers()){
-            playerInfo.put(playerId, new Player(playerId, playerId, false, pref.COLOR2));
-        }
-        localPlayer = new Player("bob", sender.getLocalID(), true, pref.COLOR1);
-        playerInfo.put(localPlayer.playerId, localPlayer);
+        if (sender.isHost()){
+            System.out.println("this device is host");
+            Message message = new Message(new byte[512],"",0);
+            message.putString("ORDER");
+            message.putInt(1234);
 
-        Player[] players = playerInfo.values().toArray(new Player[playerInfo.size()]);
-
-        for(int i = 0; i < players.length; i++){
-            players[i].playerIndex = i;
+            sender.sendToAllReliably(message.getData());
         }
-        game.screenManager.setGameScreen(new GameModel(4), Arrays.asList(players));;
+        System.out.println("this device is NOT host");
+
+
+        game.screenManager.setGameScreen(new GameModel(sender.getPlayers()));;
     }
 
     @Override
@@ -71,6 +71,10 @@ public class WaitingRoomController extends Controller implements RoomListener, R
 
             game.getAPI().onStartGameMessageRecieved();
             enterGameScreen();
+        }
+        if(type.equals("ORDER")) {
+            System.out.println("ORDER recieved in waitingRoom" + message.getInt());
+
         }
 
     }

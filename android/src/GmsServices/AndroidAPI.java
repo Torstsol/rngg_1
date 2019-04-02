@@ -8,8 +8,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.WindowManager;
 
+import com.rngg.models.Player;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
+import com.rngg.configuration.GamePreferences;
 import com.rngg.game.AndroidLauncher;
 import com.rngg.services.IPlayServices;
 import com.rngg.services.Message;
@@ -37,6 +39,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -421,6 +424,14 @@ public class AndroidAPI implements IPlayServices {
 
     private String mMyParticipantId;
 
+    //determine if this client is the host
+    public boolean isHost(){
+        Collections.sort(mRoom.getParticipantIds());
+        return mRoom.getParticipantIds().get(0).equals(mMyParticipantId);
+    }
+
+
+
     // returns whether there are enough players to start the game
     boolean shouldStartGame(Room room) {
         int connectedPlayers = 0;
@@ -430,6 +441,24 @@ public class AndroidAPI implements IPlayServices {
             }
         }
         return connectedPlayers >= MIN_PLAYERS;
+    }
+
+    public Player[] getPlayers(){
+
+        GamePreferences pref = GamePreferences.getInstance();
+
+        Player[] players = new Player[mRoom.getParticipantIds().size()];
+
+        for (int i = 0; i < mRoom.getParticipants().size(); i++) {
+            if(!mRoom.getParticipants().get(0).getParticipantId().equals(getLocalID())){
+                players[i] = new Player(mRoom.getParticipants().get(i).getDisplayName(), mRoom.getParticipants().get(i).getParticipantId(), false, pref.getColorArray().get(i));
+            }
+            else {
+                players[i] = new Player(mRoom.getParticipants().get(i).getDisplayName(), mRoom.getParticipants().get(i).getParticipantId(), true, pref.getColorArray().get(i));
+            }
+        }
+        return players;
+
     }
 
     // Returns whether the room is in a state where the game should be canceled.

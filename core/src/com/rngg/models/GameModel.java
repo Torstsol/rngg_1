@@ -3,18 +3,20 @@ package com.rngg.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.rngg.configuration.GamePreferences;
 import com.rngg.services.IPlayServices;
 import com.rngg.services.Message;
 import com.rngg.services.RealtimeListener;
+import com.rngg.services.IPlayServices;
+import com.rngg.services.Message;
 import com.rngg.utils.RNG;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
 
 public class GameModel implements RealtimeListener{
     public int playerScore = 0;
@@ -25,7 +27,9 @@ public class GameModel implements RealtimeListener{
     private int[] contiguousAreas;
     private RNG rng;
     private int maxUnits = 8;
+    private int numPlayers;
     private GamePreferences pref;
+    private boolean inGameMenuOpen;
     private IPlayServices sender;
 
     private float attackRoll, defendRoll;
@@ -33,16 +37,74 @@ public class GameModel implements RealtimeListener{
     // defense strategies
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
 
-    public GameModel(Player[] players) {
-        pref = GamePreferences.getInstance();
-        this.players = players;
+    public GameModel(Player[] players, String mapFileName) {
         this.playerIndex = 0;
+        this.attackRoll = 0;
+        this.defendRoll = 0;
+
+        this.players = players;
+        this.rng = RNG.getInstance();
         this.contiguousAreas = new int[players.length];
-        this.map = new SquareMap(9, 16, players);
+        this.setMap(mapFileName);
+    }
+
+    public GameModel(Player[] players) {
+        this(players, "");
+
+    }
+
+    public void setMap(String fileName) {
+        if (fileName.length() > 0) {
+            this.map = loadMap(fileName);
+        } else {
+            //initializePlayerAndAreas();
+            this.map = new SquareMap(9, 16, players);
+        }
+
+        this.updateAreas();
+    }
+
+
+    private GameMap loadMap(String fileName) {
+        String mapType = "";
+        int totalCols = -1;
+        int totalRows = -1;
+        int maxPlayers = -1;
+        boolean randomPlayers = false;
+        JsonValue zones = null;
+
+        JsonValue json = new JsonReader().parse(Gdx.files.internal(fileName).readString());
+
+        for (JsonValue value : json) {
+            if (value.name.equals("mapType")) {
+                mapType = value.asString();
+            } else if (value.name.equals("totalCols")) {
+                totalCols = value.asInt();
+            } else if (value.name.equals("totalRows")) {
+                totalRows = value.asInt();
+            } else if (value.name.equals("maxPlayers")) {
+                maxPlayers = value.asInt();
+            }else if (value.name.equals("randomPlayers")) {
+                randomPlayers = value.asBoolean();
+            } else if (value.name.equals("zones")) {
+                zones = value;
+            }
+        }
+
+        if (!randomPlayers || this.numPlayers > maxPlayers) {
+            this.numPlayers = maxPlayers;
+        }
+
+        if (mapType.equals("SquareMap")) {
+            return new SquareMap(totalRows, totalCols, this.players, randomPlayers, zones);
+        }
+
         this.updateAreas();
         this.rng = RNG.getInstance();
         this.attackRoll = 0;
         this.defendRoll = 0;
+        this.inGameMenuOpen = false;
+        return new SquareMap(9, 16, this.players);
     }
 
     public GameMap getMap() {
@@ -55,6 +117,9 @@ public class GameModel implements RealtimeListener{
 
     public void click(Vector3 coords) {
         Zone temp = map.screenCoordToZone(new Vector2(coords.x, coords.y));
+
+        if (temp == null) return;
+
         if (temp.getPlayer() == this.currentPlayer()) {
             if (temp.getUnits() <= 1) {
                 Gdx.app.log(this.getClass().getSimpleName(), temp.toString() + " has too few units to attack");
@@ -174,6 +239,8 @@ public class GameModel implements RealtimeListener{
                         // for each neighbor of that member
                         for (Zone neighbor : (ArrayList<Zone>) map.getNeighbors(subgraphNode)) {
                             // if the neighbor should be a part of the subgraph but isn't yet
+                            if (neighbor == null) continue;
+
                             if (neighbor.getPlayer().equals(player) && !subgraph.contains(neighbor)) {
                                 // add the neighbor, note that we found a change
                                 subgraph.add(neighbor);
@@ -218,6 +285,8 @@ public class GameModel implements RealtimeListener{
                 ArrayList<Zone> neighbors = map.getNeighbors(z);
                 float friendlyNeighborRatio = 0;
                 for (Zone neighbor : neighbors) {
+                    if (neighbor == null) continue;
+
                     if (neighbor.getPlayer().equals(player)) {
                         friendlyNeighborRatio++;
                     }
@@ -240,14 +309,13 @@ public class GameModel implements RealtimeListener{
                 zones.add(hashMap.get(num));
             }
         }
-        Random rand = new Random();
         ArrayList<Zone> currentList = null;
         while (units > 0 && !zones.isEmpty()) {
             if (currentList == null) {
                 // get a new sublist
                 currentList = zones.get(0);
             }
-            Zone zone = currentList.get(rand.nextInt(currentList.size()));
+            Zone zone = RNG.choice(currentList);
             // if the zone is saturated, remove it from the sublist
             // if the sublist is empty, remove it from the list
             if (zone.getUnits() >= this.maxUnits) {
@@ -283,6 +351,14 @@ public class GameModel implements RealtimeListener{
         return (int) defendRoll;
     }
 
+    public boolean isInGameMenuOpen() {
+        return inGameMenuOpen;
+    }
+
+    public void updateInGameMenu() {
+        this.inGameMenuOpen = !this.inGameMenuOpen;
+    }
+
     public void sendMessage(){
         Gdx.app.log(this.getClass().getSimpleName(), "Sending FAX");
         Message message = new Message(new byte[512],"",0);
@@ -305,7 +381,7 @@ public class GameModel implements RealtimeListener{
 
         }
 
-        if(true || contents.equals("FAX")){
+        if(contents.equals("FAX")){
             for (Zone z : (ArrayList<Zone>) map.getZones()) {
                 z.setUnits(-1);
             }

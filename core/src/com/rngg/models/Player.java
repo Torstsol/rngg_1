@@ -15,8 +15,6 @@ public class Player {
         this.name = name;
         this.playerId = playerId;
         this.isLocal = isLocal;
-        // TODO get colors from config
-        //this.color = new Color((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
         this.color = color;
     }
 

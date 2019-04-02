@@ -1,10 +1,14 @@
 package com.rngg.utils;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.SkinLoader.SkinParameter;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class GameAssetManager {
+
+    private static final GameAssetManager instance = new GameAssetManager();
+
+    private GameAssetManager() {
+
+    }
 
     public final AssetManager manager = new AssetManager();
 
@@ -18,6 +22,18 @@ public class GameAssetManager {
 
     public void loadSkin() {
         manager.load(Assets.SKIN);
+    }
+
+    public void loadMusic() {
+        manager.load(Assets.MUSIC);
+    }
+
+    public void loadSounds() {
+        manager.load(Assets.OOF);
+    }
+
+    public static GameAssetManager getInstance() {
+        return instance;
     }
 
 }

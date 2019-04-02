@@ -17,7 +17,7 @@ public class GameAssetManager {
     }
 
     public void loadFonts() {
-        manager.load(Assets.MINECRAFTIA);
+        manager.load(Assets.FONT);
     }
 
     public void loadSkin() {

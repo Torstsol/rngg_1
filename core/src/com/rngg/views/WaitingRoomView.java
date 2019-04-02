@@ -2,7 +2,6 @@ package com.rngg.views;
 
 import com.rngg.controllers.WaitingRoomController;
 import com.rngg.models.WaitingRoomModel;
-import com.rngg.utils.GameAssetManager;
 
 public class WaitingRoomView extends View{
 
@@ -11,8 +10,7 @@ public class WaitingRoomView extends View{
     private boolean isQuickGame;
     private boolean isInviteRoom;
 
-    public WaitingRoomView(GameAssetManager assetManager, WaitingRoomController controller, boolean isQuickGame, boolean isInviteRoom, WaitingRoomModel model) {
-        super(assetManager);
+    public WaitingRoomView(WaitingRoomController controller, boolean isQuickGame, boolean isInviteRoom, WaitingRoomModel model) {
         this.controller = controller;
         this.model = model;
         this.isQuickGame = isQuickGame;

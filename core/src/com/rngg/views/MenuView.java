@@ -14,7 +14,6 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.rngg.controllers.MenuController;
 import com.rngg.game.Rngg;
 import com.rngg.utils.Assets;
-import com.rngg.utils.GameAssetManager;
 
 public class MenuView extends View {
 
@@ -24,9 +23,7 @@ public class MenuView extends View {
 
     private Stage stage;
 
-    public MenuView(GameAssetManager assetManager, MenuController controller) {
-        super(assetManager);
-
+    public MenuView(MenuController controller) {
         this.controller = controller;
 
         batch = new SpriteBatch();
@@ -53,13 +50,16 @@ public class MenuView extends View {
         final Label label = new Label("Are you ready to expand your empire?", assetManager.manager.get(Assets.SKIN));
         group.addActor(label);
 
-        final TextButton lobbyButton = new TextButton("Create lobby", assetManager.manager.get(Assets.SKIN));
+        final TextButton lobbyButton = new TextButton("Play", assetManager.manager.get(Assets.SKIN));
         group.addActor(lobbyButton);
 
         final TextButton settingsButton = new TextButton("Settings", assetManager.manager.get(Assets.SKIN));
         group.addActor(settingsButton);
 
-        controller.addActorListeners(lobbyButton, settingsButton); // handle input
+        final TextButton exitButton = new TextButton("Exit", assetManager.manager.get(Assets.SKIN));
+        group.addActor(exitButton);
+
+        controller.addActorListeners(lobbyButton, settingsButton, exitButton); // handle input
     }
 
     @Override

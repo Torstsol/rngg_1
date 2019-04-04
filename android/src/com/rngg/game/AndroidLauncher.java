@@ -58,7 +58,8 @@ public class AndroidLauncher extends AndroidApplication {
 			} else {
 				String message = result.getStatus().getStatusMessage();
 				if (message == null || message.isEmpty()) {
-					message = "error displaying signin " + String.valueOf(GooglePlayServicesUtil.isGooglePlayServicesAvailable(this.getContext()));
+					int errorInt = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this.getContext());
+					message = GooglePlayServicesUtil.getErrorString(errorInt);
 				}
 				new AlertDialog.Builder(this).setMessage(message)
 						.setNeutralButton(android.R.string.ok, null).show();
@@ -74,6 +75,16 @@ public class AndroidLauncher extends AndroidApplication {
 
 			if (resultCode == Activity.RESULT_OK) {
 				// Start the game!
+				if(androidAPI.mPlaying != true){
+					androidAPI.mPlaying = true;
+
+					Message message = new Message(new byte[512],"",0);
+					message.putString("START");
+
+					androidAPI.sendToAllReliably(message.getData());
+					androidAPI.roomListener.enterGameScreen();
+
+				}
 			} else if (resultCode == Activity.RESULT_CANCELED) {
 				// Waiting room was dismissed with the back button. The meaning of this
 				// action is up to the game. You may choose to leave the room and cancel the

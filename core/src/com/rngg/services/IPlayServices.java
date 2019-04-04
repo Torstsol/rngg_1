@@ -8,14 +8,13 @@ public interface IPlayServices {
     public void signOut();
     public boolean isSignedIn();
     public void sendToAllReliably(byte[] message);
-    public void sendToAllUnreliably(byte[] message);
-    public void sendToOneReliably(byte[] message, String userID);
     public void setRealTimeListener(RealtimeListener listener);
     public String getLocalID();
     public ArrayList<String> getRemotePlayers();
     public void setRoomListener(RoomListener listener);
     public void startQuickGame();
     public void startInvitePlayersRoom();
-    public void checkForInvitation();
     public void showInvitationInbox();
+    public void setMPlaying(boolean bool);
+    public void onStartGameMessageRecieved();
 }

@@ -1,5 +1,6 @@
 package com.rngg.views;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.rngg.configuration.GamePreferences;
 import com.rngg.controllers.Controller;
 import com.rngg.controllers.GameController;
 import com.rngg.game.Rngg;
@@ -23,6 +25,7 @@ public class HUDRenderer {
     private BitmapFont font;
     private GameModel gameModel;
     private Stage stage;
+    private GamePreferences pref;
 
 
     public HUDRenderer(GameModel gameModel, BitmapFont font, GameAssetManager assetManager, GameController controller) {
@@ -31,12 +34,15 @@ public class HUDRenderer {
         HUDBatch = new SpriteBatch();
         this.font = font;
         this.gameModel = gameModel;
+        pref = GamePreferences.getInstance();
 
         final TextButton defendAllButton = new TextButton("Defend All", assetManager.manager.get(Assets.SKIN));
 
         final TextButton defendCoreButton = new TextButton("Defend Core", assetManager.manager.get(Assets.SKIN));
 
         final TextButton defendFrontierButton = new TextButton("Defend Frontier", assetManager.manager.get(Assets.SKIN));
+
+        final TextButton menuButton = new TextButton("In-game menu", assetManager.manager.get(Assets.SKIN));
 
         FitViewport fitViewport = new FitViewport(Rngg.WIDTH, Rngg.HEIGHT, HUDCamera);
 
@@ -54,9 +60,10 @@ public class HUDRenderer {
         group.addActor(defendAllButton);
         group.addActor(defendCoreButton);
         group.addActor(defendFrontierButton);
+        group.addActor(menuButton);
         group.padTop(Rngg.HEIGHT*8/9); //Ghetto positioning
         controller.addInputProcessor(stage);
-        controller.addActorListeners(defendAllButton, defendCoreButton, defendFrontierButton);
+        controller.addActorListeners(defendAllButton, defendCoreButton, defendFrontierButton, menuButton);
     }
 
     public void draw() {
@@ -64,10 +71,12 @@ public class HUDRenderer {
         HUDBatch.setProjectionMatrix(HUDCamera.combined);
 
         HUDBatch.begin();
-
-        font.draw(HUDBatch,"Player " + gameModel.getPlayerIndex() + " is playing",10,Rngg.HEIGHT*19/20);
+        font.setColor(gameModel.currentPlayer().getColor());
+        font.draw(HUDBatch,"Player " + gameModel.getPlayerIndex(),10,Rngg.HEIGHT*39/40);
+        font.setColor(Color.WHITE);
+        font.draw(HUDBatch,"is playing",150,Rngg.HEIGHT*39/40);
         if(gameModel.getAttackRoll() != 0 && gameModel.getDefendRoll() != 0){
-            font.draw(HUDBatch,"You rolled: " + gameModel.getAttackRoll() + " |  Defender rolled: " + gameModel.getDefendRoll(),500,Rngg.HEIGHT*19/20);
+            font.draw(HUDBatch,"You rolled: " + gameModel.getAttackRoll() + " |  Defender rolled: " + gameModel.getDefendRoll(), Rngg.WIDTH*21/40,Rngg.HEIGHT*39/40);
         }
 
         HUDBatch.end();

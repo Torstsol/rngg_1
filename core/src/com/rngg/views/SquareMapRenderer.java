@@ -26,9 +26,9 @@ public class SquareMapRenderer extends MapRenderer<SquareMap, SquareZone, List<L
 
     @Override
     public void drawZoneText(SquareZone zone) {
-        font.draw(batch, Integer.toString(zone.getUnits()),
-                (zone.getCol() + 0.25f) * map.getZoneWidth(),
-                (zone.getRow() + 0.50f) * map.getZoneHeight()
+        font.draw(batch, "" + Integer.toString(zone.getUnits()),
+                (zone.getCol() + 0.35f) * map.getZoneWidth(),
+                (zone.getRow() + 0.70f) * map.getZoneHeight()
         );
     }
 }

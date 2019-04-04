@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Random;
 
 public class GameModel {
     public int playerScore = 0;
@@ -25,6 +24,7 @@ public class GameModel {
     private int maxUnits = 8;
     private int numPlayers;
     private GamePreferences pref;
+    private boolean inGameMenuOpen;
 
     private float attackRoll, defendRoll;
 
@@ -62,7 +62,7 @@ public class GameModel {
         for (int i = 0; i < numPlayers; i++) {
             players[i] = new Player("Player" + i, "90238049", true, pref.getColorArray().get(i));
         }
-
+        this.playerIndex = 0;
         this.contiguousAreas = new int[numPlayers];
     }
 
@@ -107,6 +107,11 @@ public class GameModel {
             return new HexMap(totalRows, totalCols, this.players, randomPlayers, zones, offset);
         }
 
+        this.updateAreas();
+        this.rng = RNG.getInstance();
+        this.attackRoll = 0;
+        this.defendRoll = 0;
+        this.inGameMenuOpen = false;
         return new SquareMap(9, 16, this.players);
     }
 
@@ -308,14 +313,13 @@ public class GameModel {
                 zones.add(hashMap.get(num));
             }
         }
-        Random rand = new Random();
         ArrayList<Zone> currentList = null;
         while (units > 0 && !zones.isEmpty()) {
             if (currentList == null) {
                 // get a new sublist
                 currentList = zones.get(0);
             }
-            Zone zone = currentList.get(rand.nextInt(currentList.size()));
+            Zone zone = RNG.choice(currentList);
             // if the zone is saturated, remove it from the sublist
             // if the sublist is empty, remove it from the list
             if (zone.getUnits() >= this.maxUnits) {
@@ -349,5 +353,13 @@ public class GameModel {
 
     public int getDefendRoll() {
         return (int) defendRoll;
+    }
+
+    public boolean isInGameMenuOpen() {
+        return inGameMenuOpen;
+    }
+
+    public void updateInGameMenu() {
+        this.inGameMenuOpen = !this.inGameMenuOpen;
     }
 }

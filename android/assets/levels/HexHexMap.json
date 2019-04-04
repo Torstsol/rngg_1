@@ -4,7 +4,7 @@
   "totalRows": 7,
   "maxPlayers": 2,
   "randomPlayers": false,
-  "skew": 0,
+  "offset": 0,
   "zones": {
     "player1": [
       [3, 5],

@@ -17,9 +17,9 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
     private float size;
     private int rows, cols;
     private HexZone[][] zones;
-    private int skew;
+    private int offset;
 
-    public HexMap(int rows, int cols, Player[] players, boolean randomPlayers, JsonValue zoneJSON, int skew) {
+    public HexMap(int rows, int cols, Player[] players, boolean randomPlayers, JsonValue zoneJSON, int offset) {
         super();
 
         Gdx.app.log(this.getClass().getSimpleName(),
@@ -33,18 +33,14 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
         this.zoneHeight = (float) 2 * size;
         this.rows = rows;
         this.cols = cols;
-        this.skew = skew;
+        this.offset = offset;
 
-        this.zones = new HexZone[rows][cols + skew + 1];
+        this.zones = new HexZone[rows][cols + offset + 1];
         this.initializeZones(players, randomPlayers, decodeZoneJSON(zoneJSON));
     }
 
     public HexMap(int rows, int cols, Player[] players) {
         this(rows, cols, players, true, null, 0);
-    }
-
-    public float getSize() {
-        return size;
     }
 
     @Override
@@ -79,23 +75,23 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
         HashMap<HexZone, ArrayList<HexZone>> zones = new HashMap<HexZone, ArrayList<HexZone>>();
 
         if (customZones == null) {
-            int colSkew = rows / 2;
-            int cut = 0;
+            int startIndex = rows / 2;
+            int endCut = 0;
             for (int row = 0; row < rows; row++) {
-                for (int col = colSkew; col < rows; col++) {
+                for (int col = startIndex; col < rows; col++) {
                     HexZone zone = new HexZone(players[(int) (Math.random() * (players.length))], row, col);
                     this.zones[row][col] = zone;
                     Gdx.app.log(this.getClass().getSimpleName(), "generated: " + zone.toString());
 
-                    if (col >= rows - cut) break;
+                    if (col >= rows - endCut) break;
                 }
 
-                if (row < rows / 2 && colSkew > 0) {
-                    colSkew--;
+                if (startIndex > 0) {
+                    startIndex--;
                 }
 
-                if (colSkew == 0) {
-                    cut++;
+                if (startIndex == 0) {
+                    endCut++;
                 }
             }
 
@@ -108,6 +104,7 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
         } else {
             int playerNum = 0;
             for (List<int[]> playerZones : customZones) {
+
                 int rowNum = 0;
                 for (int[] row : playerZones) {
                     for (int col : row) {
@@ -119,12 +116,13 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
                             zone = new HexZone(players[playerNum], rowNum, col);
                         }
 
-                        this.zones[rowNum][col + this.skew] = zone;
+                        this.zones[rowNum][col + this.offset] = zone;
                         Gdx.app.log(this.getClass().getSimpleName(), "generated: " + zone.toString());
                     }
 
                     rowNum++;
                 }
+
                 playerNum++;
             }
 
@@ -139,9 +137,9 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
     }
 
     private HexZone getZone(int row, int col) {
-        if (row > rows - 1 || col > cols + this.skew || row < 0 || col + this.skew < 0) return null;
+        if (row > rows - 1 || col > cols + this.offset || row < 0 || col + this.offset < 0) return null;
 
-        return this.zones[row][col + this.skew];
+        return this.zones[row][col + this.offset];
     }
 
     private ArrayList<HexZone> generateNeighbors(HexZone zone) {
@@ -153,8 +151,8 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
         int col = zone.getCol();
 
         HexZone neighbor;
-        for (int i = -1; i < 2; i++) {
-            for (int j = -1; j < 2; j++) {
+        for (int i = 0; i < 2; i++) {
+            for (int j = -1; j < 1; j++) {
                 neighbor = getZone(row + i, col + j);
 
                 if (neighbor != null) ret.add(neighbor);
@@ -162,6 +160,10 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
         }
 
         return ret;
+    }
+
+    public float getSize() {
+        return size;
     }
 
     public float getZoneWidth() {
@@ -172,5 +174,4 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
         return zoneHeight;
     }
 
-    public int getSkew() { return skew; }
 }

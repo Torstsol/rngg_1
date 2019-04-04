@@ -12,16 +12,15 @@ import com.rngg.utils.GameAssetManager;
 abstract public class View implements Screen {
 
     protected OrthographicCamera camera;
-    protected GameAssetManager assetManager;
     protected BitmapFont font; // default font
+    protected GameAssetManager assetManager;
 
-    public View(GameAssetManager assetManager) {
-        this.assetManager = assetManager;
-
+    public View() {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Rngg.WIDTH, Rngg.HEIGHT);
 
-        font = assetManager.manager.get(Assets.MINECRAFTIA);
+        font = GameAssetManager.getInstance().manager.get(Assets.FONT);
+        assetManager = GameAssetManager.getInstance();
     }
 
     @Override

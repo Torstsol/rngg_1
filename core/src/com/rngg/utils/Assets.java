@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 public class Assets {
 
     public static final AssetDescriptor<BitmapFont>
-            MINECRAFTIA = new AssetDescriptor("fonts/yaheilight.fnt", BitmapFont.class);
+            FONT = new AssetDescriptor("fonts/yaheilight.fnt", BitmapFont.class);
 
     public static final AssetDescriptor<Skin> SKIN = new AssetDescriptor("skins/flat-earth/skin/flat-earth-ui.json", Skin.class);
 

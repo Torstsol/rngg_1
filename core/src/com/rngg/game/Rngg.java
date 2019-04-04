@@ -3,8 +3,6 @@ package com.rngg.game;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
 import com.rngg.services.IPlayServices;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;

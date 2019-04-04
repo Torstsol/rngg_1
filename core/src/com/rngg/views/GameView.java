@@ -10,7 +10,6 @@ import com.rngg.controllers.GameController;
 import com.rngg.game.Rngg;
 import com.rngg.models.Player;
 import com.rngg.models.SquareMap;
-import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
 
 import java.util.List;
@@ -20,35 +19,32 @@ public class GameView extends View {
     private GameController controller;
 
     private SpriteBatch batch;
-    private BitmapFont font;
     private MapRenderer mapRenderer;
-    private ShapeRenderer sr;
+    private ShapeRenderer shapeRenderer;
     private List<Player> players;
     private HUDRenderer hudRenderer;
     private InGameMenuRenderer inGameMenuRenderer;
 
 
-    public GameView(GameAssetManager assetManager, GameController controller, List<Player> players) {
-        super(assetManager);
+    public GameView(GameController controller, List<Player> players) {
         camera.viewportHeight = Rngg.HEIGHT * 10 / 8;
 
         this.controller = controller;
         this.players = players;
 
         batch = new SpriteBatch();
-        font = assetManager.manager.get(Assets.MINECRAFTIA);
         font.setColor(Color.WHITE);
-        this.sr = new ShapeRenderer();
-        mapRenderer = new SquareMapRenderer((SquareMap) controller.gameModel.getMap(), sr, batch, font);
-        hudRenderer = new HUDRenderer(controller.gameModel, font, assetManager, controller);
-        inGameMenuRenderer = new InGameMenuRenderer(controller.gameModel, font, assetManager, controller, sr);
+        this.shapeRenderer = new ShapeRenderer();
+        mapRenderer = new SquareMapRenderer((SquareMap) controller.gameModel.getMap(), shapeRenderer, batch, font);
+        hudRenderer = new HUDRenderer(controller.gameModel, font, GameAssetManager.getInstance(), controller);
+        inGameMenuRenderer = new InGameMenuRenderer(controller.gameModel, font, GameAssetManager.getInstance(), controller, shapeRenderer);
     }
 
     @Override
     public void render(float delta) {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-        sr.setProjectionMatrix(camera.combined);
+        shapeRenderer.setProjectionMatrix(camera.combined);
 
         controller.update(delta);
         controller.setCamera(camera);
@@ -62,7 +58,7 @@ public class GameView extends View {
     }
 
     public ShapeRenderer getSR() {
-        return this.sr;
+        return this.shapeRenderer;
     }
 
     public BitmapFont getFont() {

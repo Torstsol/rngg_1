@@ -1,8 +1,8 @@
 package com.rngg.utils;
 
 // TODO only used for Arrays.toString() in main, remove before merging
+
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 

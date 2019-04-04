@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.rngg.controllers.LobbyController;
 import com.rngg.game.Rngg;
 import com.rngg.utils.Assets;
-import com.rngg.utils.GameAssetManager;
 
 public class LobbyView extends View {
 
@@ -21,9 +20,7 @@ public class LobbyView extends View {
 
     private Stage stage;
 
-    public LobbyView(GameAssetManager assetManager, LobbyController controller) {
-        super(assetManager);
-
+    public LobbyView(LobbyController controller) {
         this.controller = controller;
 
         batch = new SpriteBatch();
@@ -55,7 +52,7 @@ public class LobbyView extends View {
         final TextButton localGameButton = new TextButton("Local Game", assetManager.manager.get(Assets.SKIN));
         group.addActor(localGameButton);
 
-        final TextButton menuButton = new TextButton("Cancel", assetManager.manager.get(Assets.SKIN));
+        final TextButton menuButton = new TextButton("Back", assetManager.manager.get(Assets.SKIN));
         group.addActor(menuButton);
 
         controller.addActorListeners(quickGameButton, invitePlayersButton, seeInvitationButton, localGameButton, menuButton); // handle input

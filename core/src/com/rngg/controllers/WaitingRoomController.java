@@ -1,6 +1,5 @@
 package com.rngg.controllers;
 
-import com.badlogic.gdx.utils.Sort;
 import com.rngg.configuration.GamePreferences;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
@@ -10,13 +9,10 @@ import com.rngg.services.IPlayServices;
 import com.rngg.services.Message;
 import com.rngg.services.RealtimeListener;
 import com.rngg.services.RoomListener;
-import com.rngg.views.GameView;
 import com.rngg.views.WaitingRoomView;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Random;
 
 public class WaitingRoomController extends Controller implements RoomListener, RealtimeListener {
 

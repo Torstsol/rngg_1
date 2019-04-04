@@ -1,16 +1,11 @@
 package com.rngg.controllers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
 import com.rngg.models.WaitingRoomModel;
-
-import javax.xml.soap.Text;
 
 public class LobbyController extends Controller {
 

@@ -1,7 +1,6 @@
 package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -20,7 +19,6 @@ import com.rngg.controllers.SettingsController;
 import com.rngg.game.Rngg;
 import com.rngg.models.SettingsModel;
 import com.rngg.utils.Assets;
-import com.rngg.utils.GameAssetManager;
 
 public class SettingsView extends View {
 
@@ -51,16 +49,14 @@ public class SettingsView extends View {
     private TextButton color4Button;
 
 
-    public SettingsView(GameAssetManager assetManager, SettingsController controller) {
-        super(assetManager);
-
+    public SettingsView(SettingsController controller) {
         this.controller = controller;
 
         sr = new ShapeRenderer();
 
         shapeType = ShapeRenderer.ShapeType.Filled;
 
-        font = assetManager.manager.get(Assets.MINECRAFTIA);
+        font = assetManager.manager.get(Assets.FONT);
         font.setColor(Color.WHITE);
 
         pref = GamePreferences.getInstance();
@@ -134,7 +130,7 @@ public class SettingsView extends View {
         final TextButton toggleMusic = new TextButton("Music [" + (pref.isMusicEnabled() ? "enabled" : "disabled") + "]", assetManager.manager.get(Assets.SKIN));
         group2.addActor(toggleMusic);
 
-        final TextButton menuButton = new TextButton("Cancel", assetManager.manager.get(Assets.SKIN));
+        final TextButton menuButton = new TextButton("Back", assetManager.manager.get(Assets.SKIN));
         group3.addActor(menuButton);
 
 

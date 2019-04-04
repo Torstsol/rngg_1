@@ -33,7 +33,7 @@ public class HexMapRenderer extends MapRenderer<HexMap, HexZone, List<List<int[]
                 + map.getSize() * (float) (Math.sqrt(3) * getCol(zone)
                 + Math.sqrt(3) / 2) - (float) (Math.sqrt(3) * map.getSize() / 2);
 
-        float centerY = map.getSize() * (3f / 2 * zone.getRow());
+        float centerY = map.getSize() + map.getSize() * (3f / 2 * zone.getRow());
 
         if (zone.getRow() % 2 != 0) {
             centerX += map.getZoneWidth() / 2;
@@ -67,7 +67,7 @@ public class HexMapRenderer extends MapRenderer<HexMap, HexZone, List<List<int[]
                 + map.getSize() * (float) (Math.sqrt(3) * getCol(zone)
                 + Math.sqrt(3) / 2) - (float) (Math.sqrt(3) * map.getSize() / 2);
 
-        float centerY = map.getSize() * (3f / 2 * zone.getRow());
+        float centerY = map.getSize() + map.getSize() * (3f / 2 * zone.getRow());
 
         if (zone.getRow() % 2 != 0) {
             centerX += map.getZoneWidth() / 2;

@@ -64,8 +64,8 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
 
     @Override
     public HexZone _screenCoordToZone(Vector2 coords) {
-        double q = (Math.sqrt(3)/3 * (coords.x - size / 2)  -  1./3 * coords.y) / size;
-        double r =  (2./3 * coords.y) / size;
+        double q = (Math.sqrt(3)/3 * (coords.x - size / 2)  -  1./3 * (coords.y - size)) / size;
+        double r =  (2./3 * (coords.y - size)) / size;
 
         Hex hex = Hex.hexRound(new Hex(q, r));
         return getZone((int) hex.getR(), (int) hex.getQ());
@@ -151,8 +151,10 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
         int col = zone.getCol();
 
         HexZone neighbor;
-        for (int i = 0; i < 2; i++) {
-            for (int j = -1; j < 1; j++) {
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (i == j) continue;
+
                 neighbor = getZone(row + i, col + j);
 
                 if (neighbor != null) ret.add(neighbor);

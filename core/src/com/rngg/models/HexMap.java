@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
     private float zoneWidth, zoneHeight;
 
@@ -26,6 +27,7 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
                 "Creating HexMap" + "[" + rows + "][" + cols + "]"
         );
 
+        // The size is the length from a corner to the middle
         this.size = (float) (Rngg.HEIGHT / rows) - (float) (Rngg.HEIGHT / (rows * 3));
 
         this.shapetype = ShapeRenderer.ShapeType.Filled;
@@ -35,6 +37,7 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
         this.cols = cols;
         this.offset = offset;
 
+        // Need tp extend the array to support offset of negative indexes
         this.zones = new HexZone[rows][cols + offset + 1];
         this.initializeZones(players, randomPlayers, decodeZoneJSON(zoneJSON));
     }
@@ -43,6 +46,12 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
         this(rows, cols, players, true, null, 0);
     }
 
+
+    /*
+     *   The ZoneFormat return value is set to be List<List<int[]>>
+     *   This is because the JSON-files for this map type fits well as a 3 dimensional list
+     *   The inner list is primitive int[] because the JsonValue only deals in primitives
+     */
     @Override
     public List<List<int[]>> decodeZoneJSON(JsonValue zones) {
         if (zones == null) return null;
@@ -64,9 +73,12 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
 
     @Override
     public HexZone _screenCoordToZone(Vector2 coords) {
+        // Values are offset a bit to fit with the rendering of the map
+        // The rendering is offset to not draw the map exactly at coordinate (0,0)
         double q = (Math.sqrt(3)/3 * (coords.x - size / 2)  -  1./3 * (coords.y - size)) / size;
         double r =  (2./3 * (coords.y - size)) / size;
 
+        // The q (column) and r (row) coordinates must be rounded to match their corresponding integer values
         Hex hex = Hex.hexRound(new Hex(q, r));
         return getZone((int) hex.getR(), (int) hex.getQ());
     }
@@ -74,7 +86,10 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
     private void initializeZones(Player[] players, boolean randomPlayers, List<List<int[]>> customZones) {
         HashMap<HexZone, ArrayList<HexZone>> zones = new HashMap<HexZone, ArrayList<HexZone>>();
 
+        // When there's no custom map, the default rendered map is a hexagonal HexMap
         if (customZones == null) {
+            // indexes are offset to match 2D array storage
+            // ref: https://www.redblobgames.com/grids/hexagons/#map-storage
             int startIndex = rows / 2;
             int endCut = 0;
             for (int row = 0; row < rows; row++) {
@@ -150,6 +165,8 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
         int row = zone.getRow();
         int col = zone.getCol();
 
+        // Generated according to ref: https://www.redblobgames.com/grids/hexagons/#neighbors-axial
+
         HexZone neighbor;
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
@@ -171,9 +188,4 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
     public float getZoneWidth() {
         return zoneWidth;
     }
-
-    public float getZoneHeight() {
-        return zoneHeight;
-    }
-
 }

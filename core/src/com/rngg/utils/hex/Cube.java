@@ -25,11 +25,11 @@ public class Cube {
         double zDiff = Math.abs(rz - cube.z);
 
         if (xDiff > yDiff && xDiff > zDiff) {
-            rx = -ry-rz;
+            rx = -ry - rz;
         } else if(yDiff > zDiff) {
-            ry = -rx-rz;
+            ry = -rx - rz;
         } else {
-            rz = -rx-ry;
+            rz = -rx - ry;
         }
 
         return new Cube(rx, ry, rz);

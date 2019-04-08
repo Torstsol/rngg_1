@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.rngg.controllers.GameController;
 import com.rngg.game.Rngg;
+import com.rngg.models.GameMap;
+import com.rngg.models.HexMap;
 import com.rngg.models.Player;
 import com.rngg.models.SquareMap;
 import com.rngg.utils.GameAssetManager;
@@ -25,9 +27,8 @@ public class GameView extends View {
     private HUDRenderer hudRenderer;
     private InGameMenuRenderer inGameMenuRenderer;
 
-
     public GameView(GameController controller, List<Player> players) {
-        camera.viewportHeight = Rngg.HEIGHT * 10 / 8;
+        camera.viewportHeight = (float) (Rngg.HEIGHT * 10 / 8);
 
         this.controller = controller;
         this.players = players;
@@ -35,7 +36,7 @@ public class GameView extends View {
         batch = new SpriteBatch();
         font.setColor(Color.WHITE);
         this.shapeRenderer = new ShapeRenderer();
-        mapRenderer = new SquareMapRenderer((SquareMap) controller.gameModel.getMap(), shapeRenderer, batch, font);
+        mapRenderer = getMapRenderer();
         hudRenderer = new HUDRenderer(controller.gameModel, font, GameAssetManager.getInstance(), controller);
         inGameMenuRenderer = new InGameMenuRenderer(controller.gameModel, font, GameAssetManager.getInstance(), controller, shapeRenderer);
     }
@@ -55,6 +56,18 @@ public class GameView extends View {
         mapRenderer.draw();
         hudRenderer.draw();
         inGameMenuRenderer.draw();
+    }
+
+    private MapRenderer getMapRenderer() {
+        GameMap map = controller.gameModel.getMap();
+
+        if (map instanceof SquareMap) {
+            return new SquareMapRenderer((SquareMap) map, shapeRenderer, batch, font);
+        } else if (map instanceof HexMap) {
+            return new HexMapRenderer((HexMap) map, shapeRenderer, batch, font);
+        }
+
+        return null;
     }
 
     public ShapeRenderer getSR() {

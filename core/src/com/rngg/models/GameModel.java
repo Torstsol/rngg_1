@@ -50,7 +50,7 @@ public class GameModel {
             this.map = loadMap(fileName);
         } else {
             initializePlayerAndAreas();
-            this.map = new SquareMap(9, 16, players);
+            this.map = new HexMap(7, 7, players);
         }
 
         this.updateAreas();
@@ -72,6 +72,7 @@ public class GameModel {
         int totalRows = -1;
         int maxPlayers = -1;
         boolean randomPlayers = false;
+        int offset = 0;
         JsonValue zones = null;
 
         JsonValue json = new JsonReader().parse(Gdx.files.internal(fileName).readString());
@@ -85,8 +86,10 @@ public class GameModel {
                 totalRows = value.asInt();
             } else if (value.name.equals("maxPlayers")) {
                 maxPlayers = value.asInt();
-            }else if (value.name.equals("randomPlayers")) {
+            } else if (value.name.equals("randomPlayers")) {
                 randomPlayers = value.asBoolean();
+            } else if (value.name.equals("offset")) {
+                offset = value.asInt();
             } else if (value.name.equals("zones")) {
                 zones = value;
             }
@@ -100,6 +103,8 @@ public class GameModel {
 
         if (mapType.equals("SquareMap")) {
             return new SquareMap(totalRows, totalCols, this.players, randomPlayers, zones);
+        } else if (mapType.equals("HexMap")) {
+            return new HexMap(totalRows, totalCols, this.players, randomPlayers, zones, offset);
         }
 
         this.updateAreas();

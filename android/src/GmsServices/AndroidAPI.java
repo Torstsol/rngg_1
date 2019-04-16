@@ -450,11 +450,18 @@ public class AndroidAPI implements IPlayServices {
         Player[] players = new Player[mRoom.getParticipantIds().size()];
 
         for (int i = 0; i < mRoom.getParticipants().size(); i++) {
-            if(!mRoom.getParticipants().get(0).getParticipantId().equals(getLocalID())){
+            /*if(!mRoom.getParticipants().get(0).getParticipantId().equals(getLocalID())){
                 players[i] = new Player(mRoom.getParticipants().get(i).getDisplayName(), mRoom.getParticipants().get(i).getParticipantId(), false, pref.getColorArray().get(i));
             }
             else {
                 players[i] = new Player(mRoom.getParticipants().get(i).getDisplayName(), mRoom.getParticipants().get(i).getParticipantId(), true, pref.getColorArray().get(i));
+            }*/
+            Participant player = mRoom.getParticipants().get(i);
+            if(!player.getParticipantId().equals(getLocalID())){
+                players[i] = new Player(player.getDisplayName(), player.getParticipantId(), false, pref.getEnemyColorArray().get(i));
+            }
+            else {
+                players[i] = new Player(player.getDisplayName(), player.getParticipantId(), true, pref.getMainColor());
             }
         }
         return players;

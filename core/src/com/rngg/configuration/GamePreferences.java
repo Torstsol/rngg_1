@@ -39,7 +39,7 @@ public class GamePreferences {
     }
 
     public void setTrueColors(){
-        this.setColors("255,0,0", "0,255,0", "0,0,255", "255,255,0");
+        this.setColors("200,0,0", "0,200,0", "0,0,200", "200,200,0");
         prefs.flush();
     }
 

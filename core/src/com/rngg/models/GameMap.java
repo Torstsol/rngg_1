@@ -6,7 +6,6 @@ import com.badlogic.gdx.utils.JsonValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class GameMap<Z extends Zone, ZoneFormat> {
 
@@ -25,6 +24,8 @@ public abstract class GameMap<Z extends Zone, ZoneFormat> {
     public ArrayList<Z> _getPlayerZones(Player player) {
         ArrayList<Z> ret = new ArrayList<Z>();
         for (Z zone : neighbors.keySet()) {
+            if (zone == null) continue;
+
             if (zone.getPlayer().equals(player)) {
                 ret.add(zone);
             }

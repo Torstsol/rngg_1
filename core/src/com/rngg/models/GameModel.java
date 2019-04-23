@@ -50,7 +50,6 @@ public class GameModel implements RealtimeListener{
 
     public GameModel(Player[] players) {
         this(players, "");
-
     }
 
     public void setMap(String fileName) {
@@ -64,6 +63,15 @@ public class GameModel implements RealtimeListener{
         this.updateAreas();
     }
 
+    private void initializePlayerAndAreas() {
+        pref = GamePreferences.getInstance();
+        this.players = new Player[numPlayers];
+        for (int i = 0; i < numPlayers; i++) {
+            players[i] = new Player("Player" + i, "90238049", true, pref.getColorArray().get(i));
+        }
+        this.playerIndex = 0;
+        this.contiguousAreas = new int[numPlayers];
+    }
 
     private GameMap loadMap(String fileName) {
         String mapType = "";
@@ -71,6 +79,7 @@ public class GameModel implements RealtimeListener{
         int totalRows = -1;
         int maxPlayers = -1;
         boolean randomPlayers = false;
+        int offset = 0;
         JsonValue zones = null;
 
         JsonValue json = new JsonReader().parse(Gdx.files.internal(fileName).readString());
@@ -84,8 +93,10 @@ public class GameModel implements RealtimeListener{
                 totalRows = value.asInt();
             } else if (value.name.equals("maxPlayers")) {
                 maxPlayers = value.asInt();
-            }else if (value.name.equals("randomPlayers")) {
+            } else if (value.name.equals("randomPlayers")) {
                 randomPlayers = value.asBoolean();
+            } else if (value.name.equals("offset")) {
+                offset = value.asInt();
             } else if (value.name.equals("zones")) {
                 zones = value;
             }
@@ -95,8 +106,12 @@ public class GameModel implements RealtimeListener{
             this.numPlayers = maxPlayers;
         }
 
+        //initializePlayerAndAreas();
+
         if (mapType.equals("SquareMap")) {
             return new SquareMap(totalRows, totalCols, this.players, randomPlayers, zones);
+        } else if (mapType.equals("HexMap")) {
+            return new HexMap(totalRows, totalCols, this.players, randomPlayers, zones, offset);
         }
 
         this.updateAreas();

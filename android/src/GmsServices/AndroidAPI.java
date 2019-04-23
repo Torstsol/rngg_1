@@ -473,6 +473,10 @@ public class AndroidAPI implements IPlayServices {
         return false;
     }
 
+    public void leaveGame(){
+        mPlaying = false;
+    }
+
 
 }
 

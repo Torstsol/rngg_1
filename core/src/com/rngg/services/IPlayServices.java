@@ -21,4 +21,5 @@ public interface IPlayServices {
     public void onStartGameMessageRecieved();
     public boolean isHost();
     public Player[] getPlayers();
+    public void leaveGame();
 }

@@ -134,6 +134,7 @@ public class GameController extends Controller {
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                game.getAPI().leaveGame();
                 game.screenManager.setMenuScreen();
             }
         });

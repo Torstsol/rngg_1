@@ -37,12 +37,14 @@ public class SettingsController extends Controller {
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.log(this.getClass().getSimpleName(), "colors updated");
                 pref.setCbMode(!pref.getCbMode());
+                System.out.println("Cb mode: " + pref.getCbMode());
                 if (pref.getCbMode()){
                     pref.setColors("213,0,0", "240,228,66", "0,114,178", "86,180,233");
+                    cbSettingsButton.setText("Colorblind mode [enabled]");
                 } else {
                     pref.setColors("200,0,0", "0,200,0", "0,0,200", "200,200,0");
+                    cbSettingsButton.setText("Colorblind mode [disabled]");
                 }
-                cbSettingsButton.setText("Colorblind mode [" + pref.getCbModeString() + "]");
             }
         });
 

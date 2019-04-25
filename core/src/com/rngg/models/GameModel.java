@@ -41,10 +41,19 @@ public class GameModel implements RealtimeListener{
         this.playerIndex = 0;
         this.attackRoll = 0;
         this.defendRoll = 0;
-
-        this.players = players;
+        if(players == null){
+            pref = GamePreferences.getInstance();
+            this.players = new Player[4];
+            this.players[0] = new Player("You", "6969", true, pref.getColorArray().get(0));
+            for (int i = 1; i < 4; i++) {
+                this.players[i] = new Player("BOT" + i, "6969", true, pref.getColorArray().get(i));
+            }
+        }
+        else{
+            this.players = players;
+        }
         this.rng = RNG.getInstance();
-        this.contiguousAreas = new int[players.length];
+        this.contiguousAreas = new int[this.players.length];
         this.setMap(mapFileName);
     }
 

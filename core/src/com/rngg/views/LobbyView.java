@@ -34,25 +34,30 @@ public class LobbyView extends View {
 
         VerticalGroup group = new VerticalGroup();
         group.grow();
-        group.space(8);
+        group.space(30);
         table.add(group);
 
         stage.addActor(table);
 
 
         final TextButton quickGameButton = new TextButton("Quick Game", assetManager.manager.get(Assets.SKIN));
+        quickGameButton.getLabel().setFontScale(2f);
         group.addActor(quickGameButton);
 
         final TextButton invitePlayersButton = new TextButton("Invite Players", assetManager.manager.get(Assets.SKIN));
+        invitePlayersButton.getLabel().setFontScale(2f);
         group.addActor(invitePlayersButton);
 
         final TextButton seeInvitationButton = new TextButton("Invitations", assetManager.manager.get(Assets.SKIN));
+        seeInvitationButton.getLabel().setFontScale(2f);
         group.addActor(seeInvitationButton);
 
         final TextButton localGameButton = new TextButton("Local Game", assetManager.manager.get(Assets.SKIN));
+        localGameButton.getLabel().setFontScale(2f);
         group.addActor(localGameButton);
 
         final TextButton menuButton = new TextButton("Back", assetManager.manager.get(Assets.SKIN));
+        menuButton.getLabel().setFontScale(2f);
         group.addActor(menuButton);
 
         controller.addActorListeners(quickGameButton, invitePlayersButton, seeInvitationButton, localGameButton, menuButton); // handle input

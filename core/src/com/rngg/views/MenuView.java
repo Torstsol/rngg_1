@@ -33,31 +33,51 @@ public class MenuView extends View {
         controller.setInputProcessor(stage);
 
         Table table = new Table();
+        table.defaults().pad(40f);
         table.setFillParent(true);
 
-        VerticalGroup group = new VerticalGroup();
-        group.grow();
-        group.space(8);
-        table.add(group);
+        Table imageTable = new Table();
+        imageTable.row();
+        //imageTable.setFillParent(true);
+
+        Table buttonTable = new Table();
+        buttonTable.row();
+        //buttonTable.setFillParent(true);
+
+        table.add(imageTable);
+        table.add(buttonTable);
+
+        VerticalGroup imageGroup = new VerticalGroup();
+        imageGroup.grow();
+        imageTable.add(imageGroup);
+
+        VerticalGroup buttonGroup = new VerticalGroup();
+        buttonGroup.grow();
+        buttonGroup.space(50);
+        buttonTable.add(buttonGroup).width(300);
 
         stage.addActor(table);
 
         final Texture logoTexture = assetManager.manager.get(Assets.LOGO);
         final Image logoImage = new Image(logoTexture);
+        //logoImage.setOrigin(Rngg.WIDTH/2, Rngg.HEIGHT/2);
 
-        group.addActor(logoImage);
+        imageGroup.addActor(logoImage);
 
         final Label label = new Label("Are you ready to expand your empire?", assetManager.manager.get(Assets.SKIN));
-        group.addActor(label);
+        buttonGroup.addActor(label);
 
         final TextButton lobbyButton = new TextButton("Play", assetManager.manager.get(Assets.SKIN));
-        group.addActor(lobbyButton);
+        lobbyButton.getLabel().setFontScale(2f);
+        buttonGroup.addActor(lobbyButton);
 
         final TextButton settingsButton = new TextButton("Settings", assetManager.manager.get(Assets.SKIN));
-        group.addActor(settingsButton);
+        settingsButton.getLabel().setFontScale(2f);
+        buttonGroup.addActor(settingsButton);
 
         final TextButton exitButton = new TextButton("Exit", assetManager.manager.get(Assets.SKIN));
-        group.addActor(exitButton);
+        exitButton.getLabel().setFontScale(2f);
+        buttonGroup.addActor(exitButton);
 
         controller.addActorListeners(lobbyButton, settingsButton, exitButton); // handle input
     }

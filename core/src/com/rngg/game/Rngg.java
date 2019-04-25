@@ -39,7 +39,7 @@ public class Rngg extends Game {
         assetManager.loadImages();
         assetManager.loadFonts();
         assetManager.loadSkin();
-        assetManager.loadMusic();
+        //assetManager.loadMusic();
         assetManager.loadSounds();
         assetManager.manager.finishLoading();
 

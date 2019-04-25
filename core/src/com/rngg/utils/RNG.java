@@ -47,7 +47,7 @@ public class RNG {
     }
 
     public static int nextInt(int min, int max) {
-        int ret = RNG.generator.nextInt(max - min) + min;
+        int ret = RNG.generator.nextInt(max + 1 - min) + min;
         RNG.newSeed();
         return ret;
     }

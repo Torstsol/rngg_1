@@ -31,6 +31,9 @@ public class GameModel implements RealtimeListener{
     private GamePreferences pref;
     private boolean inGameMenuOpen;
     private IPlayServices sender;
+    public Player host;
+    public Player localPlayer;
+
 
     private float attackRoll, defendRoll;
 
@@ -41,16 +44,29 @@ public class GameModel implements RealtimeListener{
         this.playerIndex = 0;
         this.attackRoll = 0;
         this.defendRoll = 0;
+
+        //support for localgame, generates players or "bots"
         if(players == null){
             pref = GamePreferences.getInstance();
             this.players = new Player[4];
-            this.players[0] = new Player("You", "6969", true, pref.getColorArray().get(0));
+            this.players[0] = new Player("You", "6969", true, true, pref.getColorArray().get(0));
+            this.host = this.players[0];
+            this.localPlayer = this.players[0];
             for (int i = 1; i < 4; i++) {
-                this.players[i] = new Player("BOT" + i, "6969", true, pref.getColorArray().get(i));
+                this.players[i] = new Player("BOT" + i, "6969", true, false, pref.getColorArray().get(i));
             }
         }
         else{
             this.players = players;
+            for (int i = 0; i < players.length; i++) {
+                if(players[i].isHost == true){
+                    this.host = players[i];
+                }
+                if (players[i].isLocal == true){
+                    this.localPlayer = players[i];
+                }
+            }
+
         }
         this.rng = RNG.getInstance();
         this.contiguousAreas = new int[this.players.length];
@@ -75,8 +91,7 @@ public class GameModel implements RealtimeListener{
     private void initializePlayerAndAreas() {
         pref = GamePreferences.getInstance();
         this.players = new Player[numPlayers];
-        for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player("Player" + i, "90238049", true, pref.getColorArray().get(i));
+        for (int i = 0; i < numPlayers; i++) { //players[i] = new Player("Player" + i, "90238049", true,  pref.getColorArray().get(i));
         }
         this.playerIndex = 0;
         this.contiguousAreas = new int[numPlayers];

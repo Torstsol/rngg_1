@@ -430,6 +430,11 @@ public class AndroidAPI implements IPlayServices {
         return mRoom.getParticipantIds().get(0).equals(mMyParticipantId);
     }
 
+    public String hostID(){
+        Collections.sort(mRoom.getParticipantIds());
+        return mRoom.getParticipantIds().get(0);
+    }
+
 
 
     // returns whether there are enough players to start the game
@@ -458,10 +463,10 @@ public class AndroidAPI implements IPlayServices {
             }*/
             Participant player = mRoom.getParticipants().get(i);
             if(!player.getParticipantId().equals(getLocalID())){
-                players[i] = new Player(player.getDisplayName(), player.getParticipantId(), false, pref.getEnemyColorArray().get(i));
+                players[i] = new Player(player.getDisplayName(), player.getParticipantId(), false, this.hostID() == player.getParticipantId(), pref.getEnemyColorArray().get(i));
             }
             else {
-                players[i] = new Player(player.getDisplayName(), player.getParticipantId(), true, pref.getMainColor());
+                players[i] = new Player(player.getDisplayName(), player.getParticipantId(), true, this.hostID() == player.getParticipantId(), pref.getMainColor());
             }
         }
         return players;

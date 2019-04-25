@@ -82,7 +82,7 @@ public class SettingsView extends View {
 
         Table second_table = new Table();
         second_table.defaults().pad(10F);
-        second_table.add(new Label("Colorblind settings", skin)).row();
+        second_table.row();
 
         Table third_table = new Table();
         third_table.defaults().pad(10F);
@@ -95,17 +95,16 @@ public class SettingsView extends View {
 
         VerticalGroup group1 = new VerticalGroup();
         group1.grow();
-        group1.space(20);
+        group1.space(30);
         first_table.add(group1).width(300);
 
         VerticalGroup group2 = new VerticalGroup();
         group2.grow();
-        group2.space(8);
+        group2.space(30);
         second_table.add(group2).width(500);
 
         VerticalGroup group3 = new VerticalGroup();
         group3.grow();
-        group3.space(8);
         third_table.add(group3);
 
         stage.addActor(table);
@@ -113,24 +112,31 @@ public class SettingsView extends View {
         settingsModel = new SettingsModel();
 
         color1Button = new TextButton("Color 1", skin);
+        color1Button.getLabel().setFontScale(1.5f);
         group1.addActor(color1Button);
 
         color2Button = new TextButton("Color 2", skin);
+        color2Button.getLabel().setFontScale(1.5f);
         group1.addActor(color2Button);
 
         color3Button = new TextButton("Color 3", skin);
+        color3Button.getLabel().setFontScale(1.5f);
         group1.addActor(color3Button);
 
         color4Button = new TextButton("Color 4", skin);
+        color4Button.getLabel().setFontScale(1.5f);
         group1.addActor(color4Button);
 
-        cbSettingsButton = new TextButton("Colorblind mode [" + pref.getCbModeString() + "]", skin);
+        cbSettingsButton = new TextButton("Colorblind mode [" + (pref.getCbMode() ? "enabled" : "disabled") + "]", skin);
+        cbSettingsButton.getLabel().setFontScale(1.5f);
         group2.addActor(cbSettingsButton);
 
-        final TextButton toggleMusic = new TextButton("Music [" + (pref.isMusicEnabled() ? "enabled" : "disabled") + "]", assetManager.manager.get(Assets.SKIN));
+        final TextButton toggleMusic = new TextButton("Music [" + (pref.isMusicEnabled() ? "enabled" : "disabled") + "]", skin);
+        toggleMusic.getLabel().setFontScale(1.5f);
         group2.addActor(toggleMusic);
 
         final TextButton menuButton = new TextButton("Back", assetManager.manager.get(Assets.SKIN));
+        menuButton.getLabel().setFontScale(1.5f);
         group3.addActor(menuButton);
 
 

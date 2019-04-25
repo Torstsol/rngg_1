@@ -106,6 +106,7 @@ public class GamePreferences {
 
     public void setCbMode(boolean b) {
         prefs.putBoolean("colorblind mode", b);
+        prefs.flush();
     }
 
     public boolean hasColors(){

@@ -2,7 +2,9 @@ package com.rngg.utils;
 
 // TODO only used for Arrays.toString() in main, remove before merging
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -124,13 +126,16 @@ public class RNG {
         rollResult = ret;
     }
 
-    public float valueFromRoll() {
+    public ArrayList<Float> valueFromRoll() {
         // takes an array of indices, returns sum of values
+        ArrayList<Float> result = new ArrayList<Float>();
         float sum = 0;
         for (int i : rollResult) {
+            result.add(values[i]);
             sum += values[i];
         }
-        return sum;
+        result.add(0, sum);
+        return result;
     }
 
     public String[] labelFromRoll() {

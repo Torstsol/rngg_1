@@ -77,8 +77,15 @@ public class SettingsView extends View {
         label.setAlignment(Align.center);
 
         Table first_table = new Table();
-        first_table.defaults().pad(10F);
-        first_table.add(new Label("Choose your color", skin)).row();
+        //first_table.defaults().padRight(100f);
+
+        Table color_choose_table = new Table();
+        color_choose_table.defaults().pad(10F);
+        color_choose_table.add(new Label("Choose your color", skin)).row();
+
+        Table game_settings_table = new Table();
+        game_settings_table.defaults().pad(10F);
+        game_settings_table.add(new Label("Choose your in-game settings", skin)).row();
 
         Table second_table = new Table();
         second_table.defaults().pad(10F);
@@ -89,6 +96,8 @@ public class SettingsView extends View {
         third_table.row();
 
         table.add(label).colspan(2).fillX().row();
+        first_table.add(color_choose_table).expand();
+        first_table.add(game_settings_table).expand().row();
         table.add(first_table).expand().row();
         table.add(second_table).expand().row();
         table.add(third_table).expand().row();
@@ -96,7 +105,7 @@ public class SettingsView extends View {
         VerticalGroup group1 = new VerticalGroup();
         group1.grow();
         group1.space(30);
-        first_table.add(group1).width(300);
+        color_choose_table.add(group1).width(300);
 
         VerticalGroup group2 = new VerticalGroup();
         group2.grow();
@@ -106,6 +115,11 @@ public class SettingsView extends View {
         VerticalGroup group3 = new VerticalGroup();
         group3.grow();
         third_table.add(group3);
+
+        VerticalGroup group4 = new VerticalGroup();
+        group4.grow();
+        group4.space(30);
+        game_settings_table.add(group4).width(300);
 
         stage.addActor(table);
 
@@ -127,6 +141,14 @@ public class SettingsView extends View {
         color4Button.getLabel().setFontScale(1.5f);
         group1.addActor(color4Button);
 
+        final TextButton mapButton = new TextButton(pref.getMapType().equals("SquareMap") ? "Square map" : "Hexagonal map", skin);
+        mapButton.getLabel().setFontScale(1.5f);
+        group4.addActor(mapButton);
+
+        final TextButton diceBytton = new TextButton(pref.getDiceType(), skin);
+        diceBytton.getLabel().setFontScale(1.5f);
+        group4.addActor(diceBytton);
+
         cbSettingsButton = new TextButton("Colorblind mode [" + (pref.getCbMode() ? "enabled" : "disabled") + "]", skin);
         cbSettingsButton.getLabel().setFontScale(1.5f);
         group2.addActor(cbSettingsButton);
@@ -140,8 +162,7 @@ public class SettingsView extends View {
         group3.addActor(menuButton);
 
 
-
-        controller.addActorListeners(cbSettingsButton, toggleMusic, menuButton, color1Button, color2Button, color3Button, color4Button); // handle input
+        controller.addActorListeners(cbSettingsButton, toggleMusic, menuButton, color1Button, color2Button, color3Button, color4Button, mapButton, diceBytton); // handle input
     }
 
     @Override
@@ -155,13 +176,13 @@ public class SettingsView extends View {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         sr.begin(shapeType);
-        settingsModel.setCustomColor("color 1", sr, 200, Rngg.HEIGHT/2 + 225);
-        settingsModel.setCustomColor("color 2", sr, 200, Rngg.HEIGHT/2 + 75);
-        settingsModel.setCustomColor("color 3", sr, 200, Rngg.HEIGHT/2 - 75);
-        settingsModel.setCustomColor("color 4", sr, 200, Rngg.HEIGHT/2 - 225);
+        settingsModel.setCustomColor("color 1", sr, 100, Rngg.HEIGHT/2 + 225);
+        settingsModel.setCustomColor("color 2", sr, 100, Rngg.HEIGHT/2 + 75);
+        settingsModel.setCustomColor("color 3", sr, 100, Rngg.HEIGHT/2 - 75);
+        settingsModel.setCustomColor("color 4", sr, 100, Rngg.HEIGHT/2 - 225);
         sr.end();
 
-        int x_margin = 192;
+        int x_margin = 92;
 
         batch.begin();
         settingsModel.drawText(font, batch, Integer.toString(1), x_margin, Rngg.HEIGHT/2 + 235);

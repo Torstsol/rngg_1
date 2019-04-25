@@ -53,7 +53,7 @@ public class RNG {
     }
 
     public static int nextInt(int max) {
-        return RNG.nextInt(0, max);
+        return RNG.nextInt(0, max - 1);
     }
 
     public static float nextFloat(float min, float max) {

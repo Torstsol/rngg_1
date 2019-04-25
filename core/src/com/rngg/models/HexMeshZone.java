@@ -1,5 +1,7 @@
 package com.rngg.models;
 
+import com.rngg.utils.RNG;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,5 +30,18 @@ public class HexMeshZone extends Zone implements Iterable<HexZone> {
     @Override
     public Iterator<HexZone> iterator() {
         return subZones.iterator();
+    }
+
+    public List<HexZone> getSubZones() {
+        return subZones;
+    }
+
+    public HexZone getRandomSubZone() {
+        if (subZones.size() == 0) return null;
+        return subZones.get(RNG.nextInt(0, subZones.size() - 1));
+    }
+
+    public HexMeshZone getSuperZone() {
+        return this;
     }
 }

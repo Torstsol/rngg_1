@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.rngg.models.HexMeshMap;
 import com.rngg.models.HexMeshZone;
 import com.rngg.models.HexZone;
+import com.rngg.utils.RNG;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HexMeshMapRenderer extends MapRenderer<HexMeshMap, HexMeshZone, List<List<int[]>>> {
@@ -26,8 +28,6 @@ public class HexMeshMapRenderer extends MapRenderer<HexMeshMap, HexMeshZone, Lis
     @Override
     public void drawZone(HexMeshZone superZone) {
         if (superZone == null) return;
-
-        sr.setColor((superZone.getClicked()) ? Color.GRAY : superZone.getPlayer().getColor());
 
         for (HexZone subZone : superZone) {
             float[] xPoints = new float[7];
@@ -64,32 +64,82 @@ public class HexMeshMapRenderer extends MapRenderer<HexMeshMap, HexMeshZone, Lis
             yPoints[6] = yPoints[0];
 
             for (int i = 0; i < 6; i++) {
+                sr.setColor((superZone.getClicked()) ? Color.GRAY : superZone.getPlayer().getColor());
                 sr.triangle(centerX, centerY,
                         xPoints[i], yPoints[i],
                         xPoints[i + 1], yPoints[i + 1]);
+            }
+
+            for (HexZone neighbor : subZone.getNeighbors()) {
+                if (neighbor.getSuperZone() != subZone.getSuperZone()) {
+                    int neighborRow = neighbor.getRow();
+                    int neighborCol = neighbor.getCol();
+                    int subZoneRow = subZone.getRow();
+                    int subZoneCol = subZone.getCol();
+
+                    float size = map.getSize();
+                    float width = (float) Math.sqrt(3) * size;
+                    float height = 2 * size;
+
+                    float x1 = -1;
+                    float x2 = -1;
+                    float y1 = -1;
+                    float y2 = -1;
+
+                    if (neighborRow == subZoneRow) {
+                        y1 = centerY + size / 2;
+                        y2 = centerY - size / 2;
+
+                        x1 = (neighborCol == subZoneCol - 1) ? centerX - (width / 2) : centerX + (width / 2);
+                        x2 = x1;
+                    } else if (neighborRow == subZoneRow - 1) {
+                        y1 = centerY - (size / 2);
+                        y2 = centerY - size;
+
+                        x1 = (neighborCol == subZoneCol + 1) ? centerX + (width / 2) : centerX - (width / 2);
+                        x2 = centerX;
+                    } else if (neighborRow == subZoneRow  + 1) {
+                        y1 = centerY + (size / 2);
+                        y2 = centerY + size;
+
+                        x1 = (neighborCol == subZoneCol) ? centerX + (width / 2) : centerX - (width / 2);
+                        x2 = centerX;
+                    }
+
+                    sr.rectLine(x1, y1, x2, y2, 3f, Color.BLACK, Color.BLACK);
+                }
             }
         }
     }
 
     @Override
     public void drawZoneText(HexMeshZone zone) {
-        /*if (zone == null) return;
+        if (zone == null || zone.getSubZones().size() == 0) return;
+
+        List<HexZone> subZones = zone.getSubZones();
+        HexZone randomZone = subZones.get(subZones.size() / 2);
 
         // Center points for the zone. Offset to not render from coordinate (0, 0)
         float centerX = map.getSize() / 2
-                + map.getSize() * (float) (Math.sqrt(3) * getCol(zone)
+                + map.getSize() * (float) (Math.sqrt(3) * getCol(randomZone)
                 + Math.sqrt(3) / 2) - (float) (Math.sqrt(3) * map.getSize() / 2);
 
-        float centerY = map.getSize() + map.getSize() * (3f / 2 * zone.getRow());
+        float centerY = map.getSize() + map.getSize() * (3f / 2 * randomZone.getRow());
 
         // Offsets every other row, so they are not generated in a straight line
-        if (zone.getRow() % 2 != 0) {
+        if (randomZone.getRow() % 2 != 0) {
             centerX += map.getZoneWidth() / 2;
         }
 
+        float fontScaleX = font.getScaleX();
+        float fontScaleY = font.getScaleY();
+
+        font.getData().setScale(map.getZoneWidth() / 1.2f / map.getSize() / 2);
         font.draw(batch, Integer.toString(zone.getUnits()),
                 centerX,
                 centerY
-        );*/
+        );
+
+        font.getData().setScale(fontScaleX, fontScaleY);
     }
 }

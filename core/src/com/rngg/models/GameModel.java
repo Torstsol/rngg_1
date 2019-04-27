@@ -28,7 +28,7 @@ public class GameModel {
     private boolean inGameMenuOpen;
 
     private float attackRoll, defendRoll;
-    private ArrayList<Float> attackValues, defendValues;
+    private String[] attackValues, defendValues;
 
     // defense strategies
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
@@ -167,14 +167,14 @@ public class GameModel {
         );
 
         this.rng.roll(attacker.getUnits());
-        attackRoll = rng.valueFromRoll().get(0);
-        attackValues = rng.valueFromRoll();
+        attackRoll = rng.valueFromRoll();
+        attackValues = rng.labelFromRoll();
         Gdx.app.log(this.getClass().getSimpleName(),
                 attacker.toString() + " rolled " + attackRoll + " (" + Arrays.toString(rng.labelFromRoll()) + ")");
 
         this.rng.roll(defender.getUnits());
-        defendRoll = rng.valueFromRoll().get(0);
-        defendValues = rng.valueFromRoll();
+        defendRoll = rng.valueFromRoll();
+        defendValues = rng.labelFromRoll();
         Gdx.app.log(this.getClass().getSimpleName(),
                 defender.toString() + " rolled " + defendRoll + " (" + Arrays.toString(rng.labelFromRoll()) + ")");
 
@@ -355,24 +355,16 @@ public class GameModel {
         return (int) attackRoll;
     }
 
-    public ArrayList<Float> getAttackValues() {
-        ArrayList<Float> values = new ArrayList<Float>();
-        for(int i = 1; i < attackValues.size(); i++){
-            values.add(attackValues.get(i));
-        }
-        return values;
+    public String[] getAttackValues() {
+        return attackValues;
     }
 
     public int getDefendRoll() {
         return (int) defendRoll;
     }
 
-    public ArrayList<Float> getDefendValues() {
-        ArrayList<Float> values = new ArrayList<Float>();
-        for(int i = 1; i < defendValues.size(); i++){
-            values.add(defendValues.get(i));
-        }
-        return values;
+    public String[] getDefendValues() {
+        return defendValues;
     }
 
     public boolean isInGameMenuOpen() {
@@ -382,4 +374,11 @@ public class GameModel {
     public void updateInGameMenu() {
         this.inGameMenuOpen = !this.inGameMenuOpen;
     }
+
+
+    public int getNumDice(){
+        //return pref.getNumDice();
+        return 8;
+    }
+
 }

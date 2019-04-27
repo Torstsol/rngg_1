@@ -4,7 +4,6 @@ package com.rngg.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -126,25 +125,26 @@ public class RNG {
         rollResult = ret;
     }
 
-    public ArrayList<Float> valueFromRoll() {
+    public float valueFromRoll() {
         // takes an array of indices, returns sum of values
-        ArrayList<Float> result = new ArrayList<Float>();
         float sum = 0;
         for (int i : rollResult) {
-            result.add(values[i]);
             sum += values[i];
         }
-        result.add(0, sum);
-        return result;
+        return sum;
     }
 
     public String[] labelFromRoll() {
-        // takes an array of indices, returns array of labels
-        String[] ret = new String[rollResult.length];
-        for (int j = 0; j < rollResult.length; j++) {
-            ret[j] = labels[rollResult[j]];
+        if(rollResult != null){
+            // takes an array of indices, returns array of labels
+            String[] ret = new String[rollResult.length];
+            for (int j = 0; j < rollResult.length; j++) {
+                ret[j] = labels[rollResult[j]];
+            }
+            return ret;
+        } else {
+            return new String[0];
         }
-        return ret;
     }
 
     // --- END rolling logic ---

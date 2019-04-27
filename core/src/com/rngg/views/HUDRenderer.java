@@ -17,8 +17,10 @@ import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
+import com.rngg.utils.RNG;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class HUDRenderer {
@@ -31,12 +33,15 @@ public class HUDRenderer {
     private GamePreferences pref;
     private float startTime;
     private float elapsedTime;
-    private ArrayList<Float> tempValues;
-    private static final Random generator = new Random();
+    private String tempValues;
+    private String[] attack, defend;
     private boolean attackStop = false;
     private boolean defendStop = false;
     private int attackIndex = 0;
     private int defendIndex = 0;
+    private float totalRouletteTime;
+    private int numDice;
+    private RNG rng;
 
     /* ON TOP OF EACH OTHER (MIGHT COLLIDE WITH MAP)
     private static final int youPosX = Rngg.WIDTH*27/40;
@@ -69,7 +74,10 @@ public class HUDRenderer {
         this.font = font;
         this.gameModel = gameModel;
         pref = GamePreferences.getInstance();
-        tempValues = new ArrayList<Float>();
+        numDice = controller.gameModel.getNumDice();
+        tempValues = "";
+        totalRouletteTime = numDice * 0.2f;
+        rng = RNG.getInstance();
 
         final TextButton defendAllButton = new TextButton("Defend All", assetManager.manager.get(Assets.SKIN));
 
@@ -105,8 +113,12 @@ public class HUDRenderer {
         HUDCamera.update();
         HUDBatch.setProjectionMatrix(HUDCamera.combined);
 
-        if(tempValues.isEmpty() || !gameModel.getAttackValues().equals(tempValues)){
+        String valueString = Arrays.toString(gameModel.getAttackValues());
+
+        if(tempValues.isEmpty() || !valueString.equals(tempValues)){
             startTime = System.nanoTime();
+            attack = gameModel.getAttackValues();
+            defend = gameModel.getDefendValues();
             attackStop = false;
             defendStop = false;
         }
@@ -120,35 +132,21 @@ public class HUDRenderer {
         if(gameModel.getAttackRoll() != 0 && gameModel.getDefendRoll() != 0){
             font.draw(HUDBatch,"You: ", youPosX,youPosY);
             font.draw(HUDBatch,"Defender: ", defPosX,defPosY);
-            if(elapsedTime<=0.2f){
-                drawDice(0);
-            }
-            if(elapsedTime>0.2f && elapsedTime<=0.4f){
-                drawDice(1);
-            }
-            if(elapsedTime>0.4f && elapsedTime<=0.6f){
-                drawDice(2);
-            }
-            if(elapsedTime>0.6f && elapsedTime<=0.8f){
-                drawDice(3);
-            }
-            if(elapsedTime>0.8f && elapsedTime<=1f){
-                drawDice(4);
-            }
-            if(elapsedTime>1f && elapsedTime<=1.2f){
-                drawDice(5);
-            }
-            if(elapsedTime>1.2f && elapsedTime<=1.4f){
-                drawDice(6);
-            }
-            if(elapsedTime>1.4f && elapsedTime<=1.6f){
-                drawDice(7);
-            }
-            if(elapsedTime>1.6f){
-                drawDice(8);
+            if(elapsedTime <= totalRouletteTime){
+                int i = 0;
+                float interval = 0;
+                while (interval < elapsedTime){
+                    interval += 0.2f;
+                    if(elapsedTime > interval - 0.2f && elapsedTime <= interval){
+                        drawDice(i, attack, defend);
+                    }
+                    i++;
+                }
+            } else {
+                drawDice(numDice, attack, defend);
             }
 
-            tempValues = gameModel.getAttackValues();
+            tempValues = valueString;
         }
 
         HUDBatch.end();
@@ -156,35 +154,36 @@ public class HUDRenderer {
 
     }
 
-    private void drawDice(int index) {
-        if(gameModel.getAttackValues().size() > index){
-            font.draw(HUDBatch, diceString(gameModel.getAttackValues(), index, true), attackPosX, attackPosY);
+    private void drawDice(int index, String[] att, String[] def) {
+        if(att.length > index){
+            font.draw(HUDBatch, diceString(att, index, true), attackPosX, attackPosY);
         } else if(attackStop){
-            font.draw(HUDBatch, diceString(gameModel.getAttackValues(), attackIndex, false), attackPosX, attackPosY);
+            font.draw(HUDBatch, diceString(att, attackIndex, false), attackPosX, attackPosY);
         } else {
-            font.draw(HUDBatch, diceString(gameModel.getAttackValues(), index, false), attackPosX, attackPosY);
+            font.draw(HUDBatch, diceString(att, index, false), attackPosX, attackPosY);
             attackIndex = index;
             attackStop = true;
         }
-        if(gameModel.getDefendValues().size() > index){
-            font.draw(HUDBatch, diceString(gameModel.getDefendValues(), index, true), defendPosX, defendPosY);
+        if(def.length > index){
+            font.draw(HUDBatch, diceString(def, index, true), defendPosX, defendPosY);
         } else if(defendStop){
-            font.draw(HUDBatch, diceString(gameModel.getDefendValues(), defendIndex, false), defendPosX, defendPosY);
+            font.draw(HUDBatch, diceString(def, defendIndex, false), defendPosX, defendPosY);
         } else {
-            font.draw(HUDBatch, diceString(gameModel.getDefendValues(), index, false), defendPosX, defendPosY);
+            font.draw(HUDBatch, diceString(def, index, false), defendPosX, defendPosY);
             defendIndex = index;
             defendStop = true;
         }
     }
 
-    private String diceString(ArrayList<Float> values, int index, boolean random) {
+    private String diceString(String[] values, int index, boolean random) {
         String str = "";
         for(int i = 0; i < index; i++){
-            str = str + values.get(i).shortValue() + " ";
+            str = str + values[i] + " ";
         }
         if(random){
-            for(int i = index; i < values.size(); i++){
-                int rand = generator.nextInt(8);
+            for(int i = index; i < values.length; i++){
+                //int rand = rng.nextInt(pref.getDiceType().substring(1));
+                int rand = rng.nextInt(6);
                 str = str + rand + " ";
             }
         }

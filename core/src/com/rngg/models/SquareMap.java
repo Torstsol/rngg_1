@@ -3,6 +3,7 @@ package com.rngg.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.rngg.game.Rngg;
 import com.rngg.utils.RNG;
@@ -15,7 +16,7 @@ public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
     private int zoneWidth, zoneHeight, rows, cols;
     private SquareZone[][] zones;
 
-    public SquareMap(int rows, int cols, Player[] players, boolean randomPlayers, JsonValue zoneJSON) {
+    public SquareMap(int rows, int cols, ArrayList<Player> players, boolean randomPlayers, JsonValue zoneJSON) {
         super();
 
         Gdx.app.log(this.getClass().getSimpleName(),
@@ -50,7 +51,7 @@ public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
         return playersWithZones;
     }
 
-    private void initializeZones(Player[] players, boolean randomPlayers, List<List<int[]>> customZones) {
+    private void initializeZones(ArrayList<Player> players, boolean randomPlayers, List<List<int[]>> customZones) {
         HashMap<SquareZone, ArrayList<SquareZone>> zones = new HashMap<SquareZone, ArrayList<SquareZone>>();
         // no custom level
         if (customZones == null) {
@@ -84,7 +85,7 @@ public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
                         if (randomPlayers) {
                             zone = new SquareZone(RNG.choice(players), rowNum, col);
                         } else {
-                            zone = new SquareZone(players[playerNum], rowNum, col);
+                            zone = new SquareZone(players.get(playerNum), rowNum, col);
                         }
 
                         this.zones[rowNum][col] = zone;
@@ -113,7 +114,7 @@ public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
         this.neighbors = zones;
     }
 
-    public SquareMap(int rows, int cols, Player[] players) {
+    public SquareMap(int rows, int cols, ArrayList<Player> players) {
         this(rows, cols, players, true, null);
     }
 

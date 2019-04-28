@@ -3,6 +3,7 @@ package com.rngg.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.rngg.configuration.GamePreferences;
@@ -17,11 +18,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 
 public class GameModel implements RealtimeListener{
     public int playerScore = 0;
     private GameMap map;
-    private Player[] players;
+    private ArrayList<Player> players;
     private int playerIndex;
     private Zone attacker;
     private int[] contiguousAreas;
@@ -33,6 +35,7 @@ public class GameModel implements RealtimeListener{
     private IPlayServices sender;
     public Player host;
     public Player localPlayer;
+    public boolean localGame = false;
 
 
     private float attackRoll, defendRoll;
@@ -40,41 +43,57 @@ public class GameModel implements RealtimeListener{
     // defense strategies
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
 
-    public GameModel(Player[] players, String mapFileName) {
+    public GameModel(ArrayList<Player> players, String mapFileName, IPlayServices sender) {
         this.playerIndex = 0;
         this.attackRoll = 0;
         this.defendRoll = 0;
 
         //support for localgame, generates players or "bots"
         if(players == null){
+            this.localGame = true;
             pref = GamePreferences.getInstance();
-            this.players = new Player[4];
-            this.players[0] = new Player("You", "6969", true, true, pref.getColorArray().get(0));
-            this.host = this.players[0];
-            this.localPlayer = this.players[0];
+            this.players = new ArrayList<Player>();
+            this.players.add(new Player("You", "6969", true, true, pref.getColorArray().get(0)));
+            this.host = this.players.get(0);
+            this.localPlayer = this.players.get(0);
             for (int i = 1; i < 4; i++) {
-                this.players[i] = new Player("BOT" + i, "6969", true, false, pref.getColorArray().get(i));
+                this.players.add(new Player("BOT" + i, "6969", true, false, pref.getColorArray().get(i)));
             }
         }
         else{
             this.players = players;
-            for (int i = 0; i < players.length; i++) {
-                if(players[i].isHost == true){
-                    this.host = players[i];
+            for (int i = 0; i < players.size(); i++) {
+                if(players.get(i).isHost == true){
+                    this.host = players.get(i);
                 }
-                if (players[i].isLocal == true){
-                    this.localPlayer = players[i];
+                if (players.get(i).isLocal == true){
+                    this.localPlayer = players.get(i);
                 }
             }
 
         }
         this.rng = RNG.getInstance();
-        this.contiguousAreas = new int[this.players.length];
+        this.contiguousAreas = new int[this.players.size()];
         this.setMap(mapFileName);
+
+        //check if proto-host, if true, generate seed, shuffle playerlist, and broadcast seed
+        if(this.host.isLocal){
+            long shuffleSeed = this.rng.getSeed();
+            Collections.shuffle(this.players, new Random(shuffleSeed));
+            if(!localGame){
+                //broadcast order seed to everyone
+                Message message = new Message(new byte[512],"",0);
+                message.putString("ORDER");
+                message.putLong(shuffleSeed);
+                sender.sendToAllReliably(message.getData());
+            }
+        }
+
+
     }
 
-    public GameModel(Player[] players) {
-        this(players, "");
+    public GameModel(ArrayList<Player> players, IPlayServices sender) {
+        this(players, "", sender);
     }
 
     public void setMap(String fileName) {
@@ -86,15 +105,6 @@ public class GameModel implements RealtimeListener{
         }
 
         this.updateAreas();
-    }
-
-    private void initializePlayerAndAreas() {
-        pref = GamePreferences.getInstance();
-        this.players = new Player[numPlayers];
-        for (int i = 0; i < numPlayers; i++) { //players[i] = new Player("Player" + i, "90238049", true,  pref.getColorArray().get(i));
-        }
-        this.playerIndex = 0;
-        this.contiguousAreas = new int[numPlayers];
     }
 
     private GameMap loadMap(String fileName) {
@@ -151,7 +161,7 @@ public class GameModel implements RealtimeListener{
     }
 
     public Player getPlayer(int index){
-        return players[index];
+        return players.get(index);
     }
 
     public void click(Vector3 coords) {
@@ -226,7 +236,7 @@ public class GameModel implements RealtimeListener{
     }
 
     public Player currentPlayer() {
-        return this.players[playerIndex];
+        return this.players.get(playerIndex);
     }
 
     public int getPlayerIndex() {
@@ -234,7 +244,7 @@ public class GameModel implements RealtimeListener{
     }
 
     public void setPlayer(int playerIndex) {
-        if (playerIndex >= 0 && playerIndex < this.players.length) {
+        if (playerIndex >= 0 && playerIndex < this.players.size()) {
             this.playerIndex = playerIndex;
             Gdx.app.log(
                     this.getClass().getSimpleName(),
@@ -243,7 +253,7 @@ public class GameModel implements RealtimeListener{
         } else {
             Gdx.app.error(
                     this.getClass().getSimpleName(),
-                    "Illegal player index given (" + playerIndex + " is not in [0, " + this.players.length + "])");
+                    "Illegal player index given (" + playerIndex + " is not in [0, " + this.players.size() + "])");
         }
     }
 
@@ -254,8 +264,8 @@ public class GameModel implements RealtimeListener{
         Kinda funky with lots of loops, but it does at least work
          */
         // for each player
-        for (int i = 0; i < this.players.length; i++) {
-            Player player = this.players[i];
+        for (int i = 0; i < this.players.size(); i++) {
+            Player player = this.players.get(i);
             int max = 0;
             // total graph for this player
             ArrayList<Zone> graph = new ArrayList<Zone>(map.getPlayerZones(player));
@@ -309,7 +319,7 @@ public class GameModel implements RealtimeListener{
         // continue until no lists remain or no units remain
         // total number of units to distribute
         int units = this.contiguousAreas[playerIndex];
-        Player player = this.players[playerIndex];
+        Player player = this.players.get(playerIndex);
         // this is the list of lists from which to get zones
         ArrayList<ArrayList<Zone>> zones = new ArrayList<ArrayList<Zone>>();
         if (strategy.equals(DEFEND_ALL)) {
@@ -378,7 +388,7 @@ public class GameModel implements RealtimeListener{
         if (this.attacker != null) {
             this.attacker.unClick();
         }
-        this.playerIndex = (this.playerIndex + 1)%(players.length);
+        this.playerIndex = (this.playerIndex + 1)%(players.size());
         Gdx.app.debug(this.getClass().getSimpleName(), "Player " + playerIndex + " is now playing");
     }
 
@@ -416,7 +426,10 @@ public class GameModel implements RealtimeListener{
         }
 
         if(contents.equals("ORDER")) {
-            System.out.println("ORDER recieved in gameModel" + message.getInt());
+            long shuffleSeed = message.getLong();
+            System.out.println("ORDER recieved in gameModel" + shuffleSeed);
+            Collections.shuffle(players, new Random(shuffleSeed));
+            this.setMap("");
 
         }
 

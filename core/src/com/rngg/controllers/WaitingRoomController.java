@@ -54,8 +54,8 @@ public class WaitingRoomController extends Controller implements RoomListener, R
         }
         System.out.println("this device is NOT host");
 
-
-        game.screenManager.setGameScreen(new GameModel(sender.getPlayers()));
+        GameModel instance = new GameModel(sender.getPlayers(), sender);
+        game.screenManager.setGameScreen(instance);
     }
 
     @Override

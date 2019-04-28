@@ -73,8 +73,16 @@ public class Message {
         return buffer.getInt();
     }
 
+    public long getLong() {
+        return buffer.getLong();
+    }
+
     public void putInt(int number){
         buffer.putInt(number);
+    }
+
+    public void putLong(long number) {
+        buffer.putLong(number);
     }
 
     public void putString(String str){

@@ -38,6 +38,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -432,7 +433,7 @@ public class AndroidAPI implements IPlayServices {
 
     public String hostID(){
         Collections.sort(mRoom.getParticipantIds());
-        return mRoom.getParticipantIds().get(0);
+        return mRoom.getParticipantIds().get(1);
     }
 
 
@@ -448,10 +449,10 @@ public class AndroidAPI implements IPlayServices {
         return connectedPlayers >= MIN_PLAYERS;
     }
 
-    public Player[] getPlayers(){
+    public ArrayList<Player> getPlayers(){
 
         GamePreferences pref = GamePreferences.getInstance();
-
+        ArrayList<Player> playerList = new ArrayList<Player>();
         Player[] players = new Player[mRoom.getParticipantIds().size()];
 
         for (int i = 0; i < mRoom.getParticipants().size(); i++) {
@@ -464,12 +465,14 @@ public class AndroidAPI implements IPlayServices {
             Participant player = mRoom.getParticipants().get(i);
             if(!player.getParticipantId().equals(getLocalID())){
                 players[i] = new Player(player.getDisplayName(), player.getParticipantId(), false, this.hostID() == player.getParticipantId(), pref.getEnemyColorArray().get(i));
+                playerList.add(new Player(player.getDisplayName(), player.getParticipantId(), false, this.hostID() == player.getParticipantId(), pref.getEnemyColorArray().get(i)));
             }
             else {
                 players[i] = new Player(player.getDisplayName(), player.getParticipantId(), true, this.hostID() == player.getParticipantId(), pref.getMainColor());
+                playerList.add(new Player(player.getDisplayName(), player.getParticipantId(), true, this.hostID() == player.getParticipantId(), pref.getMainColor()));
             }
         }
-        return players;
+        return playerList;
 
     }
 

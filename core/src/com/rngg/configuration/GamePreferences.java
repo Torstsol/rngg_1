@@ -18,7 +18,7 @@ public class GamePreferences {
     private ArrayList<Float> colorArray;
     private ArrayList<Color> list;
     private ArrayList<Color> enemyList;
-    private boolean musicEnabled = true;
+    private boolean musicEnabled = false;
 
     private GamePreferences(){
         prefs = Gdx.app.getPreferences("game-preferences");

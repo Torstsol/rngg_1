@@ -10,12 +10,18 @@ public class Player {
     public int randomNumber = -1;
     public int playerIndex = -1;
     public final boolean isLocal;
+    public final boolean isHost;
 
-    public Player(String name, String playerId, boolean isLocal, Color color) {
+    public Player(String name, String playerId, boolean isLocal, boolean isHost, Color color) {
         this.name = name;
         this.playerId = playerId;
         this.isLocal = isLocal;
         this.color = color;
+        this.isHost = isHost;
+    }
+
+    public String getName(){
+        return name;
     }
 
     public Color getColor() {

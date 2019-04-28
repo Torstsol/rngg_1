@@ -17,6 +17,7 @@ public class GamePreferences {
     private Preferences prefs;
     private ArrayList<Float> colorArray;
     private ArrayList<Color> list;
+    private ArrayList<Color> enemyList;
     private boolean musicEnabled = true;
 
     private GamePreferences(){
@@ -78,6 +79,17 @@ public class GamePreferences {
         list.add(COLOR4);
 
         return list;
+    }
+
+    public ArrayList<Color> getEnemyColorArray(){
+        enemyList = new ArrayList<Color>();
+        for(Color c : this.getColorArray()){
+            if(!c.equals(this.getMainColor())){
+                enemyList.add(c);
+            }
+        }
+
+        return enemyList;
     }
 
     public boolean getCbMode(){

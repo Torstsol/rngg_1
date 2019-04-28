@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
+import com.rngg.services.IPlayServices;
 
 public class GameController extends Controller {
 
@@ -71,6 +72,9 @@ public class GameController extends Controller {
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(gameInputProcessor);
         Gdx.input.setInputProcessor(inputMultiplexer);
+
+        IPlayServices playServices = game.getAPI();
+        playServices.setRealTimeListener(gameModel);
     }
 
     @Override
@@ -130,6 +134,7 @@ public class GameController extends Controller {
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                game.getAPI().leaveGame();
                 game.screenManager.setMenuScreen();
             }
         });

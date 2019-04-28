@@ -43,9 +43,11 @@ public class Rngg extends Game {
         assetManager.loadSounds();
         assetManager.manager.finishLoading();
 
+        /*
 		if(assetManager.manager.isLoaded(Assets.MUSIC)) {
 			assetManager.manager.get(Assets.MUSIC).play();
 		}
+		*/
 
         screenManager = new ScreenManager(this);
         screenManager.setMenuScreen();

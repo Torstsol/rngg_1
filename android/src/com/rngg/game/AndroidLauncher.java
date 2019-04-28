@@ -74,7 +74,10 @@ public class AndroidLauncher extends AndroidApplication {
 			}
 
 			if (resultCode == Activity.RESULT_OK) {
-				// Start the game!
+				// When the waiting room is dismissed, either because the room is full or one of the players
+				//initiated the fight, the waiting room sends RESULT_OK.
+				//If it is one of the clients that starts the game, a start-message must be sent to the other
+				//players in order for their game to start as well.
 				if(androidAPI.mPlaying != true){
 					androidAPI.mPlaying = true;
 

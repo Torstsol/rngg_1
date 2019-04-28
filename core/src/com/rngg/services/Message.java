@@ -69,6 +69,14 @@ public class Message {
         return new String(chars, StandardCharsets.UTF_8);
     }
 
+    public int getInt(){
+        return buffer.getInt();
+    }
+
+    public void putInt(int number){
+        buffer.putInt(number);
+    }
+
     public void putString(String str){
         byte[] data = str.getBytes(StandardCharsets.UTF_8);
         buffer.putInt(data.length);

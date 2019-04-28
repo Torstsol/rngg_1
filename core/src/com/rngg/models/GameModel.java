@@ -7,6 +7,11 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.rngg.configuration.GamePreferences;
+import com.rngg.services.IPlayServices;
+import com.rngg.services.Message;
+import com.rngg.services.RealtimeListener;
+import com.rngg.services.IPlayServices;
+import com.rngg.services.Message;
 import com.rngg.utils.RNG;
 
 import java.util.ArrayList;
@@ -14,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class GameModel {
+public class GameModel implements RealtimeListener{
     public int playerScore = 0;
     private GameMap map;
     private Player[] players;
@@ -26,6 +31,10 @@ public class GameModel {
     private int numPlayers;
     private GamePreferences pref;
     private boolean inGameMenuOpen;
+    private IPlayServices sender;
+    public Player host;
+    public Player localPlayer;
+
 
     private float attackRoll, defendRoll;
     private String[] attackValues, defendValues;
@@ -33,26 +42,49 @@ public class GameModel {
     // defense strategies
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
 
-    public GameModel(int numPlayers, String mapFileName) {
+    public GameModel(Player[] players, String mapFileName) {
         this.playerIndex = 0;
         this.attackRoll = 0;
         this.defendRoll = 0;
 
-        this.numPlayers = numPlayers;
+        //support for localgame, generates players or "bots"
+        if(players == null){
+            pref = GamePreferences.getInstance();
+            this.players = new Player[4];
+            this.players[0] = new Player("You", "6969", true, true, pref.getColorArray().get(0));
+            this.host = this.players[0];
+            this.localPlayer = this.players[0];
+            for (int i = 1; i < 4; i++) {
+                this.players[i] = new Player("BOT" + i, "6969", true, false, pref.getColorArray().get(i));
+            }
+        }
+        else{
+            this.players = players;
+            for (int i = 0; i < players.length; i++) {
+                if(players[i].isHost == true){
+                    this.host = players[i];
+                }
+                if (players[i].isLocal == true){
+                    this.localPlayer = players[i];
+                }
+            }
+
+        }
         this.rng = RNG.getInstance();
+        this.contiguousAreas = new int[this.players.length];
         this.setMap(mapFileName);
     }
 
-    public GameModel(int numPlayers) {
-        this(numPlayers, "");
+    public GameModel(Player[] players) {
+        this(players, "");
     }
 
     public void setMap(String fileName) {
         if (fileName.length() > 0) {
             this.map = loadMap(fileName);
         } else {
-            initializePlayerAndAreas();
-            this.map = new HexMap(7, 7, players);
+            //initializePlayerAndAreas();
+            this.map = new SquareMap(9, 16, players);
         }
 
         this.updateAreas();
@@ -61,8 +93,7 @@ public class GameModel {
     private void initializePlayerAndAreas() {
         pref = GamePreferences.getInstance();
         this.players = new Player[numPlayers];
-        for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player("Player" + i, "90238049", true, pref.getColorArray().get(i));
+        for (int i = 0; i < numPlayers; i++) { //players[i] = new Player("Player" + i, "90238049", true,  pref.getColorArray().get(i));
         }
         this.playerIndex = 0;
         this.contiguousAreas = new int[numPlayers];
@@ -101,7 +132,7 @@ public class GameModel {
             this.numPlayers = maxPlayers;
         }
 
-        initializePlayerAndAreas();
+        //initializePlayerAndAreas();
 
         if (mapType.equals("SquareMap")) {
             return new SquareMap(totalRows, totalCols, this.players, randomPlayers, zones);
@@ -119,6 +150,10 @@ public class GameModel {
 
     public GameMap getMap() {
         return this.map;
+    }
+
+    public Player getPlayer(int index){
+        return players[index];
     }
 
     public void click(Vector3 coords) {
@@ -373,6 +408,40 @@ public class GameModel {
 
     public void updateInGameMenu() {
         this.inGameMenuOpen = !this.inGameMenuOpen;
+    }
+
+    public void sendMessage(){
+        Gdx.app.log(this.getClass().getSimpleName(), "Sending FAX");
+        Message message = new Message(new byte[512],"",0);
+        message.putString("FAX");
+        sender.sendToAllReliably(message.getData());
+    }
+
+    @Override
+    public void handleDataReceived(Message message) {
+        String contents = message.getString();
+
+        //the start-message is redundant if the game is initiated from the quick-game option,
+        //the game is already in game-mode when it recieves the start-message.
+        if(contents.equals("START")){
+            return;
+        }
+
+        if(contents.equals("ORDER")) {
+            System.out.println("ORDER recieved in gameModel" + message.getInt());
+
+        }
+
+        if(contents.equals("FAX")){
+            for (Zone z : (ArrayList<Zone>) map.getZones()) {
+                z.setUnits(-1);
+            }
+        }
+    }
+
+    @Override
+    public void setSender(IPlayServices playServices) {
+        this.sender = playServices;
     }
 
 

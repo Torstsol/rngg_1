@@ -126,9 +126,8 @@ public class HUDRenderer {
 
         HUDBatch.begin();
         font.setColor(gameModel.currentPlayer().getColor());
-        font.draw(HUDBatch,"Player " + gameModel.getPlayerIndex(),10,Rngg.HEIGHT*39/40);
+        font.draw(HUDBatch,"Player " + gameModel.getPlayer(gameModel.getPlayerIndex()).getName() + " Host: " + gameModel.host.getName(),10,Rngg.HEIGHT*39/40);
         font.setColor(Color.WHITE);
-        font.draw(HUDBatch,"is playing",150,Rngg.HEIGHT*39/40);
         if(gameModel.getAttackRoll() != 0 && gameModel.getDefendRoll() != 0){
             font.draw(HUDBatch,"You: ", youPosX,youPosY);
             font.draw(HUDBatch,"Defender: ", defPosX,defPosY);

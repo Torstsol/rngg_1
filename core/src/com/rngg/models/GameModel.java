@@ -74,12 +74,12 @@ public class GameModel implements RealtimeListener{
         }
         this.rng = RNG.getInstance();
         this.contiguousAreas = new int[this.players.size()];
-        this.setMap(mapFileName);
 
         //check if proto-host, if true, generate seed, shuffle playerlist, and broadcast seed
-        if(this.host.isLocal){
+        if(this.localPlayer.isHost){
             long shuffleSeed = this.rng.getSeed();
             Collections.shuffle(this.players, new Random(shuffleSeed));
+            System.out.println(this.players.toString());
             if(!localGame){
                 //broadcast order seed to everyone
                 Message message = new Message(new byte[512],"",0);
@@ -88,6 +88,7 @@ public class GameModel implements RealtimeListener{
                 sender.sendToAllReliably(message.getData());
             }
         }
+        this.setMap(mapFileName);
 
 
     }
@@ -429,7 +430,10 @@ public class GameModel implements RealtimeListener{
             long shuffleSeed = message.getLong();
             System.out.println("ORDER recieved in gameModel" + shuffleSeed);
             Collections.shuffle(players, new Random(shuffleSeed));
+
             this.setMap("");
+            System.out.println(players.toString());
+
 
         }
 

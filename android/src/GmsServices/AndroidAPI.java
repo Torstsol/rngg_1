@@ -433,7 +433,7 @@ public class AndroidAPI implements IPlayServices {
 
     public String hostID(){
         Collections.sort(mRoom.getParticipantIds());
-        return mRoom.getParticipantIds().get(1);
+        return mRoom.getParticipantIds().get(0);
     }
 
 

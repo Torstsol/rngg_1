@@ -29,8 +29,8 @@ public class ScreenManager {
         game.setScreen(new MenuView(new MenuController(game)));
     }
 
-    public void setGameScreen(GameModel model, List<Player> players) {
-        game.setScreen(new GameView(new GameController(game, model), players));
+    public void setGameScreen(GameModel model) {
+        game.setScreen(new GameView(new GameController(game, model)));
     }
 
     public void setLobbyScreen() {

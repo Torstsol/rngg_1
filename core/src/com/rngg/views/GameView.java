@@ -27,11 +27,10 @@ public class GameView extends View {
     private HUDRenderer hudRenderer;
     private InGameMenuRenderer inGameMenuRenderer;
 
-    public GameView(GameController controller, List<Player> players) {
+    public GameView(GameController controller) {
         camera.viewportHeight = (float) (Rngg.HEIGHT * 10 / 8);
 
         this.controller = controller;
-        this.players = players;
 
         batch = new SpriteBatch();
         font.setColor(Color.WHITE);

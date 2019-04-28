@@ -8,26 +8,30 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.WindowManager;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.games.InvitationsClient;
-import com.google.android.gms.games.RealTimeMultiplayerClient;
+import com.rngg.models.Player;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
-import com.google.android.gms.games.multiplayer.realtime.Room;
-import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
+import com.rngg.configuration.GamePreferences;
 import com.rngg.game.AndroidLauncher;
 import com.rngg.services.IPlayServices;
 import com.rngg.services.Message;
 import com.rngg.services.RealtimeListener;
 import com.rngg.services.RoomListener;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesCallbackStatusCodes;
+import com.google.android.gms.games.InvitationsClient;
+import com.google.android.gms.games.RealTimeMultiplayerClient;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.realtime.OnRealTimeMessageReceivedListener;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
+import com.google.android.gms.games.multiplayer.realtime.Room;
+import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateCallback;
 import com.google.android.gms.games.multiplayer.realtime.RoomUpdateCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,6 +39,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -117,7 +122,7 @@ public class AndroidAPI implements IPlayServices {
     public void startQuickGame() {
         // auto-match criteria to invite one random automatch opponent.
         // You can also specify more opponents (up to 3).
-        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(3, 3, 0x0);
+        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0x0);
 
         // build the room config:
         RoomConfig roomConfig =
@@ -172,6 +177,8 @@ public class AndroidAPI implements IPlayServices {
     @Override
     public void onStartGameMessageRecieved() {
         mPlaying = true;
+        mWaitingRoomFinishedFromCode = true;
+
         androidLauncher.finishActivity(RC_WAITING_ROOM);
     }
 
@@ -417,6 +424,19 @@ public class AndroidAPI implements IPlayServices {
 
     private String mMyParticipantId;
 
+    //determine if this client is the host
+    public boolean isHost(){
+        Collections.sort(mRoom.getParticipantIds());
+        return mRoom.getParticipantIds().get(0).equals(mMyParticipantId);
+    }
+
+    public String hostID(){
+        Collections.sort(mRoom.getParticipantIds());
+        return mRoom.getParticipantIds().get(0);
+    }
+
+
+
     // returns whether there are enough players to start the game
     boolean shouldStartGame(Room room) {
         int connectedPlayers = 0;
@@ -428,9 +448,38 @@ public class AndroidAPI implements IPlayServices {
         return connectedPlayers >= MIN_PLAYERS;
     }
 
+    public Player[] getPlayers(){
+
+        GamePreferences pref = GamePreferences.getInstance();
+
+        Player[] players = new Player[mRoom.getParticipantIds().size()];
+
+        for (int i = 0; i < mRoom.getParticipants().size(); i++) {
+            /*if(!mRoom.getParticipants().get(0).getParticipantId().equals(getLocalID())){
+                players[i] = new Player(mRoom.getParticipants().get(i).getDisplayName(), mRoom.getParticipants().get(i).getParticipantId(), false, pref.getColorArray().get(i));
+            }
+            else {
+                players[i] = new Player(mRoom.getParticipants().get(i).getDisplayName(), mRoom.getParticipants().get(i).getParticipantId(), true, pref.getColorArray().get(i));
+            }*/
+            Participant player = mRoom.getParticipants().get(i);
+            if(!player.getParticipantId().equals(getLocalID())){
+                players[i] = new Player(player.getDisplayName(), player.getParticipantId(), false, this.hostID() == player.getParticipantId(), pref.getEnemyColorArray().get(i));
+            }
+            else {
+                players[i] = new Player(player.getDisplayName(), player.getParticipantId(), true, this.hostID() == player.getParticipantId(), pref.getMainColor());
+            }
+        }
+        return players;
+
+    }
+
     // Returns whether the room is in a state where the game should be canceled.
     boolean shouldCancelGame(Room room) {
         return false;
+    }
+
+    public void leaveGame(){
+        mPlaying = false;
     }
 
 

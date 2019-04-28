@@ -37,6 +37,9 @@ public class GamePreferences {
         if(!prefs.contains("dice type")){
             setDiceType("d6");
         }
+        if(!prefs.contains("Number of dice")){
+            setNumDice(8);
+        }
         updateColors();
     }
 
@@ -156,5 +159,14 @@ public class GamePreferences {
 
     public String getDiceType(){
         return prefs.getString("dice type");
+    }
+
+    public void setNumDice(int num) {
+        prefs.putInteger("Number of dice", num);
+        prefs.flush();
+    }
+
+    public int getNumDice(){
+        return prefs.getInteger("Number of dice");
     }
 }

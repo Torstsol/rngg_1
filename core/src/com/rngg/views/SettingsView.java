@@ -7,8 +7,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
@@ -149,6 +151,16 @@ public class SettingsView extends View {
         diceBytton.getLabel().setFontScale(1.5f);
         group4.addActor(diceBytton);
 
+        final Slider diceNumSLider = settingsModel.createSlider(skin);
+        Container<Slider> container = new Container<Slider>(diceNumSLider);
+        container.setTransform(true);   // for enabling scaling and rotation
+        container.size(200, 10);
+        container.setScale(2);  //scale according to your requirement
+        Label sliderLabel = new Label("Number of dice: " + pref.getNumDice(), skin);
+        sliderLabel.setAlignment(Align.center);
+        group4.addActor(sliderLabel);
+        group4.addActor(container);
+
         cbSettingsButton = new TextButton("Colorblind mode [" + (pref.getCbMode() ? "enabled" : "disabled") + "]", skin);
         cbSettingsButton.getLabel().setFontScale(1.5f);
         group2.addActor(cbSettingsButton);
@@ -162,7 +174,7 @@ public class SettingsView extends View {
         group3.addActor(menuButton);
 
 
-        controller.addActorListeners(cbSettingsButton, toggleMusic, menuButton, color1Button, color2Button, color3Button, color4Button, mapButton, diceBytton); // handle input
+        controller.addActorListeners(cbSettingsButton, toggleMusic, menuButton, color1Button, color2Button, color3Button, color4Button, mapButton, diceBytton, diceNumSLider, sliderLabel); // handle input
     }
 
     @Override

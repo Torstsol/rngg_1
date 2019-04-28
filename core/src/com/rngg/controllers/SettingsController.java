@@ -2,6 +2,8 @@ package com.rngg.controllers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.rngg.configuration.GamePreferences;
@@ -32,7 +34,9 @@ public class SettingsController extends Controller {
                                   final TextButton color3Button,
                                   final TextButton color4Button,
                                   final TextButton mapButton,
-                                  final TextButton diceButton) {
+                                  final TextButton diceButton,
+                                  final Slider slider,
+                                  final Label sliderLabel) {
 
         cbSettingsButton.addListener(new ChangeListener() {
             @Override
@@ -123,6 +127,14 @@ public class SettingsController extends Controller {
                     pref.setDiceType("d6");
                     diceButton.setText("d6");
                 }
+            }
+        });
+
+        slider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                pref.setNumDice((int) slider.getValue());
+                sliderLabel.setText("Number of dice: " + pref.getNumDice());
             }
         });
     }

@@ -3,6 +3,7 @@ package com.rngg.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.rngg.configuration.GamePreferences;
@@ -36,6 +37,7 @@ public class GameModel implements RealtimeListener{
 
 
     private float attackRoll, defendRoll;
+    private String[] attackValues, defendValues;
 
     // defense strategies
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
@@ -49,11 +51,11 @@ public class GameModel implements RealtimeListener{
         if(players == null){
             pref = GamePreferences.getInstance();
             this.players = new Player[4];
-            this.players[0] = new Player("You", "6969", true, true, pref.getColorArray().get(0));
+            this.players[0] = new Player("You", "6969", true, true, pref.getMainColor());
             this.host = this.players[0];
             this.localPlayer = this.players[0];
             for (int i = 1; i < 4; i++) {
-                this.players[i] = new Player("BOT" + i, "6969", true, false, pref.getColorArray().get(i));
+                this.players[i] = new Player("BOT" + i, "6969", true, false, pref.getEnemyColorArray().get(i-1));
             }
         }
         else{
@@ -201,11 +203,13 @@ public class GameModel implements RealtimeListener{
 
         this.rng.roll(attacker.getUnits());
         attackRoll = rng.valueFromRoll();
+        attackValues = rng.labelFromRoll();
         Gdx.app.log(this.getClass().getSimpleName(),
                 attacker.toString() + " rolled " + attackRoll + " (" + Arrays.toString(rng.labelFromRoll()) + ")");
 
         this.rng.roll(defender.getUnits());
         defendRoll = rng.valueFromRoll();
+        defendValues = rng.labelFromRoll();
         Gdx.app.log(this.getClass().getSimpleName(),
                 defender.toString() + " rolled " + defendRoll + " (" + Arrays.toString(rng.labelFromRoll()) + ")");
 
@@ -386,8 +390,16 @@ public class GameModel implements RealtimeListener{
         return (int) attackRoll;
     }
 
+    public String[] getAttackValues() {
+        return attackValues;
+    }
+
     public int getDefendRoll() {
         return (int) defendRoll;
+    }
+
+    public String[] getDefendValues() {
+        return defendValues;
     }
 
     public boolean isInGameMenuOpen() {
@@ -431,4 +443,11 @@ public class GameModel implements RealtimeListener{
     public void setSender(IPlayServices playServices) {
         this.sender = playServices;
     }
+
+
+    public int getNumDice(){
+        //return pref.getNumDice();
+        return 8;
+    }
+
 }

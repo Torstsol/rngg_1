@@ -51,11 +51,11 @@ public class GameModel implements RealtimeListener{
         if(players == null){
             pref = GamePreferences.getInstance();
             this.players = new Player[4];
-            this.players[0] = new Player("You", "6969", true, true, pref.getColorArray().get(0));
+            this.players[0] = new Player("You", "6969", true, true, pref.getMainColor());
             this.host = this.players[0];
             this.localPlayer = this.players[0];
             for (int i = 1; i < 4; i++) {
-                this.players[i] = new Player("BOT" + i, "6969", true, false, pref.getColorArray().get(i));
+                this.players[i] = new Player("BOT" + i, "6969", true, false, pref.getEnemyColorArray().get(i-1));
             }
         }
         else{

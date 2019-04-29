@@ -56,14 +56,14 @@ public class HUDRenderer {
     */
 
     // SIDE BY SIDE (MIGHT COLLIDE WITH USERNAMES)
-    private static final int youPosX = Rngg.WIDTH*15/40;
+    private static final int youPosX = Rngg.WIDTH*175/400;
     private static final int youPosY = Rngg.HEIGHT*39/40;
-    private static final int defPosX = Rngg.WIDTH*27/40;
+    private static final int defPosX = Rngg.WIDTH*295/400;
     private static final int defPosY = Rngg.HEIGHT*39/40;
 
-    private static final int attackPosX = Rngg.WIDTH*18/40;
+    private static final int attackPosX = Rngg.WIDTH*205/400;
     private static final int attackPosY = Rngg.HEIGHT*39/40;
-    private static final int defendPosX = Rngg.WIDTH*327/400;
+    private static final int defendPosX = Rngg.WIDTH*322/400;
     private static final int defendPosY = Rngg.HEIGHT*39/40;
 
 
@@ -126,11 +126,11 @@ public class HUDRenderer {
 
         HUDBatch.begin();
         font.setColor(gameModel.currentPlayer().getColor());
-        font.draw(HUDBatch,"Player " + gameModel.getPlayer(gameModel.getPlayerIndex()).getName() + " Host: " + gameModel.host.getName(),10,Rngg.HEIGHT*39/40);
+        font.draw(HUDBatch, "Playing: " + gameModel.getPlayer(gameModel.getPlayerIndex()).getName(),10,Rngg.HEIGHT*39/40);
         font.setColor(Color.WHITE);
         if(gameModel.getAttackRoll() != 0 && gameModel.getDefendRoll() != 0){
             font.draw(HUDBatch,"You: ", youPosX,youPosY);
-            font.draw(HUDBatch,"Defender: ", defPosX,defPosY);
+            font.draw(HUDBatch,"Def: ", defPosX,defPosY);
             if(elapsedTime <= totalRouletteTime){
                 int i = 0;
                 float interval = 0;

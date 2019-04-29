@@ -31,6 +31,15 @@ public class GamePreferences {
         if(!prefs.contains("Main color")){
             setMainColor("color 1");
         }
+        if(!prefs.contains("map type")){
+            setMapType("SquareMap");
+        }
+        if(!prefs.contains("dice type")){
+            setDiceType("d6");
+        }
+        if(!prefs.contains("Number of dice")){
+            setNumDice(8);
+        }
         updateColors();
     }
 
@@ -132,5 +141,32 @@ public class GamePreferences {
 
     public String getMainColorString(){
         return prefs.getString("Main color");
+    }
+
+    public void setMapType(String mapType){
+        prefs.putString("map type", mapType);
+        prefs.flush();
+    }
+
+    public String getMapType(){
+        return prefs.getString("map type");
+    }
+
+    public void setDiceType(String diceType){
+        prefs.putString("dice type", diceType);
+        prefs.flush();
+    }
+
+    public String getDiceType(){
+        return prefs.getString("dice type");
+    }
+
+    public void setNumDice(int num) {
+        prefs.putInteger("Number of dice", num);
+        prefs.flush();
+    }
+
+    public int getNumDice(){
+        return prefs.getInteger("Number of dice");
     }
 }

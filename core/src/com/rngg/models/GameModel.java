@@ -65,9 +65,13 @@ public class GameModel implements RealtimeListener{
             for (int i = 0; i < players.size(); i++) {
                 if(players.get(i).isHost == true){
                     this.host = players.get(i);
+                    System.out.println("HOSTNAME: " + players.get(i).getName());
+                    System.out.println("HOST_ID: " + players.get(i).playerId);
                 }
                 if (players.get(i).isLocal == true){
                     this.localPlayer = players.get(i);
+                    System.out.println("LocalNAME: " + players.get(i).getName());
+                    System.out.println("Local_ID: " + players.get(i).playerId);
                 }
             }
 
@@ -80,12 +84,22 @@ public class GameModel implements RealtimeListener{
             long shuffleSeed = this.rng.getSeed();
             Collections.shuffle(this.players, new Random(shuffleSeed));
             System.out.println(this.players.toString());
+
             if(!localGame){
+                System.out.println("This unit believes its host and sends out order");
                 //broadcast order seed to everyone
                 Message message = new Message(new byte[512],"",0);
                 message.putString("ORDER");
                 message.putLong(shuffleSeed);
                 sender.sendToAllReliably(message.getData());
+            }
+            //if the proto-host ends up as settings-host also, it has to broadcast the settings
+            if(!localGame && this.localPlayer.playerId.equals(players.get(0).playerId)){
+                System.out.println("This unit believes its host and settingshost, and sends out settings");
+                Message settingsMessage = new Message(new byte[512],"",0);
+                settingsMessage.putString("mapSettingsFromProtoHost");
+                settingsMessage.putLong((long) 696969);
+                sender.sendToAllReliably(settingsMessage.getData());
             }
         }
         this.setMap(mapFileName);
@@ -427,14 +441,33 @@ public class GameModel implements RealtimeListener{
         }
 
         if(contents.equals("ORDER")) {
+            System.out.println("THis unit recieves an order");
             long shuffleSeed = message.getLong();
             System.out.println("ORDER recieved in gameModel" + shuffleSeed);
             Collections.shuffle(players, new Random(shuffleSeed));
 
+            System.out.println("New player-list based on order recieved: " + players.toString());
+
+
+            //this.setMap("");
+
+            if(this.localPlayer.playerId.equals(players.get(0).playerId)){
+                System.out.println("THis unit believes its not host, but settingshost and sends out the settings");
+                Message settingsMessage = new Message(new byte[512],"",0);
+                settingsMessage.putString("mapSettings");
+                settingsMessage.putLong((long) 696969);
+                sender.sendToAllReliably(settingsMessage.getData());
+            }
+
+        }
+        if(contents.equals("mapSettings")){
+            System.out.println("THis unit recieves mapSettings");
             this.setMap("");
-            System.out.println(players.toString());
+        }
 
-
+        if(contents.equals("mapSettingsFromProtoHost")){
+            System.out.println("THis unit recieves mapSettings from protohost that believes its settingshost");
+            this.setMap("");
         }
 
         if(contents.equals("FAX")){

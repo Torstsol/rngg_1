@@ -22,8 +22,9 @@ public class HexMeshZone extends Zone implements Iterable<HexZone> {
 
     @Override
     public String toString() {
-        return "HexZone{" +
-                ", player=" + player +
+        return "HexMeshZone{" +
+                "player=" + player +
+                ", subZones=" + subZones +
                 '}';
     }
 

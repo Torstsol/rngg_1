@@ -7,9 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.rngg.models.HexMeshMap;
 import com.rngg.models.HexMeshZone;
 import com.rngg.models.HexZone;
-import com.rngg.utils.RNG;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HexMeshMapRenderer extends MapRenderer<HexMeshMap, HexMeshZone, List<List<int[]>>> {
@@ -134,7 +132,7 @@ public class HexMeshMapRenderer extends MapRenderer<HexMeshMap, HexMeshZone, Lis
         float fontScaleX = font.getScaleX();
         float fontScaleY = font.getScaleY();
 
-        font.getData().setScale(map.getZoneWidth() / 1.2f / map.getSize() / 2);
+        font.getData().setScale(map.getZoneWidth() / 1f / map.getSize() / 2);
         font.draw(batch, Integer.toString(zone.getUnits()),
                 centerX,
                 centerY

@@ -50,7 +50,7 @@ public class GameModel {
             this.map = loadMap(fileName);
         } else {
             initializePlayerAndAreas();
-            this.map = new HexMeshMap(30, 45, players);
+            this.map = new HexMeshMap(25, 45, players);
         }
 
         this.updateAreas();

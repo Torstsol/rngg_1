@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.rngg.configuration.GamePreferences;
 
 public class SettingsModel {
@@ -37,6 +39,17 @@ public class SettingsModel {
             font.setColor(Color.WHITE);
         }
         font.draw(sb, text, x, y);
+    }
+
+    public Slider createSlider(Skin skin){
+        int length = pref.getNumDice();
+        Slider slider = new Slider(1, 8, 1, false, skin);
+        float[] sliderValues = new float[length];
+        for(int i = 0; i < length; i++){
+            sliderValues[i] = i + 1;
+        }
+        slider.setValue(pref.getNumDice());
+        return slider;
     }
 
 }

@@ -39,6 +39,7 @@ public class GameModel implements RealtimeListener{
 
 
     private float attackRoll, defendRoll;
+    private String[] attackValues, defendValues;
 
     // defense strategies
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
@@ -226,11 +227,13 @@ public class GameModel implements RealtimeListener{
 
         this.rng.roll(attacker.getUnits());
         attackRoll = rng.valueFromRoll();
+        attackValues = rng.labelFromRoll();
         Gdx.app.log(this.getClass().getSimpleName(),
                 attacker.toString() + " rolled " + attackRoll + " (" + Arrays.toString(rng.labelFromRoll()) + ")");
 
         this.rng.roll(defender.getUnits());
         defendRoll = rng.valueFromRoll();
+        defendValues = rng.labelFromRoll();
         Gdx.app.log(this.getClass().getSimpleName(),
                 defender.toString() + " rolled " + defendRoll + " (" + Arrays.toString(rng.labelFromRoll()) + ")");
 
@@ -411,8 +414,16 @@ public class GameModel implements RealtimeListener{
         return (int) attackRoll;
     }
 
+    public String[] getAttackValues() {
+        return attackValues;
+    }
+
     public int getDefendRoll() {
         return (int) defendRoll;
+    }
+
+    public String[] getDefendValues() {
+        return defendValues;
     }
 
     public boolean isInGameMenuOpen() {
@@ -481,4 +492,11 @@ public class GameModel implements RealtimeListener{
     public void setSender(IPlayServices playServices) {
         this.sender = playServices;
     }
+
+
+    public int getNumDice(){
+        //return pref.getNumDice();
+        return 8;
+    }
+
 }

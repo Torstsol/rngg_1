@@ -2,6 +2,8 @@ package com.rngg.controllers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.rngg.configuration.GamePreferences;
@@ -30,7 +32,11 @@ public class SettingsController extends Controller {
                                   final TextButton color1Button,
                                   final TextButton color2Button,
                                   final TextButton color3Button,
-                                  final TextButton color4Button) {
+                                  final TextButton color4Button,
+                                  final TextButton mapButton,
+                                  final TextButton diceButton,
+                                  final Slider slider,
+                                  final Label sliderLabel) {
 
         cbSettingsButton.addListener(new ChangeListener() {
             @Override
@@ -95,6 +101,40 @@ public class SettingsController extends Controller {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 pref.setMainColor("color 4");
+            }
+        });
+
+        mapButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (pref.getMapType().equals("SquareMap")){
+                    pref.setMapType("HexMap");
+                    mapButton.setText("Hexagonal map");
+                } else {
+                    pref.setMapType("SquareMap");
+                    mapButton.setText("Square map");
+                }
+            }
+        });
+
+        diceButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (pref.getDiceType().equals("d6")){
+                    pref.setDiceType("d20");
+                    diceButton.setText("d20");
+                } else {
+                    pref.setDiceType("d6");
+                    diceButton.setText("d6");
+                }
+            }
+        });
+
+        slider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                pref.setNumDice((int) slider.getValue());
+                sliderLabel.setText("Number of dice: " + pref.getNumDice());
             }
         });
     }

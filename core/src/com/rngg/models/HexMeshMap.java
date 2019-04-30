@@ -22,7 +22,7 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<int[]>>> {
     private HexZone[][] zones;
     private List<HexMeshZone> superZones;
 
-    public HexMeshMap(int rows, int cols, Player[] players, boolean randomPlayers, JsonValue zoneJSON, int offset, int numZones) {
+    public HexMeshMap(int rows, Player[] players, boolean randomPlayers, JsonValue zoneJSON, int offset, int numZones) {
         super();
 
         Gdx.app.log(this.getClass().getSimpleName(),
@@ -36,10 +36,10 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<int[]>>> {
         this.zoneWidth = (float) Math.sqrt(3) * size;
         this.zoneHeight = (float) 2 * size;
         this.rows = rows;
-        this.cols = cols;
+        this.cols = (int) (rows * 1.4);
         this.offset = zoneJSON == null ? rows / 2 : offset;
         this.numZones = numZones;
-        this.maxZoneSize = cols * 2;
+        this.maxZoneSize = cols;
         this.minZoneSize = cols / 5;
 
         // Need tp extend the array to support offset of negative indexes
@@ -48,8 +48,8 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<int[]>>> {
         this.initializeZones(players, randomPlayers, decodeZoneJSON(zoneJSON));
     }
 
-    public HexMeshMap(int rows, int cols, Player[] players) {
-        this(rows, cols, players, true, null, 0, rows * 2);
+    public HexMeshMap(int rows, Player[] players) {
+        this(rows, players, true, null, 0, rows * 2);
     }
 
 
@@ -274,7 +274,7 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<int[]>>> {
     }
 
     private HexZone getZone(int row, int col) {
-        if (row > rows - 1 || col > cols - 1 + this.offset || row < 0 || col + this.offset < 0) return null;
+        if (row > rows - 1 || col + this.offset > cols || row < 0 || col + this.offset < 0) return null;
 
         return this.zones[row][col + this.offset];
     }

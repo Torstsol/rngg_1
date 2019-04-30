@@ -17,7 +17,8 @@ public class GamePreferences {
     private Preferences prefs;
     private ArrayList<Float> colorArray;
     private ArrayList<Color> list;
-    private boolean musicEnabled = true;
+    private ArrayList<Color> enemyList;
+    private boolean musicEnabled = false;
 
     private GamePreferences(){
         prefs = Gdx.app.getPreferences("game-preferences");
@@ -29,6 +30,15 @@ public class GamePreferences {
         }
         if(!prefs.contains("Main color")){
             setMainColor("color 1");
+        }
+        if(!prefs.contains("map type")){
+            setMapType("SquareMap");
+        }
+        if(!prefs.contains("dice type")){
+            setDiceType("d6");
+        }
+        if(!prefs.contains("Number of dice")){
+            setNumDice(8);
         }
         updateColors();
     }
@@ -80,6 +90,17 @@ public class GamePreferences {
         return list;
     }
 
+    public ArrayList<Color> getEnemyColorArray(){
+        enemyList = new ArrayList<Color>();
+        for(Color c : this.getColorArray()){
+            if(!c.equals(this.getMainColor())){
+                enemyList.add(c);
+            }
+        }
+
+        return enemyList;
+    }
+
     public boolean getCbMode(){
         return prefs.getBoolean("colorblind mode");
     }
@@ -94,6 +115,7 @@ public class GamePreferences {
 
     public void setCbMode(boolean b) {
         prefs.putBoolean("colorblind mode", b);
+        prefs.flush();
     }
 
     public boolean hasColors(){
@@ -119,5 +141,32 @@ public class GamePreferences {
 
     public String getMainColorString(){
         return prefs.getString("Main color");
+    }
+
+    public void setMapType(String mapType){
+        prefs.putString("map type", mapType);
+        prefs.flush();
+    }
+
+    public String getMapType(){
+        return prefs.getString("map type");
+    }
+
+    public void setDiceType(String diceType){
+        prefs.putString("dice type", diceType);
+        prefs.flush();
+    }
+
+    public String getDiceType(){
+        return prefs.getString("dice type");
+    }
+
+    public void setNumDice(int num) {
+        prefs.putInteger("Number of dice", num);
+        prefs.flush();
+    }
+
+    public int getNumDice(){
+        return prefs.getInteger("Number of dice");
     }
 }

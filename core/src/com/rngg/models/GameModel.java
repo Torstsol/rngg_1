@@ -30,13 +30,14 @@ public class GameModel implements RealtimeListener{
     private RNG rng;
     private int maxUnits = 8;
     private int numPlayers;
-    private GamePreferences pref;
+    private GamePreferences pref = GamePreferences.getInstance();
     private boolean inGameMenuOpen;
     private IPlayServices sender;
     public Player host;
     public Player localPlayer;
     public boolean localGame = false;
 
+    public static final String HEX = "HEX", SQUARE = "SQUARE";
 
     private float attackRoll, defendRoll;
     private String[] attackValues, defendValues;
@@ -52,7 +53,6 @@ public class GameModel implements RealtimeListener{
         //support for localgame, generates players or "bots"
         if(players == null){
             this.localGame = true;
-            pref = GamePreferences.getInstance();
             this.players = new ArrayList<Player>();
             this.players.add(new Player("You", "6969", true, true, pref.getColorArray().get(0)));
             this.host = this.players.get(0);
@@ -97,10 +97,7 @@ public class GameModel implements RealtimeListener{
             //if the proto-host ends up as settings-host also, it has to broadcast the settings
             if(!localGame && this.localPlayer.playerId.equals(players.get(0).playerId)){
                 System.out.println("This unit believes its host and settingshost, and sends out settings");
-                Message settingsMessage = new Message(new byte[512],"",0);
-                settingsMessage.putString("mapSettingsFromProtoHost");
-                settingsMessage.putLong((long) 696969);
-                sender.sendToAllReliably(settingsMessage.getData());
+                sendSettings();
             }
         }
         this.setMap(mapFileName);
@@ -275,7 +272,6 @@ public class GameModel implements RealtimeListener{
         }
     }
 
-
     public void updateAreas() {
         /*
         Method for calculating contiguous areas per player
@@ -434,10 +430,64 @@ public class GameModel implements RealtimeListener{
         this.inGameMenuOpen = !this.inGameMenuOpen;
     }
 
-    public void sendMessage(){
-        Gdx.app.log(this.getClass().getSimpleName(), "Sending FAX");
+    public void applySettings(Message settings, boolean sentBySelf) {
+        Gdx.app.log(this.getClass().getSimpleName(), "Receiving settings");
+
+        if (sentBySelf) {
+            // pop the header from the message, we don't need it
+            // if the message was received via network, the header is popped in handleDataReceived
+            String header = settings.getString();
+            Gdx.app.log(this.getClass().getSimpleName(), "Header: " + header);
+        }
+
+        String diceType = settings.getString();
+        int numDice = settings.getInt();
+        String mapType = settings.getString();
+        long seed = settings.getLong();
+        Gdx.app.log(this.getClass().getSimpleName(), "Recieved settings: \n" +
+                "diceType: " + diceType + "\n" +
+                "numDice: " + numDice + "\n" +
+                "mapType: " + mapType + "\n" +
+                "seed: " + seed + "\n"
+        );
+
+        rng.setFromString(diceType);
+        this.maxUnits = numDice;
+        rng.setSeed(seed);
+        // TODO remove magic Strings
+        if (mapType.equals("HexMap")) {
+            this.map = new HexMap(7, 7, players);
+        } else if (mapType.equals("SquareMap")) {
+            this.map = new SquareMap(9, 16, players);
+        } else {
+            Gdx.app.error(this.getClass().getSimpleName(), "Incorrect or missing mapType: " + mapType);
+        }
+    }
+
+    public void sendSettings(){
+        Gdx.app.log(this.getClass().getSimpleName(), "Sending settings");
         Message message = new Message(new byte[512],"",0);
-        message.putString("FAX");
+        // message header
+        String header = "mapSettings";
+        message.putString(header);
+        // actual settings
+        String diceType = pref.getDiceType();
+        message.putString(diceType);
+        int numDice = pref.getNumDice();
+        message.putInt(numDice);
+        String mapType = pref.getMapType();
+        message.putString(mapType);
+        long seed = rng.getSeed();
+        message.putLong(seed);
+        Gdx.app.log(this.getClass().getSimpleName(), "Sent settings: \n" +
+                "diceType: " + diceType + "\n" +
+                "numDice: " + numDice + "\n" +
+                "mapType: " + mapType + "\n" +
+                "seed: " + seed + "\n"
+        );
+        // apply settings and send
+        // TODO this doesn't work, for some reason
+        applySettings(message.copy(), true);
         sender.sendToAllReliably(message.getData());
     }
 
@@ -464,27 +514,13 @@ public class GameModel implements RealtimeListener{
 
             if(this.localPlayer.playerId.equals(players.get(0).playerId)){
                 System.out.println("THis unit believes its not host, but settingshost and sends out the settings");
-                Message settingsMessage = new Message(new byte[512],"",0);
-                settingsMessage.putString("mapSettings");
-                settingsMessage.putLong((long) 696969);
-                sender.sendToAllReliably(settingsMessage.getData());
+                sendSettings();
             }
 
         }
         if(contents.equals("mapSettings")){
-            System.out.println("THis unit recieves mapSettings");
-            this.setMap("");
-        }
-
-        if(contents.equals("mapSettingsFromProtoHost")){
-            System.out.println("THis unit recieves mapSettings from protohost that believes its settingshost");
-            this.setMap("");
-        }
-
-        if(contents.equals("FAX")){
-            for (Zone z : (ArrayList<Zone>) map.getZones()) {
-                z.setUnits(-1);
-            }
+            System.out.println("This unit recieves mapSettings");
+            applySettings(message, false);
         }
     }
 
@@ -492,7 +528,6 @@ public class GameModel implements RealtimeListener{
     public void setSender(IPlayServices playServices) {
         this.sender = playServices;
     }
-
 
     public int getNumDice(){
         //return pref.getNumDice();

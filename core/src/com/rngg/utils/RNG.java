@@ -151,6 +151,18 @@ public class RNG {
 
     // --- BEGIN useful instances ---
 
+    public static final String D6 = "d6", D20 = "d20", GRADES = "grades";
+
+    public void setFromString(String type) {
+        if (type.equals(D6)) {
+            d6();
+        } else if (type.equals(D20)) {
+            d20();
+        } else if (type.equals(GRADES)) {
+            grades();
+        }
+    }
+
     public void uniformRange(int min, int max, int step) {
         // Fills the RNG with uniformly distributed integer values in a range
         // labels are values as strings

@@ -454,6 +454,7 @@ public class AndroidAPI implements IPlayServices {
         GamePreferences pref = GamePreferences.getInstance();
         ArrayList<Player> playerList = new ArrayList<Player>();
         Player[] players = new Player[mRoom.getParticipantIds().size()];
+        ArrayList<Player> playerListTesting = new ArrayList<Player>();
 
         for (int i = 0; i < mRoom.getParticipants().size(); i++) {
             /*if(!mRoom.getParticipants().get(0).getParticipantId().equals(getLocalID())){
@@ -466,12 +467,15 @@ public class AndroidAPI implements IPlayServices {
             if(!player.getParticipantId().equals(getLocalID())){
                 players[i] = new Player(player.getDisplayName(), player.getParticipantId(), false, this.hostID() == player.getParticipantId(), pref.getEnemyColorArray().get(i));
                 playerList.add(new Player(player.getDisplayName(), player.getParticipantId(), false, this.hostID() == player.getParticipantId(), pref.getEnemyColorArray().get(i)));
+                playerListTesting.add(new Player(player.getDisplayName(), player.getParticipantId(), false, player.getDisplayName().equals("IncapableTactics3"), pref.getEnemyColorArray().get(i)));
             }
             else {
                 players[i] = new Player(player.getDisplayName(), player.getParticipantId(), true, this.hostID() == player.getParticipantId(), pref.getMainColor());
                 playerList.add(new Player(player.getDisplayName(), player.getParticipantId(), true, this.hostID() == player.getParticipantId(), pref.getMainColor()));
+                playerListTesting.add(new Player(player.getDisplayName(), player.getParticipantId(), true, player.getDisplayName().equals("IncapableTactics3"), pref.getEnemyColorArray().get(i)));
             }
         }
+
         return playerList;
 
     }

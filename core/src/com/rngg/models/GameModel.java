@@ -49,6 +49,7 @@ public class GameModel implements RealtimeListener{
         this.playerIndex = 0;
         this.attackRoll = 0;
         this.defendRoll = 0;
+        this.sender = sender;
 
         //support for localgame, generates players or "bots"
         if(players == null){
@@ -80,6 +81,8 @@ public class GameModel implements RealtimeListener{
         this.rng = RNG.getInstance();
         this.contiguousAreas = new int[this.players.size()];
 
+        this.setMap(mapFileName);
+
         //check if proto-host, if true, generate seed, shuffle playerlist, and broadcast seed
         if(this.localPlayer.isHost){
             long shuffleSeed = this.rng.getSeed();
@@ -100,7 +103,7 @@ public class GameModel implements RealtimeListener{
                 sendSettings();
             }
         }
-        this.setMap(mapFileName);
+
 
 
     }

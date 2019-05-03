@@ -487,7 +487,8 @@ public class GameModel implements RealtimeListener{
         );
         // apply settings and send
         // TODO this doesn't work, for some reason
-        applySettings(message.copy(), true);
+        Message message2 = new Message(message.getData(), "who cares", 69);
+        applySettings(message2, true);
         sender.sendToAllReliably(message.getData());
     }
 

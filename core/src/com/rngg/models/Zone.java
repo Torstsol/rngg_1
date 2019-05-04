@@ -1,9 +1,17 @@
 package com.rngg.models;
 
+import com.rngg.utils.RNG;
+
 public abstract class Zone {
     protected Player player;
     protected int units;
     protected boolean clicked = false;
+
+    public Zone(Player player, int maxUnits) {
+        this.player = player;
+        // + 1 because nextInt upper bound is exclusive
+        this.units = RNG.nextInt(1, maxUnits + 1);
+    }
 
     public Player getPlayer() {
         return player;

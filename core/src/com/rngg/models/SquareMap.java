@@ -13,10 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
-    private int zoneWidth, zoneHeight, rows, cols;
+    private int zoneWidth, zoneHeight, rows, cols, maxUnits;
     private SquareZone[][] zones;
 
-    public SquareMap(int rows, int cols, ArrayList<Player> players, boolean randomPlayers, JsonValue zoneJSON) {
+    public SquareMap(int rows, int cols, ArrayList<Player> players, int maxUnits, boolean randomPlayers, JsonValue zoneJSON) {
         super();
 
         Gdx.app.log(this.getClass().getSimpleName(),
@@ -29,6 +29,7 @@ public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
         this.rows = rows;
         this.cols = cols;
         this.zones = new SquareZone[rows][cols];
+        this.maxUnits = maxUnits;
         this.initializeZones(players, randomPlayers, decodeZoneJSON(zoneJSON));
     }
 
@@ -60,7 +61,7 @@ public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
                 for (int col = 0; col < cols; col++) {
                     // TODO look at another way to distribute zones
 
-                    SquareZone zone = new SquareZone(RNG.choice(players), row, col);
+                    SquareZone zone = new SquareZone(RNG.choice(players), maxUnits, row, col);
                     this.zones[row][col] = zone;
                     Gdx.app.log(this.getClass().getSimpleName(), "generated: " + zone.toString());
                 }
@@ -83,9 +84,9 @@ public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
 
                         SquareZone zone;
                         if (randomPlayers) {
-                            zone = new SquareZone(RNG.choice(players), rowNum, col);
+                            zone = new SquareZone(RNG.choice(players), maxUnits, rowNum, col);
                         } else {
-                            zone = new SquareZone(players.get(playerNum), rowNum, col);
+                            zone = new SquareZone(players.get(playerNum), maxUnits, rowNum, col);
                         }
 
                         this.zones[rowNum][col] = zone;
@@ -114,8 +115,8 @@ public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
         this.neighbors = zones;
     }
 
-    public SquareMap(int rows, int cols, ArrayList<Player> players) {
-        this(rows, cols, players, true, null);
+    public SquareMap(int rows, int cols, ArrayList<Player> players, int maxUnits) {
+        this(rows, cols, players, maxUnits, true, null);
     }
 
     private SquareZone getZone(int row, int col) {

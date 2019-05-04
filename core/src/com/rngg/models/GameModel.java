@@ -117,7 +117,7 @@ public class GameModel implements RealtimeListener{
             this.map = loadMap(fileName);
         } else {
             //initializePlayerAndAreas();
-            this.map = new SquareMap(9, 16, players);
+            applyPreferences(RNG.getSeed());
         }
 
         this.updateAreas();
@@ -159,9 +159,9 @@ public class GameModel implements RealtimeListener{
         //initializePlayerAndAreas();
 
         if (mapType.equals("SquareMap")) {
-            return new SquareMap(totalRows, totalCols, this.players, randomPlayers, zones);
+            return new SquareMap(totalRows, totalCols, this.players, this.maxUnits, randomPlayers, zones);
         } else if (mapType.equals("HexMap")) {
-            return new HexMap(totalRows, totalCols, this.players, randomPlayers, zones, offset);
+            return new HexMap(totalRows, totalCols, this.players, this.maxUnits, randomPlayers, zones, offset);
         }
 
         this.updateAreas();
@@ -169,7 +169,7 @@ public class GameModel implements RealtimeListener{
         this.attackRoll = 0;
         this.defendRoll = 0;
         this.inGameMenuOpen = false;
-        return new SquareMap(9, 16, this.players);
+        return new SquareMap(9, 16, this.players, this.maxUnits);
     }
 
     public GameMap getMap() {
@@ -433,15 +433,19 @@ public class GameModel implements RealtimeListener{
         this.inGameMenuOpen = !this.inGameMenuOpen;
     }
 
-    public void applySettings(Message settings, boolean sentBySelf) {
-        Gdx.app.log(this.getClass().getSimpleName(), "Receiving settings");
-
-        if (sentBySelf) {
-            // pop the header from the message, we don't need it
-            // if the message was received via network, the header is popped in handleDataReceived
-            String header = settings.getString();
-            Gdx.app.log(this.getClass().getSimpleName(), "Header: " + header);
+    public void setMapFromType(String mapType) {
+        // TODO remove magic Strings
+        if (mapType.equals("HexMap")) {
+            this.map = new HexMap(7, 7, players, this.maxUnits);
+        } else if (mapType.equals("SquareMap")) {
+            this.map = new SquareMap(9, 16, players, this.maxUnits);
+        } else {
+            Gdx.app.error(this.getClass().getSimpleName(), "Incorrect or missing mapType: " + mapType);
         }
+    }
+
+    public void applySettings(Message settings) {
+        Gdx.app.log(this.getClass().getSimpleName(), "Receiving settings");
 
         String diceType = settings.getString();
         int numDice = settings.getInt();
@@ -456,15 +460,15 @@ public class GameModel implements RealtimeListener{
 
         rng.setFromString(diceType);
         this.maxUnits = numDice;
-        rng.setSeed(seed);
-        // TODO remove magic Strings
-        if (mapType.equals("HexMap")) {
-            this.map = new HexMap(7, 7, players);
-        } else if (mapType.equals("SquareMap")) {
-            this.map = new SquareMap(9, 16, players);
-        } else {
-            Gdx.app.error(this.getClass().getSimpleName(), "Incorrect or missing mapType: " + mapType);
-        }
+        RNG.setSeed(seed);
+        setMapFromType(mapType);
+    }
+
+    public void applyPreferences(long seed) {
+        rng.setFromString(pref.getDiceType());
+        this.maxUnits = pref.getNumDice();
+        RNG.setSeed(seed);
+        setMapFromType(pref.getMapType());
     }
 
     public void sendSettings(){
@@ -490,8 +494,7 @@ public class GameModel implements RealtimeListener{
         );
         // apply settings and send
         // TODO this doesn't work, for some reason
-        Message message2 = new Message(message.getData(), "who cares", 69);
-        applySettings(message2, true);
+        applyPreferences(seed);
         sender.sendToAllReliably(message.getData());
     }
 
@@ -524,7 +527,7 @@ public class GameModel implements RealtimeListener{
         }
         if(contents.equals("mapSettings")){
             System.out.println("This unit recieves mapSettings");
-            applySettings(message, false);
+            applySettings(message);
         }
     }
 
@@ -535,7 +538,7 @@ public class GameModel implements RealtimeListener{
 
     public int getNumDice(){
         //return pref.getNumDice();
-        return 8;
+        return this.maxUnits;
     }
 
 }

@@ -133,7 +133,6 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
                         } else {
                             zone = new HexZone(players.get(playerNum), maxUnits, rowNum, col);
                         }
-
                         this.zones[rowNum][col + this.offset] = zone;
                         Gdx.app.log(this.getClass().getSimpleName(), "generated: " + zone.toString());
                     }

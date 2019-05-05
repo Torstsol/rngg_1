@@ -23,6 +23,7 @@ public class SquareZone extends Zone {
     @Override
     public String toString() {
         return "SquareZone{" +
+                "id=" + id +
                 "row=" + row +
                 ", col=" + col +
                 ", player=" + player +

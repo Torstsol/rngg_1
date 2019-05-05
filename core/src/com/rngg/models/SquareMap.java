@@ -88,7 +88,6 @@ public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
                         } else {
                             zone = new SquareZone(players.get(playerNum), maxUnits, rowNum, col);
                         }
-
                         this.zones[rowNum][col] = zone;
                         Gdx.app.log(this.getClass().getSimpleName(), "generated: " + zone.toString());
                     }

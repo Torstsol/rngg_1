@@ -23,6 +23,7 @@ public class HexZone extends Zone {
     @Override
     public String toString() {
         return "HexZone{" +
+                "id=" + id +
                 "row=" + row +
                 ", col=" + col +
                 ", player=" + player +

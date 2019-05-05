@@ -205,11 +205,12 @@ public class GameModel implements RealtimeListener{
                 Gdx.app.log(this.getClass().getSimpleName(), temp.toString() + " and " + attacker.toString() + " are not neighbors");
                 return;
             }
-            this.attack(attacker, temp);
+            // don't send data if the game is local
+            this.attack(attacker, temp, !this.localGame);
         }
     }
 
-    public int attack(Zone attacker, Zone defender) {
+    public int attack(Zone attacker, Zone defender, boolean localAttack) {
         /*
         Returns
             -1 if defender defends
@@ -224,6 +225,10 @@ public class GameModel implements RealtimeListener{
         Gdx.app.log(this.getClass().getSimpleName(),
                 String.format("%s is attacking %s", attacker.getPlayer().toString(), defender.getPlayer().toString())
         );
+
+        if (localAttack) {
+            sendAttack(attacker, defender, RNG.getSeed());
+        }
 
         this.rng.roll(attacker.getUnits());
         attackRoll = rng.valueFromRoll();
@@ -251,6 +256,22 @@ public class GameModel implements RealtimeListener{
         }
         attacker.setUnits(1);
         return attackerWon ? 1 : -1;
+    }
+
+    public void sendAttack(Zone attacker, Zone defender, long seed) {
+        Message message = new Message(new byte[512],"",0);
+        message.putString("ATTACK");
+        message.putInt(attacker.getId());
+        message.putInt(defender.getId());
+        message.putLong(seed);
+        sender.sendToAllReliably(message.getData());
+    }
+
+    public void parseAttack(Message message) {
+        Zone attacker = this.map.getZoneById(message.getInt());
+        Zone defender = this.map.getZoneById(message.getInt());
+        RNG.setSeed(message.getLong());
+        this.attack(attacker, defender, false);
     }
 
     public Player currentPlayer() {
@@ -528,6 +549,9 @@ public class GameModel implements RealtimeListener{
         if(contents.equals("mapSettings")){
             System.out.println("This unit recieves mapSettings");
             applySettings(message);
+        }
+        if (contents.equals("ATTACK")) {
+            this.parseAttack(message);
         }
     }
 

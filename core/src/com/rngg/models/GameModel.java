@@ -18,11 +18,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 
 public class GameModel implements RealtimeListener{
     public int playerScore = 0;
     private GameMap map;
-    private Player[] players;
+    private ArrayList<Player> players;
     private ArrayList<Player> eliminatedPlayers;
     private int playerIndex;
     private Zone attacker;
@@ -30,14 +31,16 @@ public class GameModel implements RealtimeListener{
     private RNG rng;
     private int maxUnits = 8;
     private int numPlayers;
-    private GamePreferences pref;
+    private GamePreferences pref = GamePreferences.getInstance();
     private boolean inGameMenuOpen;
     private IPlayServices sender;
     public Player host;
     public Player localPlayer;
     private boolean gameOver;
     private Player gameWinner;
+    public boolean localGame = false;
 
+    public static final String HEX = "HEX", SQUARE = "SQUARE";
 
     private float attackRoll, defendRoll;
     private String[] attackValues, defendValues;
@@ -45,47 +48,76 @@ public class GameModel implements RealtimeListener{
     // defense strategies
     public static final String DEFEND_ALL = "DEFEND_ALL", DEFEND_CORE = "DEFEND_CORE", DEFEND_FRONTIER = "DEFEND_FRONTIER";
 
-    public GameModel(Player[] players, String mapFileName) {
+    public GameModel(ArrayList<Player> players, String mapFileName, IPlayServices sender) {
         this.playerIndex = 0;
         this.attackRoll = 0;
         this.defendRoll = 0;
+        this.sender = sender;
         this.eliminatedPlayers = new ArrayList<Player>();
         this.gameOver = false;
         this.gameWinner = null;
 
         //support for localgame, generates players or "bots"
         if(players == null){
-            pref = GamePreferences.getInstance();
-            this.players = new Player[4];
-            this.players[0] = new Player("You", "6969", true, true, pref.getMainColor());
-
-            this.host = this.players[0];
-            this.localPlayer = this.players[0];
+            this.localGame = true;
+            this.players = new ArrayList<Player>();
+            this.players.add(new Player("You", "6969", true, true, pref.getColorArray().get(0)));
+            this.host = this.players.get(0);
+            this.localPlayer = this.players.get(0);
             for (int i = 1; i < 4; i++) {
-                this.players[i] = new Player("BOT" + i, "6969", true, false, pref.getEnemyColorArray().get(i-1));
+                this.players.add(new Player("BOT" + i, "6969", true, false, pref.getColorArray().get(i)));
             }
         }
         else{
             this.players = players;
-            for (int i = 0; i < players.length; i++) {
-                if(players[i].isHost == true){
-                    this.host = players[i];
+            for (int i = 0; i < players.size(); i++) {
+                if(players.get(i).isHost == true){
+                    this.host = players.get(i);
+                    System.out.println("HOSTNAME: " + players.get(i).getName());
+                    System.out.println("HOST_ID: " + players.get(i).playerId);
                 }
-                if (players[i].isLocal == true){
-                    this.localPlayer = players[i];
+                if (players.get(i).isLocal == true){
+                    this.localPlayer = players.get(i);
+                    System.out.println("LocalNAME: " + players.get(i).getName());
+                    System.out.println("Local_ID: " + players.get(i).playerId);
                 }
             }
 
         }
         this.rng = RNG.getInstance();
-        this.contiguousAreas = new int[this.players.length];
+        this.contiguousAreas = new int[this.players.size()];
+
         this.setMap(mapFileName);
+
+
+
+        //check if proto-host, if true, generate seed, shuffle playerlist, and broadcast seed
+        if(this.localPlayer.isHost){
+            long shuffleSeed = this.rng.getSeed();
+            Collections.shuffle(this.players, new Random(shuffleSeed));
+            System.out.println(this.players.toString());
+
+            if(!localGame){
+                System.out.println("This unit believes its host and sends out order");
+                //broadcast order seed to everyone
+                Message message = new Message(new byte[512],"",0);
+                message.putString(Message.ORDER);
+                message.putLong(shuffleSeed);
+                sender.sendToAllReliably(message.getData());
+            }
+            //if the proto-host ends up as settings-host also, it has to broadcast the settings
+            if(!localGame && this.localPlayer.playerId.equals(players.get(0).playerId)){
+                System.out.println("This unit believes its host and settingshost, and sends out settings");
+                sendSettings();
+            }
+        }
+
 
 
     }
 
-    public GameModel(Player[] players) {
-        this(players, "");
+    public GameModel(ArrayList<Player> players, IPlayServices sender) {
+        this(players, "", sender);
     }
 
     public void setMap(String fileName) {
@@ -93,29 +125,20 @@ public class GameModel implements RealtimeListener{
             this.map = loadMap(fileName);
         } else {
             //initializePlayerAndAreas();
+            applyPreferences(RNG.getSeed());
 
-            this.map = new SquareMap(5, 5, players);
         }
 
-        for(int i = 0; i < this.players.length; i++){
-            if(this.map.getPlayerZones(players[i]).size() == 0){
-                this.eliminatedPlayers.add(players[i]);
+        for(int i = 0; i < this.players.size(); i++){
+            if(this.map.getPlayerZones(players.get(i)).size() == 0){
+                this.eliminatedPlayers.add(players.get(i));
             }
         }
-        if(eliminatedPlayers.contains(players[0])){
+        if(eliminatedPlayers.contains(players.get(0))){
             nextPlayer();
         }
 
         this.updateAreas();
-    }
-
-    private void initializePlayerAndAreas() {
-        pref = GamePreferences.getInstance();
-        this.players = new Player[numPlayers];
-        for (int i = 0; i < numPlayers; i++) { //players[i] = new Player("Player" + i, "90238049", true,  pref.getColorArray().get(i));
-        }
-        this.playerIndex = 0;
-        this.contiguousAreas = new int[numPlayers];
     }
 
     private GameMap loadMap(String fileName) {
@@ -154,9 +177,9 @@ public class GameModel implements RealtimeListener{
         //initializePlayerAndAreas();
 
         if (mapType.equals("SquareMap")) {
-            return new SquareMap(totalRows, totalCols, this.players, randomPlayers, zones);
+            return new SquareMap(totalRows, totalCols, this.players, this.maxUnits, randomPlayers, zones);
         } else if (mapType.equals("HexMap")) {
-            return new HexMap(totalRows, totalCols, this.players, randomPlayers, zones, offset);
+            return new HexMap(totalRows, totalCols, this.players, this.maxUnits, randomPlayers, zones, offset);
         }
 
         this.updateAreas();
@@ -164,7 +187,7 @@ public class GameModel implements RealtimeListener{
         this.attackRoll = 0;
         this.defendRoll = 0;
         this.inGameMenuOpen = false;
-        return new SquareMap(9, 16, this.players);
+        return new SquareMap(9, 16, this.players, this.maxUnits);
     }
 
     public GameMap getMap() {
@@ -172,7 +195,7 @@ public class GameModel implements RealtimeListener{
     }
 
     public Player getPlayer(int index){
-        return players[index];
+        return players.get(index);
     }
 
     public void click(Vector3 coords) {
@@ -200,11 +223,12 @@ public class GameModel implements RealtimeListener{
                 Gdx.app.log(this.getClass().getSimpleName(), temp.toString() + " and " + attacker.toString() + " are not neighbors");
                 return;
             }
-            this.attack(attacker, temp);
+            // don't send data if the game is local
+            this.attack(attacker, temp, !this.localGame);
         }
     }
 
-    public int attack(Zone attacker, Zone defender) {
+    public int attack(Zone attacker, Zone defender, boolean localAttack) {
         /*
         Returns
             -1 if defender defends
@@ -219,6 +243,10 @@ public class GameModel implements RealtimeListener{
         Gdx.app.log(this.getClass().getSimpleName(),
                 String.format("%s is attacking %s", attacker.getPlayer().toString(), defender.getPlayer().toString())
         );
+
+        if (localAttack) {
+            sendAttack(attacker, defender, RNG.getSeed());
+        }
 
         this.rng.roll(attacker.getUnits());
         attackRoll = rng.valueFromRoll();
@@ -244,7 +272,7 @@ public class GameModel implements RealtimeListener{
                 eliminatedPlayers.add(defender.player);
 
                 // Checking if the game is over
-                if(eliminatedPlayers.size() == players.length - 1) {
+                if(eliminatedPlayers.size() == players.size() - 1) {
                     Gdx.app.log(this.getClass().getSimpleName(),attacker.getPlayer().getName() + " has won the game!");
                     this.gameOver = true;
                     this.gameWinner = attacker.getPlayer();
@@ -261,8 +289,24 @@ public class GameModel implements RealtimeListener{
         return attackerWon ? 1 : -1;
     }
 
+    public void sendAttack(Zone attacker, Zone defender, long seed) {
+        Message message = new Message(new byte[512],"",0);
+        message.putString(Message.ATTACK);
+        message.putInt(attacker.getId());
+        message.putInt(defender.getId());
+        message.putLong(seed);
+        sender.sendToAllReliably(message.getData());
+    }
+
+    public void parseAttack(Message message) {
+        Zone attacker = this.map.getZoneById(message.getInt());
+        Zone defender = this.map.getZoneById(message.getInt());
+        RNG.setSeed(message.getLong());
+        this.attack(attacker, defender, false);
+    }
+
     public Player currentPlayer() {
-        return this.players[playerIndex];
+        return this.players.get(playerIndex);
     }
 
     public int getPlayerIndex() {
@@ -270,7 +314,7 @@ public class GameModel implements RealtimeListener{
     }
 
     public void setPlayer(int playerIndex) {
-        if (playerIndex >= 0 && playerIndex < this.players.length) {
+        if (playerIndex >= 0 && playerIndex < this.players.size()) {
             this.playerIndex = playerIndex;
             Gdx.app.log(
                     this.getClass().getSimpleName(),
@@ -279,10 +323,9 @@ public class GameModel implements RealtimeListener{
         } else {
             Gdx.app.error(
                     this.getClass().getSimpleName(),
-                    "Illegal player index given (" + playerIndex + " is not in [0, " + this.players.length + "])");
+                    "Illegal player index given (" + playerIndex + " is not in [0, " + this.players.size() + "])");
         }
     }
-
 
     public void updateAreas() {
         /*
@@ -290,8 +333,8 @@ public class GameModel implements RealtimeListener{
         Kinda funky with lots of loops, but it does at least work
          */
         // for each player
-        for (int i = 0; i < this.players.length; i++) {
-            Player player = this.players[i];
+        for (int i = 0; i < this.players.size(); i++) {
+            Player player = this.players.get(i);
             int max = 0;
             // total graph for this player
             ArrayList<Zone> graph = new ArrayList<Zone>(map.getPlayerZones(player));
@@ -345,7 +388,7 @@ public class GameModel implements RealtimeListener{
         // continue until no lists remain or no units remain
         // total number of units to distribute
         int units = this.contiguousAreas[playerIndex];
-        Player player = this.players[playerIndex];
+        Player player = this.players.get(playerIndex);
         // this is the list of lists from which to get zones
         ArrayList<ArrayList<Zone>> zones = new ArrayList<ArrayList<Zone>>();
         if (strategy.equals(DEFEND_ALL)) {
@@ -414,7 +457,7 @@ public class GameModel implements RealtimeListener{
         if (this.attacker != null) {
             this.attacker.unClick();
         }
-        this.playerIndex = (this.playerIndex + 1)%(players.length);
+        this.playerIndex = (this.playerIndex + 1)%(players.size());
         if(eliminatedPlayers.contains(getPlayer(playerIndex))){
             nextPlayer();
         }
@@ -446,10 +489,68 @@ public class GameModel implements RealtimeListener{
         this.inGameMenuOpen = !this.inGameMenuOpen;
     }
 
-    public void sendMessage(){
-        Gdx.app.log(this.getClass().getSimpleName(), "Sending FAX");
+    public void setMapFromType(String mapType) {
+        // TODO remove magic Strings
+        if (mapType.equals("HexMap")) {
+            this.map = new HexMap(7, 7, players, this.maxUnits);
+        } else if (mapType.equals("SquareMap")) {
+            this.map = new SquareMap(9, 16, players, this.maxUnits);
+        } else {
+            Gdx.app.error(this.getClass().getSimpleName(), "Incorrect or missing mapType: " + mapType);
+        }
+    }
+
+    public void applySettings(Message settings) {
+        Gdx.app.log(this.getClass().getSimpleName(), "Receiving settings");
+
+        String diceType = settings.getString();
+        int numDice = settings.getInt();
+        String mapType = settings.getString();
+        long seed = settings.getLong();
+        Gdx.app.log(this.getClass().getSimpleName(), "Recieved settings: \n" +
+                "diceType: " + diceType + "\n" +
+                "numDice: " + numDice + "\n" +
+                "mapType: " + mapType + "\n" +
+                "seed: " + seed + "\n"
+        );
+
+        rng.setFromString(diceType);
+        this.maxUnits = numDice;
+        RNG.setSeed(seed);
+        setMapFromType(mapType);
+    }
+
+    public void applyPreferences(long seed) {
+        rng.setFromString(pref.getDiceType());
+        this.maxUnits = pref.getNumDice();
+        RNG.setSeed(seed);
+        setMapFromType(pref.getMapType());
+    }
+
+    public void sendSettings(){
+        Gdx.app.log(this.getClass().getSimpleName(), "Sending settings");
         Message message = new Message(new byte[512],"",0);
-        message.putString("FAX");
+        // message header
+        String header = Message.MAPSETTINGS;
+        message.putString(header);
+        // actual settings
+        String diceType = pref.getDiceType();
+        message.putString(diceType);
+        int numDice = pref.getNumDice();
+        message.putInt(numDice);
+        String mapType = pref.getMapType();
+        message.putString(mapType);
+        long seed = rng.getSeed();
+        message.putLong(seed);
+        Gdx.app.log(this.getClass().getSimpleName(), "Sent settings: \n" +
+                "diceType: " + diceType + "\n" +
+                "numDice: " + numDice + "\n" +
+                "mapType: " + mapType + "\n" +
+                "seed: " + seed + "\n"
+        );
+        // apply settings and send
+        // TODO this doesn't work, for some reason
+        applyPreferences(seed);
         sender.sendToAllReliably(message.getData());
     }
 
@@ -459,19 +560,33 @@ public class GameModel implements RealtimeListener{
 
         //the start-message is redundant if the game is initiated from the quick-game option,
         //the game is already in game-mode when it recieves the start-message.
-        if(contents.equals("START")){
+        if(contents.equals(Message.START)){
             return;
         }
 
-        if(contents.equals("ORDER")) {
-            System.out.println("ORDER recieved in gameModel" + message.getInt());
+        if(contents.equals(Message.ORDER)) {
+            System.out.println("THis unit recieves an order");
+            long shuffleSeed = message.getLong();
+            System.out.println("ORDER recieved in gameModel" + shuffleSeed);
+            Collections.shuffle(players, new Random(shuffleSeed));
+
+            System.out.println("New player-list based on order recieved: " + players.toString());
+
+
+            //this.setMap("");
+
+            if(this.localPlayer.playerId.equals(players.get(0).playerId)){
+                System.out.println("THis unit believes its not host, but settingshost and sends out the settings");
+                sendSettings();
+            }
 
         }
-
-        if(contents.equals("FAX")){
-            for (Zone z : (ArrayList<Zone>) map.getZones()) {
-                z.setUnits(-1);
-            }
+        if(contents.equals(Message.MAPSETTINGS)){
+            System.out.println("This unit recieves mapSettings");
+            applySettings(message);
+        }
+        if (contents.equals(Message.ATTACK)) {
+            this.parseAttack(message);
         }
     }
 
@@ -480,10 +595,9 @@ public class GameModel implements RealtimeListener{
         this.sender = playServices;
     }
 
-
     public int getNumDice(){
         //return pref.getNumDice();
-        return 8;
+        return this.maxUnits;
     }
 
     public boolean isGameOver(){

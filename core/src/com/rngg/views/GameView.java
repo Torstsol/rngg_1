@@ -42,6 +42,7 @@ public class GameView extends View {
 
     @Override
     public void render(float delta) {
+        this.mapRenderer = this.getMapRenderer();
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(camera.combined);

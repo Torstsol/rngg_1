@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.JsonValue;
 import com.rngg.game.Rngg;
+import com.rngg.utils.RNG;
 import com.rngg.utils.hex.Hex;
 
 import java.util.ArrayList;
@@ -19,8 +20,9 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
     private int rows, cols;
     private HexZone[][] zones;
     private int offset;
+    private int maxUnits;
 
-    public HexMap(int rows, int cols, Player[] players, boolean randomPlayers, JsonValue zoneJSON, int offset) {
+    public HexMap(int rows, int cols, ArrayList<Player> players, int maxUnits, boolean randomPlayers, JsonValue zoneJSON, int offset) {
         super();
 
         Gdx.app.log(this.getClass().getSimpleName(),
@@ -39,11 +41,12 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
 
         // Need tp extend the array to support offset of negative indexes
         this.zones = new HexZone[rows][cols + offset + 1];
+        this.maxUnits = maxUnits;
         this.initializeZones(players, randomPlayers, decodeZoneJSON(zoneJSON));
     }
 
-    public HexMap(int rows, int cols, Player[] players) {
-        this(rows, cols, players, true, null, 0);
+    public HexMap(int rows, int cols, ArrayList<Player> players, int maxUnits) {
+        this(rows, cols, players, maxUnits, true, null, 0);
     }
 
 
@@ -83,7 +86,7 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
         return getZone((int) hex.getR(), (int) hex.getQ());
     }
 
-    private void initializeZones(Player[] players, boolean randomPlayers, List<List<int[]>> customZones) {
+    private void initializeZones(ArrayList<Player> players, boolean randomPlayers, List<List<int[]>> customZones) {
         HashMap<HexZone, ArrayList<HexZone>> zones = new HashMap<HexZone, ArrayList<HexZone>>();
 
         // When there's no custom map, the default rendered map is a hexagonal HexMap
@@ -94,7 +97,7 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
             int endCut = 0;
             for (int row = 0; row < rows; row++) {
                 for (int col = startIndex; col < rows; col++) {
-                    HexZone zone = new HexZone(players[(int) (Math.random() * (players.length))], row, col);
+                    HexZone zone = new HexZone(RNG.choice(players), maxUnits, row, col);
                     this.zones[row][col] = zone;
                     Gdx.app.log(this.getClass().getSimpleName(), "generated: " + zone.toString());
 
@@ -126,11 +129,10 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
 
                         HexZone zone;
                         if (randomPlayers) {
-                            zone = new HexZone(players[(int) (Math.random() * (players.length))], rowNum, col);
+                            zone = new HexZone(RNG.choice(players), maxUnits, rowNum, col);
                         } else {
-                            zone = new HexZone(players[playerNum], rowNum, col);
+                            zone = new HexZone(players.get(playerNum), maxUnits, rowNum, col);
                         }
-
                         this.zones[rowNum][col + this.offset] = zone;
                         Gdx.app.log(this.getClass().getSimpleName(), "generated: " + zone.toString());
                     }

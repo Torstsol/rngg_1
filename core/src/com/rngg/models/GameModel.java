@@ -24,6 +24,7 @@ public class GameModel implements RealtimeListener{
     public int playerScore = 0;
     private GameMap map;
     private ArrayList<Player> players;
+    private ArrayList<Player> eliminatedPlayers;
     private int playerIndex;
     private Zone attacker;
     private int[] contiguousAreas;
@@ -35,6 +36,8 @@ public class GameModel implements RealtimeListener{
     private IPlayServices sender;
     public Player host;
     public Player localPlayer;
+    private boolean gameOver;
+    private Player gameWinner;
     public boolean localGame = false;
 
     public static final String HEX = "HEX", SQUARE = "SQUARE";
@@ -50,6 +53,9 @@ public class GameModel implements RealtimeListener{
         this.attackRoll = 0;
         this.defendRoll = 0;
         this.sender = sender;
+        this.eliminatedPlayers = new ArrayList<Player>();
+        this.gameOver = false;
+        this.gameWinner = null;
 
         //support for localgame, generates players or "bots"
         if(players == null){
@@ -82,6 +88,8 @@ public class GameModel implements RealtimeListener{
         this.contiguousAreas = new int[this.players.size()];
 
         this.setMap(mapFileName);
+
+
 
         //check if proto-host, if true, generate seed, shuffle playerlist, and broadcast seed
         if(this.localPlayer.isHost){
@@ -118,6 +126,16 @@ public class GameModel implements RealtimeListener{
         } else {
             //initializePlayerAndAreas();
             applyPreferences(RNG.getSeed());
+
+        }
+
+        for(int i = 0; i < this.players.size(); i++){
+            if(this.map.getPlayerZones(players.get(i)).size() == 0){
+                this.eliminatedPlayers.add(players.get(i));
+            }
+        }
+        if(eliminatedPlayers.contains(players.get(0))){
+            nextPlayer();
         }
 
         this.updateAreas();
@@ -247,10 +265,23 @@ public class GameModel implements RealtimeListener{
         if (attackerWon) {
             Gdx.app.log(this.getClass().getSimpleName(), "Attacker won");
             defender.setUnits(attacker.getUnits() - 1);
+
+            // Checking if defender is eliminated
+            if(map.getPlayerZones(defender.player).size() == 1){
+                Gdx.app.log(this.getClass().getSimpleName(),defender.player.getName() + " is eliminated");
+                eliminatedPlayers.add(defender.player);
+
+                // Checking if the game is over
+                if(eliminatedPlayers.size() == players.size() - 1) {
+                    Gdx.app.log(this.getClass().getSimpleName(),attacker.getPlayer().getName() + " has won the game!");
+                    this.gameOver = true;
+                    this.gameWinner = attacker.getPlayer();
+                }
+            }
             defender.setPlayer(attacker.getPlayer());
             this.updateAreas();
-            // TODO check if defender is alive
-            // TODO check if game is over
+
+
         } else {
             Gdx.app.log(this.getClass().getSimpleName(), "Attacker lost");
         }
@@ -427,6 +458,10 @@ public class GameModel implements RealtimeListener{
             this.attacker.unClick();
         }
         this.playerIndex = (this.playerIndex + 1)%(players.size());
+        if(eliminatedPlayers.contains(getPlayer(playerIndex))){
+            nextPlayer();
+        }
+
         Gdx.app.debug(this.getClass().getSimpleName(), "Player " + playerIndex + " is now playing");
     }
 
@@ -565,4 +600,11 @@ public class GameModel implements RealtimeListener{
         return this.maxUnits;
     }
 
+    public boolean isGameOver(){
+        return gameOver;
+    }
+
+    public Player getGameWinner() {
+        return gameWinner;
+    }
 }

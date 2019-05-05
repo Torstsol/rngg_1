@@ -2,10 +2,12 @@ package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -42,6 +44,8 @@ public class HUDRenderer {
     private float totalRouletteTime;
     private int numDice;
     private RNG rng;
+    private ShapeRenderer sr;
+    private ShapeRenderer.ShapeType shapeType;
 
     /* ON TOP OF EACH OTHER (MIGHT COLLIDE WITH MAP)
     private static final int youPosX = Rngg.WIDTH*27/40;
@@ -67,7 +71,7 @@ public class HUDRenderer {
     private static final int defendPosY = Rngg.HEIGHT*39/40;
 
 
-    public HUDRenderer(GameModel gameModel, BitmapFont font, GameAssetManager assetManager, GameController controller) {
+    public HUDRenderer(GameModel gameModel, BitmapFont font, GameAssetManager assetManager, GameController controller, ShapeRenderer sr) {
         HUDCamera = new OrthographicCamera();
         HUDCamera.setToOrtho(false, Rngg.WIDTH, Rngg.HEIGHT);
         HUDBatch = new SpriteBatch();
@@ -78,6 +82,8 @@ public class HUDRenderer {
         tempValues = "";
         totalRouletteTime = numDice * 0.2f;
         rng = RNG.getInstance();
+        this.sr = sr;
+        this.shapeType = ShapeRenderer.ShapeType.Filled;
 
         final TextButton defendAllButton = new TextButton("Defend All", assetManager.manager.get(Assets.SKIN));
 
@@ -115,6 +121,15 @@ public class HUDRenderer {
 
         String valueString = Arrays.toString(gameModel.getAttackValues());
 
+        if(gameModel.isGameOver()){
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            sr.begin(shapeType);
+            sr.setColor(0,0,0,0.7f);
+            sr.rect(0,0,Rngg.WIDTH,Rngg.HEIGHT);
+            sr.end();
+        }
+
         if(tempValues.isEmpty() || !valueString.equals(tempValues)){
             startTime = System.nanoTime();
             attack = gameModel.getAttackValues();
@@ -148,7 +163,13 @@ public class HUDRenderer {
             tempValues = valueString;
         }
 
+        if(gameModel.isGameOver()){
+            font.draw(HUDBatch, "GAME OVER! " + gameModel.getGameWinner().getName() + " won the game!", Rngg.WIDTH* 3/10 , Rngg.HEIGHT* 11/20);
+        }
+
         HUDBatch.end();
+
+
         stage.draw();
 
     }

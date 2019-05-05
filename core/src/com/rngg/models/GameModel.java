@@ -23,6 +23,7 @@ public class GameModel implements RealtimeListener{
     public int playerScore = 0;
     private GameMap map;
     private Player[] players;
+    private ArrayList<Player> eliminatedPlayers;
     private int playerIndex;
     private Zone attacker;
     private int[] contiguousAreas;
@@ -34,6 +35,8 @@ public class GameModel implements RealtimeListener{
     private IPlayServices sender;
     public Player host;
     public Player localPlayer;
+    private boolean gameOver;
+    private Player gameWinner;
 
 
     private float attackRoll, defendRoll;
@@ -46,12 +49,16 @@ public class GameModel implements RealtimeListener{
         this.playerIndex = 0;
         this.attackRoll = 0;
         this.defendRoll = 0;
+        this.eliminatedPlayers = new ArrayList<Player>();
+        this.gameOver = false;
+        this.gameWinner = null;
 
         //support for localgame, generates players or "bots"
         if(players == null){
             pref = GamePreferences.getInstance();
             this.players = new Player[4];
             this.players[0] = new Player("You", "6969", true, true, pref.getMainColor());
+
             this.host = this.players[0];
             this.localPlayer = this.players[0];
             for (int i = 1; i < 4; i++) {
@@ -74,6 +81,8 @@ public class GameModel implements RealtimeListener{
         this.rng = RNG.getInstance();
         this.contiguousAreas = new int[this.players.length];
         this.setMap(mapFileName);
+
+
     }
 
     public GameModel(Player[] players) {
@@ -84,9 +93,19 @@ public class GameModel implements RealtimeListener{
         if (fileName.length() > 0) {
             this.map = loadMap(fileName);
         } else {
-            //initializePlayerAndAreas();
             this.map = new HexMeshMap(25, this.players);
         }
+
+        for(int i = 0; i < this.players.length; i++){
+            if(this.map.getPlayerZones(players[i]).size() == 0){
+                this.eliminatedPlayers.add(players[i]);
+            }
+        }
+
+        if(eliminatedPlayers.contains(players[0])){
+            nextPlayer();
+        }
+
         this.updateAreas();
     }
 
@@ -218,10 +237,23 @@ public class GameModel implements RealtimeListener{
         if (attackerWon) {
             Gdx.app.log(this.getClass().getSimpleName(), "Attacker won");
             defender.setUnits(attacker.getUnits() - 1);
+
+            // Checking if defender is eliminated
+            if(map.getPlayerZones(defender.player).size() == 1){
+                Gdx.app.log(this.getClass().getSimpleName(),defender.player.getName() + " is eliminated");
+                eliminatedPlayers.add(defender.player);
+
+                // Checking if the game is over
+                if(eliminatedPlayers.size() == players.length - 1) {
+                    Gdx.app.log(this.getClass().getSimpleName(),attacker.getPlayer().getName() + " has won the game!");
+                    this.gameOver = true;
+                    this.gameWinner = attacker.getPlayer();
+                }
+            }
             defender.setPlayer(attacker.getPlayer());
             this.updateAreas();
-            // TODO check if defender is alive
-            // TODO check if game is over
+
+
         } else {
             Gdx.app.log(this.getClass().getSimpleName(), "Attacker lost");
         }
@@ -383,6 +415,10 @@ public class GameModel implements RealtimeListener{
             this.attacker.unClick();
         }
         this.playerIndex = (this.playerIndex + 1)%(players.length);
+        if(eliminatedPlayers.contains(getPlayer(playerIndex))){
+            nextPlayer();
+        }
+
         Gdx.app.debug(this.getClass().getSimpleName(), "Player " + playerIndex + " is now playing");
     }
 
@@ -450,4 +486,11 @@ public class GameModel implements RealtimeListener{
         return 8;
     }
 
+    public boolean isGameOver(){
+        return gameOver;
+    }
+
+    public Player getGameWinner() {
+        return gameWinner;
+    }
 }

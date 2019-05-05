@@ -13,6 +13,12 @@ public class Message {
     private String senderID;
     private int describeContents;
 
+    // Message headers here
+    public static final String
+        START = "START",
+        ORDER = "ORDER",
+        MAPSETTINGS = "MAPSETTINGS",
+        ATTACK = "ATTACK";
 
 
     public Message(byte[] data, String senderID, int describeContents){

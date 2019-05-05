@@ -53,12 +53,12 @@ public class WaitingRoomController extends Controller implements RoomListener, R
 
         String type = message.getString();
         System.out.println(type);
-        if(type.equals("START")) {
+        if(type.equals(Message.START)) {
 
             game.getAPI().onStartGameMessageRecieved();
             enterGameScreen();
         }
-        if(type.equals("ORDER")) {
+        if(type.equals(Message.ORDER)) {
             System.out.println("ORDER recieved in waitingRoom" + message.getInt());
 
         }

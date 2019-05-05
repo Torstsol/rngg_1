@@ -82,7 +82,7 @@ public class AndroidLauncher extends AndroidApplication {
 					androidAPI.mPlaying = true;
 
 					Message message = new Message(new byte[512],"",0);
-					message.putString("START");
+					message.putString(Message.START);
 
 					androidAPI.sendToAllReliably(message.getData());
 					androidAPI.roomListener.enterGameScreen();

@@ -93,7 +93,7 @@ public class GameModel implements RealtimeListener{
                 System.out.println("This unit believes its host and sends out order");
                 //broadcast order seed to everyone
                 Message message = new Message(new byte[512],"",0);
-                message.putString("ORDER");
+                message.putString(Message.ORDER);
                 message.putLong(shuffleSeed);
                 sender.sendToAllReliably(message.getData());
             }
@@ -260,7 +260,7 @@ public class GameModel implements RealtimeListener{
 
     public void sendAttack(Zone attacker, Zone defender, long seed) {
         Message message = new Message(new byte[512],"",0);
-        message.putString("ATTACK");
+        message.putString(Message.ATTACK);
         message.putInt(attacker.getId());
         message.putInt(defender.getId());
         message.putLong(seed);
@@ -496,7 +496,7 @@ public class GameModel implements RealtimeListener{
         Gdx.app.log(this.getClass().getSimpleName(), "Sending settings");
         Message message = new Message(new byte[512],"",0);
         // message header
-        String header = "mapSettings";
+        String header = Message.MAPSETTINGS;
         message.putString(header);
         // actual settings
         String diceType = pref.getDiceType();
@@ -525,11 +525,11 @@ public class GameModel implements RealtimeListener{
 
         //the start-message is redundant if the game is initiated from the quick-game option,
         //the game is already in game-mode when it recieves the start-message.
-        if(contents.equals("START")){
+        if(contents.equals(Message.START)){
             return;
         }
 
-        if(contents.equals("ORDER")) {
+        if(contents.equals(Message.ORDER)) {
             System.out.println("THis unit recieves an order");
             long shuffleSeed = message.getLong();
             System.out.println("ORDER recieved in gameModel" + shuffleSeed);
@@ -546,11 +546,11 @@ public class GameModel implements RealtimeListener{
             }
 
         }
-        if(contents.equals("mapSettings")){
+        if(contents.equals(Message.MAPSETTINGS)){
             System.out.println("This unit recieves mapSettings");
             applySettings(message);
         }
-        if (contents.equals("ATTACK")) {
+        if (contents.equals(Message.ATTACK)) {
             this.parseAttack(message);
         }
     }

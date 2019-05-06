@@ -16,10 +16,11 @@ import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
+import com.rngg.utils.Utils;
 
 public class InGameMenuRenderer {
     private OrthographicCamera InGameMenuCamera;
-    private SpriteBatch InGameMenuBatch;
+    private SpriteBatch batch;
     private BitmapFont font;
     private GameModel gameModel;
     private Stage stage;
@@ -29,23 +30,23 @@ public class InGameMenuRenderer {
     private ShapeRenderer.ShapeType shapeType;
 
 
-    public InGameMenuRenderer(GameModel gameModel, BitmapFont font, GameAssetManager assetManager, GameController controller, ShapeRenderer sr) {
+    public InGameMenuRenderer(GameModel gameModel, BitmapFont font, GameController controller, ShapeRenderer sr) {
         InGameMenuCamera = new OrthographicCamera();
         InGameMenuCamera.setToOrtho(false, Rngg.WIDTH, Rngg.HEIGHT);
-        InGameMenuBatch = new SpriteBatch();
+        batch = Utils.getSpriteBatch();
         this.font = font;
         this.gameModel = gameModel;
         this.inGameMenuOpen = false;
         this.sr = sr;
         this.shapeType = ShapeRenderer.ShapeType.Filled;
 
-        final TextButton backButton = new TextButton("Main Menu", assetManager.manager.get(Assets.SKIN));
+        final TextButton backButton = new TextButton("Main Menu", GameAssetManager.getManager().get(Assets.SKIN));
 
-        final TextButton menuButton = new TextButton("Close", assetManager.manager.get(Assets.SKIN));
+        final TextButton menuButton = new TextButton("Close", GameAssetManager.getManager().get(Assets.SKIN));
 
         FitViewport fitViewport = new FitViewport(Rngg.WIDTH, Rngg.HEIGHT, InGameMenuCamera);
 
-        stage = new Stage(fitViewport, InGameMenuBatch);
+        stage = new Stage(fitViewport, batch);
 
         Table table = new Table();
         table.setFillParent(true);
@@ -76,7 +77,7 @@ public class InGameMenuRenderer {
         }
         if(inGameMenuOpen){
             InGameMenuCamera.update();
-            InGameMenuBatch.setProjectionMatrix(InGameMenuCamera.combined);
+            batch.setProjectionMatrix(InGameMenuCamera.combined);
             Gdx.gl.glEnable(GL20.GL_BLEND);
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             sr.begin(shapeType);

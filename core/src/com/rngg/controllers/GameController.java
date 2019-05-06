@@ -48,15 +48,15 @@ public class GameController extends Controller {
                         gameModel.setPlayer(3);
                         break;
                     case Input.Keys.A:
-                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_ALL);
+                        gameModel.defend(gameModel.getPlayerIndex(), GameModel.DEFEND_ALL);
                         gameModel.nextPlayer();
                         break;
                     case Input.Keys.F:
-                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_FRONTIER);
+                        gameModel.defend(gameModel.getPlayerIndex(), GameModel.DEFEND_FRONTIER);
                         gameModel.nextPlayer();
                         break;
                     case Input.Keys.C:
-                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_CORE);
+                        gameModel.defend(gameModel.getPlayerIndex(), GameModel.DEFEND_CORE);
                         gameModel.nextPlayer();
                         break;
                     case Input.Keys.I:
@@ -74,6 +74,8 @@ public class GameController extends Controller {
         Gdx.input.setInputProcessor(inputMultiplexer);
 
         IPlayServices playServices = game.getAPI();
+        System.out.println(playServices);
+        System.out.println(gameModel);
         playServices.setRealTimeListener(gameModel);
     }
 
@@ -101,7 +103,7 @@ public class GameController extends Controller {
         defendAllButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_ALL);
+                gameModel.defend(gameModel.getPlayerIndex(), GameModel.DEFEND_ALL);
                 gameModel.nextPlayer();
             }
         });
@@ -109,7 +111,7 @@ public class GameController extends Controller {
         defendCoreButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_CORE);
+                gameModel.defend(gameModel.getPlayerIndex(), GameModel.DEFEND_CORE);
                 gameModel.nextPlayer();
             }
         });
@@ -117,7 +119,7 @@ public class GameController extends Controller {
         defendFrontierButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_FRONTIER);
+                gameModel.defend(gameModel.getPlayerIndex(), GameModel.DEFEND_FRONTIER);
                 gameModel.nextPlayer();
             }
         });

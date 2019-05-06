@@ -1,4 +1,4 @@
-package com.rngg.utils.hex;
+package com.rngg.utils;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -10,7 +10,7 @@ public class Utils {
         return spriteBatch;
     }
 
-    public void dispose() {
+    public static void dispose() {
         spriteBatch.dispose();
     }
 

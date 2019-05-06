@@ -45,7 +45,7 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		// result from a sign in intent
-		if (requestCode == androidAPI.RC_SIGN_IN) {
+		if (requestCode == AndroidAPI.RC_SIGN_IN) {
 			GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 			if (result.isSuccess()) {
 				// The signed in account is stored in the result.
@@ -66,7 +66,7 @@ public class AndroidLauncher extends AndroidApplication {
 			}
 
 			// result from waiting room intent
-		} else if (requestCode == androidAPI.RC_WAITING_ROOM) {
+		} else if (requestCode == AndroidAPI.RC_WAITING_ROOM) {
 			// Look for finishing the waiting room from code, for example if a
 			// "start game" message is received.  In this case, ignore the result.
 			if (androidAPI.mWaitingRoomFinishedFromCode) {
@@ -107,7 +107,7 @@ public class AndroidLauncher extends AndroidApplication {
 				this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			}
 		}
-		else if (requestCode == androidAPI.RC_SELECT_PLAYERS) {
+		else if (requestCode == AndroidAPI.RC_SELECT_PLAYERS) {
 			if (resultCode != Activity.RESULT_OK) {
 				// Canceled or some other error.
 				return;
@@ -135,7 +135,7 @@ public class AndroidLauncher extends AndroidApplication {
 			Games.getRealTimeMultiplayerClient(this, GoogleSignIn.getLastSignedInAccount(this))
 					.create(androidAPI.mJoinedRoomConfig);
 		}
-		else if (requestCode == androidAPI.RC_INVITATION_INBOX) {
+		else if (requestCode == AndroidAPI.RC_INVITATION_INBOX) {
 			if (resultCode != Activity.RESULT_OK) {
 				// Canceled or some error.
 				return;

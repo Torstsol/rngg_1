@@ -9,7 +9,8 @@ public class HexZone extends Zone {
     private HexMeshZone superZone;
     private List<HexZone> neighbors;
 
-    public HexZone(Player player, int row, int col) {
+    public HexZone(Player player, int maxUnits, int row, int col) {
+        super(player, maxUnits);
         this.row = row;
         this.col = col;
         this.player = player;
@@ -45,6 +46,7 @@ public class HexZone extends Zone {
     @Override
     public String toString() {
         return "HexZone{" +
+                "id=" + id +
                 "row=" + row +
                 ", col=" + col +
                 ", player=" + player +

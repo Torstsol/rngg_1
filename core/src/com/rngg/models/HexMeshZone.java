@@ -9,7 +9,8 @@ import java.util.List;
 public class HexMeshZone extends Zone implements Iterable<HexZone> {
     private List<HexZone> subZones;
 
-    public HexMeshZone(Player player) {
+    public HexMeshZone(Player player, int maxUnits) {
+        super(player, maxUnits);
         this.player = player;
         this.units = (int) ((Math.random() * 7) + 1);
 
@@ -39,7 +40,7 @@ public class HexMeshZone extends Zone implements Iterable<HexZone> {
 
     public HexZone getRandomSubZone() {
         if (subZones.size() == 0) return null;
-        return subZones.get(RNG.nextInt(0, subZones.size() - 1));
+        return subZones.get(RNG.nextInt(0, subZones.size()));
     }
 
     public HexMeshZone getSuperZone() {

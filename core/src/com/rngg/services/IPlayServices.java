@@ -20,6 +20,6 @@ public interface IPlayServices {
     public void setMPlaying(boolean bool);
     public void onStartGameMessageRecieved();
     public boolean isHost();
-    public Player[] getPlayers();
+    public ArrayList<Player> getPlayers();
     public void leaveGame();
 }

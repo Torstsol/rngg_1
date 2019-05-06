@@ -10,6 +10,7 @@ import com.rngg.configuration.GamePreferences;
 import com.rngg.game.Rngg;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
+import com.rngg.utils.RNG;
 
 public class SettingsController extends Controller {
 
@@ -110,6 +111,9 @@ public class SettingsController extends Controller {
                 if (pref.getMapType().equals("SquareMap")){
                     pref.setMapType("HexMap");
                     mapButton.setText("Hexagonal map");
+                } else if (pref.getMapType().equals("HexMap")) {
+                    pref.setMapType("HexMeshMap");
+                    mapButton.setText("HexMeshMap");
                 } else {
                     pref.setMapType("SquareMap");
                     mapButton.setText("Square map");
@@ -120,12 +124,12 @@ public class SettingsController extends Controller {
         diceButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (pref.getDiceType().equals("d6")){
-                    pref.setDiceType("d20");
-                    diceButton.setText("d20");
+                if (pref.getDiceType().equals(RNG.D6)){
+                    pref.setDiceType(RNG.D20);
+                    diceButton.setText(RNG.D20);
                 } else {
-                    pref.setDiceType("d6");
-                    diceButton.setText("d6");
+                    pref.setDiceType(RNG.D6);
+                    diceButton.setText(RNG.D6);
                 }
             }
         });

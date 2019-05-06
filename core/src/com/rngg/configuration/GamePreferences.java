@@ -3,6 +3,7 @@ package com.rngg.configuration;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
+import com.rngg.utils.RNG;
 
 import java.util.ArrayList;
 
@@ -35,7 +36,7 @@ public class GamePreferences {
             setMapType("SquareMap");
         }
         if(!prefs.contains("dice type")){
-            setDiceType("d6");
+            setDiceType(RNG.D6);
         }
         if(!prefs.contains("Number of dice")){
             setNumDice(8);

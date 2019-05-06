@@ -10,7 +10,7 @@ import com.rngg.models.HexZone;
 
 import java.util.List;
 
-public class HexMeshMapRenderer extends MapRenderer<HexMeshMap, HexMeshZone, List<List<int[]>>> {
+public class HexMeshMapRenderer extends MapRenderer<HexMeshMap, HexMeshZone, List<List<List<int[]>>>> {
 
     public HexMeshMapRenderer(HexMeshMap map, ShapeRenderer sr, SpriteBatch batch, BitmapFont font) {
         super(map, sr, batch, font);

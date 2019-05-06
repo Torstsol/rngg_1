@@ -44,18 +44,8 @@ public class WaitingRoomController extends Controller implements RoomListener, R
 
     public void enterGameScreen2() {
 
-        if (sender.isHost()){
-            System.out.println("this device is host");
-            Message message = new Message(new byte[512],"",0);
-            message.putString("ORDER");
-            message.putInt(1234);
-
-            sender.sendToAllReliably(message.getData());
-        }
-        System.out.println("this device is NOT host");
-
-
-        game.screenManager.setGameScreen(new GameModel(sender.getPlayers()));
+        GameModel instance = new GameModel(sender.getPlayers(), sender);
+        game.screenManager.setGameScreen(instance);
     }
 
     @Override
@@ -63,12 +53,12 @@ public class WaitingRoomController extends Controller implements RoomListener, R
 
         String type = message.getString();
         System.out.println(type);
-        if(type.equals("START")) {
+        if(type.equals(Message.START)) {
 
             game.getAPI().onStartGameMessageRecieved();
             enterGameScreen();
         }
-        if(type.equals("ORDER")) {
+        if(type.equals(Message.ORDER)) {
             System.out.println("ORDER recieved in waitingRoom" + message.getInt());
 
         }

@@ -10,7 +10,13 @@ import java.util.HashMap;
 public abstract class GameMap<Z extends Zone, ZoneFormat> {
 
     protected HashMap<Z, ArrayList<Z>> neighbors;
+    protected HashMap<Integer, Z> idMap;
     protected ShapeRenderer.ShapeType shapetype;
+
+    public GameMap() {
+        // reset id-counter on new mapgen for better concurrency
+        Zone.resetIdCounter();
+    }
 
     abstract public ZoneFormat decodeZoneJSON(JsonValue zones);
 
@@ -41,6 +47,22 @@ public abstract class GameMap<Z extends Zone, ZoneFormat> {
         return getNeighbors(zone1).contains(zone2);
     }
 
+    public Z _getZoneById(int id) {
+        if (this.idMap == null && this.neighbors != null) {
+            generateIdMap();
+        }
+        return this.idMap.get(id);
+    }
+
+    public void generateIdMap() {
+        this.idMap = new HashMap<Integer, Z>();
+        for (Z zone : _getZones()) {
+            if (zone != null) {
+                this.idMap.put(zone.getId(), zone);
+            }
+        }
+    }
+
     // Non-underscore methods cast Z up to Zone, and are used in the gameModel (and gameController)
     public Zone screenCoordToZone(Vector2 coords) {
         return _screenCoordToZone(coords);
@@ -61,5 +83,9 @@ public abstract class GameMap<Z extends Zone, ZoneFormat> {
 
     public boolean isNeighbors(Zone zone1, Zone zone2) {
         return _isNeighbors((Z) zone1, (Z) zone2);
+    }
+
+    public Zone getZoneById(int id) {
+        return _getZoneById(id);
     }
 }

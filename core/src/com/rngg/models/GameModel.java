@@ -393,6 +393,11 @@ public class GameModel implements RealtimeListener{
         // continue until no lists remain or no units remain
         // total number of units to distribute
 
+        if (localDefend && !this.currentPlayer().equals(this.localPlayer)) {
+            Gdx.app.log(this.getClass().getSimpleName(), this.localPlayer + " attempted to click but " + this.currentPlayer() + " is playing");
+            return;
+        }
+
         Gdx.app.log(this.getClass().getSimpleName(), players.get(playerIndex) + " is defending with strategy " + strategy);
 
         // don't resend data after receiving, or during local game

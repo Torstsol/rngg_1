@@ -205,8 +205,8 @@ public class GameModel implements RealtimeListener{
                 Gdx.app.log(this.getClass().getSimpleName(), temp.toString() + " and " + attacker.toString() + " are not neighbors");
                 return;
             }
-            // don't send data if the game is local
-            this.attack(attacker, temp, !this.localGame);
+
+            this.attack(attacker, temp, true);
         }
     }
 
@@ -226,7 +226,8 @@ public class GameModel implements RealtimeListener{
                 String.format("%s is attacking %s", attacker.getPlayer().toString(), defender.getPlayer().toString())
         );
 
-        if (localAttack) {
+        // don't resend data after receiving, or during local game
+        if (localAttack && !localGame) {
             sendAttack(attacker, defender, RNG.getSeed());
         }
 
@@ -351,11 +352,19 @@ public class GameModel implements RealtimeListener{
         );
     }
 
-    public void defend(int playerIndex, String strategy) {
+    public void defend(int playerIndex, String strategy, boolean localDefend) {
         // generate a list of lists
         // take from the first list until it is exhausted or units are empty
         // continue until no lists remain or no units remain
         // total number of units to distribute
+
+        Gdx.app.log(this.getClass().getSimpleName(), players.get(playerIndex) + " is defending with strategy " + strategy);
+
+        // don't resend data after receiving, or during local game
+        if (localDefend && !localGame) {
+            sendDefend(playerIndex, strategy, RNG.getSeed());
+        }
+
         int units = this.contiguousAreas[playerIndex];
         Player player = this.players.get(playerIndex);
         // this is the list of lists from which to get zones
@@ -397,6 +406,12 @@ public class GameModel implements RealtimeListener{
             }
         }
         ArrayList<Zone> currentList = null;
+
+        // sort all sublists for determinism
+        for (ArrayList<Zone> list : zones) {
+            Collections.sort(list);
+        }
+
         while (units > 0 && !zones.isEmpty()) {
             if (currentList == null) {
                 // get a new sublist
@@ -417,6 +432,23 @@ public class GameModel implements RealtimeListener{
             zone.incrementUnits();
             units--;
         }
+        nextPlayer();
+    }
+
+    public void sendDefend(int playerIndex, String strategy, long seed) {
+        Message message = new Message(new byte[512],"",0);
+        message.putString(Message.DEFEND);
+        message.putInt(playerIndex);
+        message.putString(strategy);
+        message.putLong(seed);
+        sender.sendToAllReliably(message.getData());
+    }
+
+    public void parseDefend(Message message) {
+        int playerIndex = message.getInt();
+        String strategy = message.getString();
+        RNG.setSeed(message.getLong());
+        defend(playerIndex, strategy, false);
     }
 
     public void nextPlayer(){
@@ -463,6 +495,7 @@ public class GameModel implements RealtimeListener{
         } else {
             Gdx.app.error(this.getClass().getSimpleName(), "Incorrect or missing mapType: " + mapType);
         }
+        updateAreas();
     }
 
     public void applySettings(Message settings) {
@@ -552,6 +585,9 @@ public class GameModel implements RealtimeListener{
         }
         if (contents.equals(Message.ATTACK)) {
             this.parseAttack(message);
+        }
+        if (contents.equals(Message.DEFEND)) {
+            this.parseDefend(message);
         }
     }
 

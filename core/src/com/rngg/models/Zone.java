@@ -2,7 +2,7 @@ package com.rngg.models;
 
 import com.rngg.utils.RNG;
 
-public abstract class Zone {
+public abstract class Zone implements Comparable<Zone> {
     protected Player player;
     protected static int idCounter = 0;
     protected int units, id;
@@ -53,5 +53,9 @@ public abstract class Zone {
 
     public boolean getClicked() {
         return this.clicked;
+    }
+
+    public int compareTo(Zone other) {
+        return Integer.compare(this.id, other.id);
     }
 }

@@ -1,14 +1,15 @@
 package com.rngg.models;
 
+import com.rngg.utils.RNG;
+
 public class HexZone extends Zone {
 
     private int row, col;
 
-    public HexZone(Player player, int row, int col) {
+    public HexZone(Player player, int maxUnits, int row, int col) {
+        super(player, maxUnits);
         this.row = row;
         this.col = col;
-        this.player = player;
-        this.units = (int) ((Math.random() * 7) + 1);
     }
 
     public int getRow() {
@@ -22,6 +23,7 @@ public class HexZone extends Zone {
     @Override
     public String toString() {
         return "HexZone{" +
+                "id=" + id +
                 "row=" + row +
                 ", col=" + col +
                 ", player=" + player +

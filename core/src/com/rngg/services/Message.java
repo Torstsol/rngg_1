@@ -13,6 +13,12 @@ public class Message {
     private String senderID;
     private int describeContents;
 
+    // Message headers here
+    public static final String
+        START = "START",
+        ORDER = "ORDER",
+        MAPSETTINGS = "MAPSETTINGS",
+        ATTACK = "ATTACK";
 
 
     public Message(byte[] data, String senderID, int describeContents){
@@ -73,8 +79,16 @@ public class Message {
         return buffer.getInt();
     }
 
+    public long getLong() {
+        return buffer.getLong();
+    }
+
     public void putInt(int number){
         buffer.putInt(number);
+    }
+
+    public void putLong(long number) {
+        buffer.putLong(number);
     }
 
     public void putString(String str){

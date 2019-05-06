@@ -199,6 +199,10 @@ public class GameModel implements RealtimeListener{
     }
 
     public void click(Vector3 coords) {
+        if (!this.currentPlayer().equals(this.localPlayer)) {
+            Gdx.app.log(this.getClass().getSimpleName(), this.localPlayer + " attempted to click but " + this.currentPlayer() + " is playing");
+            return;
+        }
         Zone temp = map.screenCoordToZone(new Vector2(coords.x, coords.y));
 
         if (temp == null) return;

@@ -74,7 +74,9 @@ public class GameController extends Controller {
         Gdx.input.setInputProcessor(inputMultiplexer);
 
         IPlayServices playServices = game.getAPI();
-        playServices.setRealTimeListener(gameModel);
+        if(!Rngg.RUN_DESKTOP) {
+            playServices.setRealTimeListener(gameModel);
+        }
     }
 
     @Override

@@ -29,7 +29,7 @@ public class GameAssetManager {
     }
 
     public void loadSounds() {
-        manager.load(Assets.OOF);
+
     }
 
     public static GameAssetManager getInstance() {

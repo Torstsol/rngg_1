@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -20,15 +19,14 @@ import com.rngg.models.GameModel;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
 import com.rngg.utils.RNG;
+import com.rngg.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
 public class HUDRenderer {
 
     private OrthographicCamera HUDCamera;
-    private SpriteBatch HUDBatch;
+    private SpriteBatch batch;
     private BitmapFont font;
     private GameModel gameModel;
     private Stage stage;
@@ -71,10 +69,10 @@ public class HUDRenderer {
     private static final int defendPosY = Rngg.HEIGHT*39/40;
 
 
-    public HUDRenderer(GameModel gameModel, BitmapFont font, GameAssetManager assetManager, GameController controller, ShapeRenderer sr) {
+    public HUDRenderer(GameModel gameModel, BitmapFont font, GameController controller, ShapeRenderer sr) {
         HUDCamera = new OrthographicCamera();
         HUDCamera.setToOrtho(false, Rngg.WIDTH, Rngg.HEIGHT);
-        HUDBatch = new SpriteBatch();
+        batch = Utils.getSpriteBatch();
         this.font = font;
         this.gameModel = gameModel;
         pref = GamePreferences.getInstance();
@@ -85,17 +83,17 @@ public class HUDRenderer {
         this.sr = sr;
         this.shapeType = ShapeRenderer.ShapeType.Filled;
 
-        final TextButton defendAllButton = new TextButton("Defend All", assetManager.manager.get(Assets.SKIN));
+        final TextButton defendAllButton = new TextButton("Defend All", GameAssetManager.getManager().get(Assets.SKIN));
 
-        final TextButton defendCoreButton = new TextButton("Defend Core", assetManager.manager.get(Assets.SKIN));
+        final TextButton defendCoreButton = new TextButton("Defend Core", GameAssetManager.getManager().get(Assets.SKIN));
 
-        final TextButton defendFrontierButton = new TextButton("Defend Frontier", assetManager.manager.get(Assets.SKIN));
+        final TextButton defendFrontierButton = new TextButton("Defend Frontier", GameAssetManager.getManager().get(Assets.SKIN));
 
-        final TextButton menuButton = new TextButton("In-game menu", assetManager.manager.get(Assets.SKIN));
+        final TextButton menuButton = new TextButton("In-game menu", GameAssetManager.getManager().get(Assets.SKIN));
 
         FitViewport fitViewport = new FitViewport(Rngg.WIDTH, Rngg.HEIGHT, HUDCamera);
 
-        stage = new Stage(fitViewport, HUDBatch);
+        stage = new Stage(fitViewport, batch);
 
         Table table = new Table();
         table.setFillParent(true);
@@ -117,7 +115,7 @@ public class HUDRenderer {
 
     public void draw() {
         HUDCamera.update();
-        HUDBatch.setProjectionMatrix(HUDCamera.combined);
+        batch.setProjectionMatrix(HUDCamera.combined);
 
         String valueString = Arrays.toString(gameModel.getAttackValues());
 
@@ -139,13 +137,13 @@ public class HUDRenderer {
         }
         elapsedTime = (System.nanoTime() - startTime)/1000000000.0f;
 
-        HUDBatch.begin();
+        batch.begin();
         font.setColor(gameModel.currentPlayer().getColor());
-        font.draw(HUDBatch, "Playing: " + gameModel.getPlayer(gameModel.getPlayerIndex()).getName(),10,Rngg.HEIGHT*39/40);
+        font.draw(batch, "Playing: " + gameModel.getPlayer(gameModel.getPlayerIndex()).getName(),10,Rngg.HEIGHT*39/40);
         font.setColor(Color.WHITE);
         if(gameModel.getAttackRoll() != 0 && gameModel.getDefendRoll() != 0){
-            font.draw(HUDBatch,"You: ", youPosX,youPosY);
-            font.draw(HUDBatch,"Def: ", defPosX,defPosY);
+            font.draw(batch,"You: ", youPosX,youPosY);
+            font.draw(batch,"Def: ", defPosX,defPosY);
             if(elapsedTime <= totalRouletteTime){
                 int i = 0;
                 float interval = 0;
@@ -164,10 +162,10 @@ public class HUDRenderer {
         }
 
         if(gameModel.isGameOver()){
-            font.draw(HUDBatch, "GAME OVER! " + gameModel.getGameWinner().getName() + " won the game!", Rngg.WIDTH* 3/10 , Rngg.HEIGHT* 11/20);
+            font.draw(batch, "GAME OVER! " + gameModel.getGameWinner().getName() + " won the game!", Rngg.WIDTH* 3/10 , Rngg.HEIGHT* 11/20);
         }
 
-        HUDBatch.end();
+        batch.end();
 
 
         stage.draw();
@@ -176,20 +174,20 @@ public class HUDRenderer {
 
     private void drawDice(int index, String[] att, String[] def) {
         if(att.length > index){
-            font.draw(HUDBatch, diceString(att, index, true), attackPosX, attackPosY);
+            font.draw(batch, diceString(att, index, true), attackPosX, attackPosY);
         } else if(attackStop){
-            font.draw(HUDBatch, diceString(att, attackIndex, false), attackPosX, attackPosY);
+            font.draw(batch, diceString(att, attackIndex, false), attackPosX, attackPosY);
         } else {
-            font.draw(HUDBatch, diceString(att, index, false), attackPosX, attackPosY);
+            font.draw(batch, diceString(att, index, false), attackPosX, attackPosY);
             attackIndex = index;
             attackStop = true;
         }
         if(def.length > index){
-            font.draw(HUDBatch, diceString(def, index, true), defendPosX, defendPosY);
+            font.draw(batch, diceString(def, index, true), defendPosX, defendPosY);
         } else if(defendStop){
-            font.draw(HUDBatch, diceString(def, defendIndex, false), defendPosX, defendPosY);
+            font.draw(batch, diceString(def, defendIndex, false), defendPosX, defendPosY);
         } else {
-            font.draw(HUDBatch, diceString(def, index, false), defendPosX, defendPosY);
+            font.draw(batch, diceString(def, index, false), defendPosX, defendPosY);
             defendIndex = index;
             defendStop = true;
         }
@@ -203,7 +201,7 @@ public class HUDRenderer {
         if(random){
             for(int i = index; i < values.length; i++){
                 //int rand = rng.nextInt(pref.getDiceType().substring(1));
-                int rand = rng.nextInt(6);
+                int rand = RNG.nextInt(6);
                 str = str + rand + " ";
             }
         }

@@ -34,8 +34,6 @@ public class SettingsView extends View {
 
     protected BitmapFont font;
 
-    private SpriteBatch batch;
-
     private Stage stage;
 
     private SettingsModel settingsModel;
@@ -58,14 +56,12 @@ public class SettingsView extends View {
 
         shapeType = ShapeRenderer.ShapeType.Filled;
 
-        font = assetManager.manager.get(Assets.FONT);
+        font = assetManager.get(Assets.FONT);
         font.setColor(Color.WHITE);
 
         pref = GamePreferences.getInstance();
 
-        batch = new SpriteBatch();
-
-        Skin skin = assetManager.manager.get(Assets.SKIN);
+        Skin skin = assetManager.get(Assets.SKIN);
 
         FitViewport fitViewport = new FitViewport(Rngg.WIDTH, Rngg.HEIGHT, camera);
         stage = new Stage(fitViewport, batch);
@@ -169,7 +165,7 @@ public class SettingsView extends View {
         toggleMusic.getLabel().setFontScale(1.5f);
         group2.addActor(toggleMusic);
 
-        final TextButton menuButton = new TextButton("Back", assetManager.manager.get(Assets.SKIN));
+        final TextButton menuButton = new TextButton("Back", assetManager.get(Assets.SKIN));
         menuButton.getLabel().setFontScale(1.5f);
         group3.addActor(menuButton);
 

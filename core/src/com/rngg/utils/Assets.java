@@ -18,6 +18,4 @@ public class Assets {
 
     public static final AssetDescriptor<Music> MUSIC = new AssetDescriptor("audio/menu-music.mp3", Music.class);
 
-    public static final AssetDescriptor<Sound> OOF = new AssetDescriptor<Sound>("audio/oof.mp3", Sound.class);
-
 }

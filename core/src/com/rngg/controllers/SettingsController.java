@@ -1,6 +1,7 @@
 package com.rngg.controllers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
@@ -15,13 +16,13 @@ import com.rngg.utils.RNG;
 public class SettingsController extends Controller {
 
     private GamePreferences pref;
-    private GameAssetManager assetManager;
+    private AssetManager assetManager;
 
     public SettingsController(Rngg game) {
         super(game);
 
         pref = GamePreferences.getInstance();
-        assetManager = GameAssetManager.getInstance();
+        assetManager = GameAssetManager.getManager();
     }
 
     @Override
@@ -59,11 +60,11 @@ public class SettingsController extends Controller {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if(pref.isMusicEnabled()) {
-                    assetManager.manager.get(Assets.MUSIC).pause();
+                    assetManager.get(Assets.MUSIC).pause();
                     pref.setMusic(false);
                     musicButton.setText("Music [disabled]");
                 } else {
-                    assetManager.manager.get(Assets.MUSIC).play();
+                    assetManager.get(Assets.MUSIC).play();
                     pref.setMusic(true);
                     musicButton.setText("Music [enabled]");
                 }

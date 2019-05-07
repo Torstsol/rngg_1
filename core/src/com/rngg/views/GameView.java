@@ -37,8 +37,8 @@ public class GameView extends View {
         font.setColor(Color.WHITE);
         this.shapeRenderer = new ShapeRenderer();
         mapRenderer = getMapRenderer();
-        hudRenderer = new HUDRenderer(controller.gameModel, font, GameAssetManager.getInstance(), controller, shapeRenderer);
-        inGameMenuRenderer = new InGameMenuRenderer(controller.gameModel, font, GameAssetManager.getInstance(), controller, shapeRenderer);
+        hudRenderer = new HUDRenderer(controller.gameModel, font, controller, shapeRenderer);
+        inGameMenuRenderer = new InGameMenuRenderer(controller.gameModel, font, controller, shapeRenderer);
     }
 
     @Override

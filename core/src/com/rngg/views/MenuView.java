@@ -19,14 +19,10 @@ public class MenuView extends View {
 
     MenuController controller;
 
-    private SpriteBatch batch;
-
     private Stage stage;
 
     public MenuView(MenuController controller) {
         this.controller = controller;
-
-        batch = new SpriteBatch();
 
         FitViewport fitViewport = new FitViewport(Rngg.WIDTH, Rngg.HEIGHT, camera);
         stage = new Stage(fitViewport, batch);
@@ -58,24 +54,24 @@ public class MenuView extends View {
 
         stage.addActor(table);
 
-        final Texture logoTexture = assetManager.manager.get(Assets.LOGO);
+        final Texture logoTexture = assetManager.get(Assets.LOGO);
         final Image logoImage = new Image(logoTexture);
         //logoImage.setOrigin(Rngg.WIDTH/2, Rngg.HEIGHT/2);
 
         imageGroup.addActor(logoImage);
 
-        final Label label = new Label("Are you ready to expand your empire?", assetManager.manager.get(Assets.SKIN));
+        final Label label = new Label("Are you ready to expand your empire?", assetManager.get(Assets.SKIN));
         buttonGroup.addActor(label);
 
-        final TextButton lobbyButton = new TextButton("Play", assetManager.manager.get(Assets.SKIN));
+        final TextButton lobbyButton = new TextButton("Play", assetManager.get(Assets.SKIN));
         lobbyButton.getLabel().setFontScale(2f);
         buttonGroup.addActor(lobbyButton);
 
-        final TextButton settingsButton = new TextButton("Settings", assetManager.manager.get(Assets.SKIN));
+        final TextButton settingsButton = new TextButton("Settings", assetManager.get(Assets.SKIN));
         settingsButton.getLabel().setFontScale(2f);
         buttonGroup.addActor(settingsButton);
 
-        final TextButton exitButton = new TextButton("Exit", assetManager.manager.get(Assets.SKIN));
+        final TextButton exitButton = new TextButton("Exit", assetManager.get(Assets.SKIN));
         exitButton.getLabel().setFontScale(2f);
         buttonGroup.addActor(exitButton);
 

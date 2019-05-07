@@ -1,6 +1,6 @@
 package com.rngg.services;
 
 public interface RealtimeListener {
-    public void handleDataReceived(Message message);
-    public void setSender(IPlayServices playServices);
+    void handleDataReceived(Message message);
+    void setSender(IPlayServices playServices);
 }

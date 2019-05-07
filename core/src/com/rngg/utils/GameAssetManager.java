@@ -4,13 +4,13 @@ import com.badlogic.gdx.assets.AssetManager;
 
 public class GameAssetManager {
 
-    private static final GameAssetManager instance = new GameAssetManager();
-
     private GameAssetManager() {
 
     }
 
-    public final AssetManager manager = new AssetManager();
+    private static final GameAssetManager instance = new GameAssetManager();
+
+    private final AssetManager manager = new AssetManager();
 
     public void loadImages() {
         manager.load(Assets.LOGO);
@@ -28,12 +28,12 @@ public class GameAssetManager {
         manager.load(Assets.MUSIC);
     }
 
-    public void loadSounds() {
-
-    }
-
     public static GameAssetManager getInstance() {
         return instance;
+    }
+
+    public static AssetManager getManager() {
+        return instance.manager;
     }
 
 }

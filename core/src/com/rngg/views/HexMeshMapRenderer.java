@@ -27,6 +27,7 @@ public class HexMeshMapRenderer extends MapRenderer<HexMeshMap, HexMeshZone, Lis
     public void drawZone(HexMeshZone superZone) {
         if (superZone == null) return;
 
+        // Draws all HexZones that make up a HexMeshZone
         for (HexZone subZone : superZone) {
             float[] xPoints = new float[7];
             float[] yPoints = new float[7];
@@ -68,6 +69,7 @@ public class HexMeshMapRenderer extends MapRenderer<HexMeshMap, HexMeshZone, Lis
                         xPoints[i + 1], yPoints[i + 1]);
             }
 
+            // Draws edges between neighboring HexMeshZones
             for (HexZone neighbor : subZone.getNeighbors()) {
                 if (neighbor.getSuperZone() != subZone.getSuperZone()) {
                     int neighborRow = neighbor.getRow();
@@ -77,7 +79,6 @@ public class HexMeshMapRenderer extends MapRenderer<HexMeshMap, HexMeshZone, Lis
 
                     float size = map.getSize();
                     float width = (float) Math.sqrt(3) * size;
-                    float height = 2 * size;
 
                     float x1 = -1;
                     float x2 = -1;
@@ -114,6 +115,7 @@ public class HexMeshMapRenderer extends MapRenderer<HexMeshMap, HexMeshZone, Lis
     public void drawZoneText(HexMeshZone zone) {
         if (zone == null || zone.getSubZones().size() == 0) return;
 
+        // Used to find which subZone to generate the zoneText on
         List<HexZone> subZones = zone.getSubZones();
         HexZone randomZone = subZones.get(subZones.size() / 2);
 

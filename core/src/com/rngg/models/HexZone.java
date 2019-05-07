@@ -13,8 +13,8 @@ public class HexZone extends Zone {
         super(player, maxUnits);
         this.row = row;
         this.col = col;
-        this.superZone = null;
-        this.neighbors = new ArrayList<HexZone>();
+        this.superZone = null; // Needed when drawing HexMeshZones
+        this.neighbors = new ArrayList<HexZone>(); // Needed when drawing HexMeshZones
     }
 
     public List<HexZone> getNeighbors() {

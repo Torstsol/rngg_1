@@ -41,8 +41,4 @@ public class HexMeshZone extends Zone implements Iterable<HexZone> {
         if (subZones.size() == 0) return null;
         return subZones.get(RNG.nextInt(0, subZones.size()));
     }
-
-    public HexMeshZone getSuperZone() {
-        return this;
-    }
 }

@@ -9,7 +9,6 @@ import com.rngg.utils.RNG;
 import com.rngg.utils.hex.Hex;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,8 +39,8 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<List<int[]>>>> {
         this.maxUnits = maxUnits;
 
         // Need tp extend the array to support offset of negative indexes
-        this.zones = new HexZone[rows][cols + offset + 1];
-        this.superZones = new ArrayList<HexMeshZone>();
+        this.zones = new HexZone[rows][cols + offset + 1]; // zones are all HexZones on the map
+        this.superZones = new ArrayList<HexMeshZone>(); // superZones are combinations of HexZones gathered in a mesh
         this.initializeZones(players, randomPlayers, decodeZoneJSON(zoneJSON));
 
         Gdx.app.log(this.getClass().getSimpleName(),
@@ -113,6 +112,10 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<List<int[]>>>> {
         return this.superZones.get(RNG.nextInt(0, this.superZones.size()));
     }
 
+    /*
+     * Gets a random neighboring row and col to the already generated (sub) zones
+     * Return an Integer Array with [row, col]
+     */
     private Integer[] getRandomRowAndCol() {
         Integer[] ret = new Integer[2];
 
@@ -174,7 +177,7 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<List<int[]>>>> {
             Integer lastCol = null;
             int zoneCount = 0;
             int numZones = this.numZones;
-            for (int i = 0; i < numZones; i++) {
+            for (int i = 0; i < numZones; i++) { // Generates superZones
                 Player player = RNG.choice(players);
 
                 int centerRow = (this.superZones.size() == 0 || lastRow == null) ? RNG.nextInt(rows / 4, rows - rows / 4) : lastRow;
@@ -185,10 +188,11 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<List<int[]>>>> {
                 this.superZones.add(new HexMeshZone(player, maxUnits));
 
                 int zoneSize = RNG.nextInt(minZoneSize, maxZoneSize);
-                for (int num = 0; num < zoneSize; num++) {
+                for (int num = 0; num < zoneSize; num++) { // Generates the subZones of each HexMeshZone
                     int row = RNG.nextInt(-1, 2);
                     int col = RNG.nextInt(-1, 2);
 
+                    // Tries to find available spots for new neighbors to expand the HexMeshZone
                     int count = 0;
                     while (row == col || centerRow + row < 0 || centerRow + row > rows - 1 ||
                             centerCol + col + this.offset < 0 || centerCol + col > cols - this.offset ||
@@ -217,6 +221,7 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<List<int[]>>>> {
                 lastRow = rowAndCol[0];
                 lastCol = rowAndCol[1];
 
+                // Removes invalid HexMeshZones
                 HexMeshZone currentZone = this.superZones.get(zoneCount);
                 if (currentZone.getSubZones().size() < minZoneSize || (this.superZones.size() > 1 && generateNeighbors(currentZone, true) == null)) {
                     this.superZones.remove(currentZone);
@@ -232,6 +237,8 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<List<int[]>>>> {
                 zones.put(zone, generateNeighbors(zone, false));
             }
         } else {
+            // Generates custom HexMeshMap
+
             int playerNum = 0;
             int zoneCount = 0;
             for (List<List<int[]>> playerZones : customZones) {
@@ -257,6 +264,7 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<List<int[]>>>> {
         this.neighbors = zones;
     }
 
+    // gets a single HexZone (subZone) of the map
     private HexZone getZone(int row, int col) {
         if (row > rows - 1 || col + this.offset > cols || row < 0 || col + this.offset < 0) return null;
 

@@ -13,8 +13,6 @@ public class HexZone extends Zone {
         super(player, maxUnits);
         this.row = row;
         this.col = col;
-        this.player = player;
-        this.units = (int) ((Math.random() * 7) + 1);
         this.superZone = null;
         this.neighbors = new ArrayList<HexZone>();
     }

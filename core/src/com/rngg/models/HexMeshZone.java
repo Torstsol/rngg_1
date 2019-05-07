@@ -12,7 +12,6 @@ public class HexMeshZone extends Zone implements Iterable<HexZone> {
     public HexMeshZone(Player player, int maxUnits) {
         super(player, maxUnits);
         this.player = player;
-        this.units = (int) ((Math.random() * 7) + 1);
 
         this.subZones = new ArrayList<HexZone>();
     }

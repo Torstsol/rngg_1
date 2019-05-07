@@ -18,7 +18,8 @@ public class Message {
         START = "START",
         ORDER = "ORDER",
         MAPSETTINGS = "MAPSETTINGS",
-        ATTACK = "ATTACK";
+        ATTACK = "ATTACK",
+        DEFEND = "DEFEND";
 
 
     public Message(byte[] data, String senderID, int describeContents){

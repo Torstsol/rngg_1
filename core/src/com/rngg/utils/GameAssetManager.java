@@ -14,6 +14,7 @@ public class GameAssetManager {
 
     public void loadImages() {
         manager.load(Assets.LOGO);
+        manager.load(Assets.BACKGROUND_GAME);
     }
 
     public void loadFonts() {

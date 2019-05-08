@@ -77,6 +77,7 @@ public abstract class GameMap<Z extends Zone, ZoneFormat> {
     }
 
     public ArrayList<Zone> getNeighbors(Zone zone) {
+        if (zone == null) return new ArrayList<Zone>();
         return new ArrayList<Zone>(neighbors.get(zone));
     }
 

@@ -1,15 +1,36 @@
 package com.rngg.models;
 
-import com.rngg.utils.RNG;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HexZone extends Zone {
 
     private int row, col;
+    private HexMeshZone superZone;
+    private List<HexZone> neighbors;
 
     public HexZone(Player player, int maxUnits, int row, int col) {
         super(player, maxUnits);
         this.row = row;
         this.col = col;
+        this.superZone = null; // Needed when drawing HexMeshZones
+        this.neighbors = new ArrayList<HexZone>(); // Needed when drawing HexMeshZones
+    }
+
+    public List<HexZone> getNeighbors() {
+        return neighbors;
+    }
+
+    public void addNeighbor(HexZone neighbor) {
+        this.neighbors.add(neighbor);
+    }
+
+    public void setSuperZone(HexMeshZone superZone) {
+        this.superZone = superZone;
+    }
+
+    public HexMeshZone getSuperZone() {
+        return superZone;
     }
 
     public int getRow() {

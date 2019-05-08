@@ -84,6 +84,7 @@ public class GameModel implements RealtimeListener{
             }
 
         }
+
         this.rng = RNG.getInstance();
         this.contiguousAreas = new int[this.players.size()];
 
@@ -126,7 +127,6 @@ public class GameModel implements RealtimeListener{
         } else {
             //initializePlayerAndAreas();
             applyPreferences(RNG.getSeed());
-
         }
 
         for(int i = 0; i < this.players.size(); i++){
@@ -172,6 +172,7 @@ public class GameModel implements RealtimeListener{
 
         if (!randomPlayers || this.numPlayers > maxPlayers) {
             this.numPlayers = maxPlayers;
+            this.players = new ArrayList<Player>(this.players.subList(0, maxPlayers));
         }
 
         //initializePlayerAndAreas();
@@ -180,6 +181,8 @@ public class GameModel implements RealtimeListener{
             return new SquareMap(totalRows, totalCols, this.players, this.maxUnits, randomPlayers, zones);
         } else if (mapType.equals("HexMap")) {
             return new HexMap(totalRows, totalCols, this.players, this.maxUnits, randomPlayers, zones, offset);
+        } else if (mapType.equals("HexMeshMap")) {
+            return new HexMeshMap(totalRows, this.players, randomPlayers, zones, offset, this.maxUnits);
         }
 
         this.updateAreas();
@@ -536,6 +539,8 @@ public class GameModel implements RealtimeListener{
             this.map = new HexMap(7, 7, players, this.maxUnits);
         } else if (mapType.equals("SquareMap")) {
             this.map = new SquareMap(9, 16, players, this.maxUnits);
+        } else if (mapType.equals("HexMeshMap")) {
+            this.map = new HexMeshMap(25, players, maxUnits);
         } else {
             Gdx.app.error(this.getClass().getSimpleName(), "Incorrect or missing mapType: " + mapType);
         }

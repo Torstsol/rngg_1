@@ -10,6 +10,7 @@ import com.rngg.controllers.GameController;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameMap;
 import com.rngg.models.HexMap;
+import com.rngg.models.HexMeshMap;
 import com.rngg.models.Player;
 import com.rngg.models.SquareMap;
 import com.rngg.utils.GameAssetManager;
@@ -65,6 +66,8 @@ public class GameView extends View {
             return new SquareMapRenderer((SquareMap) map, shapeRenderer, batch, font);
         } else if (map instanceof HexMap) {
             return new HexMapRenderer((HexMap) map, shapeRenderer, batch, font);
+        } else if (map instanceof HexMeshMap) {
+            return new HexMeshMapRenderer((HexMeshMap) map, shapeRenderer, batch, font);
         }
 
         return null;

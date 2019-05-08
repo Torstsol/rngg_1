@@ -139,7 +139,7 @@ public class SettingsView extends View {
         color4Button.getLabel().setFontScale(1.5f);
         group1.addActor(color4Button);
 
-        final TextButton mapButton = new TextButton(pref.getMapType().equals("SquareMap") ? "Square map" : "Hexagonal map", skin);
+        final TextButton mapButton = new TextButton(pref.getMapType().equals("SquareMap") ? "Square map" : pref.getMapType().equals("HexMap") ? "Hexagonal map" : "HexMeshMap", skin);
         mapButton.getLabel().setFontScale(1.5f);
         group4.addActor(mapButton);
 

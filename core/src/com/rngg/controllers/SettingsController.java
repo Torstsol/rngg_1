@@ -112,6 +112,9 @@ public class SettingsController extends Controller {
                 if (pref.getMapType().equals("SquareMap")){
                     pref.setMapType("HexMap");
                     mapButton.setText("Hexagonal map");
+                } else if (pref.getMapType().equals("HexMap")) {
+                    pref.setMapType("HexMeshMap");
+                    mapButton.setText("HexMeshMap");
                 } else {
                     pref.setMapType("SquareMap");
                     mapButton.setText("Square map");

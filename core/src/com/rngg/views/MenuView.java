@@ -67,6 +67,10 @@ public class MenuView extends View {
         lobbyButton.getLabel().setFontScale(2f);
         buttonGroup.addActor(lobbyButton);
 
+        final TextButton tutorialButton = new TextButton("Tutorial", assetManager.get(Assets.SKIN));
+        tutorialButton.getLabel().setFontScale(2f);
+        buttonGroup.addActor(tutorialButton);
+
         final TextButton settingsButton = new TextButton("Settings", assetManager.get(Assets.SKIN));
         settingsButton.getLabel().setFontScale(2f);
         buttonGroup.addActor(settingsButton);
@@ -75,7 +79,7 @@ public class MenuView extends View {
         exitButton.getLabel().setFontScale(2f);
         buttonGroup.addActor(exitButton);
 
-        controller.addActorListeners(lobbyButton, settingsButton, exitButton); // handle input
+        controller.addActorListeners(lobbyButton, tutorialButton, settingsButton, exitButton); // handle input
     }
 
     @Override

@@ -130,7 +130,7 @@ public class GameController extends Controller {
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.getAPI().leaveGame();
+                if (!Rngg.RUN_DESKTOP) game.getAPI().leaveGame();
                 game.screenManager.setMenuScreen();
             }
         });

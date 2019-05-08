@@ -26,9 +26,9 @@ public abstract class MapRenderer<M extends GameMap<Z, ZoneFormat>, Z extends Zo
     }
 
     public void draw() {
-        batch.begin();
+        /* batch.begin();
         batch.draw(GameAssetManager.getManager().get(Assets.BACKGROUND_GAME), 0, 0, Rngg.WIDTH, Rngg.HEIGHT);
-        batch.end();
+        batch.end(); */
 
         sr.begin(shapeType);
         for (Z zone : map._getZones()) {

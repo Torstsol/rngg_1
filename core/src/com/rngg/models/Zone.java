@@ -18,7 +18,6 @@ public abstract class Zone implements Comparable<Zone> {
     public Zone(Player player, int maxUnits, Integer units) {
         this.id = idCounter++;
         this.player = player;
-        // + 1 because nextInt upper bound is exclusive
         this.units = units;
     }
 

@@ -62,7 +62,7 @@ public class TutorialMenuRenderer {
         group.addActor(prevButton);
         group.addActor(nextButton);
         group.addActor(quitButton);
-        group.padTop((float) Rngg.HEIGHT * 8 / 9); // Ghetto positioning
+        group.padTop((float) Rngg.HEIGHT * 8 / 9);
 
         this.controller = controller;
         this.controller.addInputProcessor(stage);

@@ -25,6 +25,7 @@ public class TutorialModel {
 
     public TutorialModel(String filename) {
         this.players = new ArrayList<Player>();
+
         for (int i = 0; i < 4; i++) {
             this.players.add(new Player("BOT" + i, "6969", true, i == 0, prefs.getColorArray().get(i)));
         }

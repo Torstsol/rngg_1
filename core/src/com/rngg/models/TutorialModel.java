@@ -213,13 +213,13 @@ public class TutorialModel {
         } else if (step == 9) {
             zones.get(0).setUnits(1);
             zones.get(0).setPlayer(players.get(0));
-            zones.get(1).setUnits(1);
+            zones.get(1).setUnits(2);
             zones.get(1).setPlayer(players.get(0));
-            zones.get(2).setUnits(6);
+            zones.get(2).setUnits(7);
             zones.get(2).setPlayer(players.get(0));
-            zones.get(3).setUnits(1);
+            zones.get(3).setUnits(3);
             zones.get(3).setPlayer((players.get(0)));
-            zones.get(4).setUnits(1);
+            zones.get(4).setUnits(2);
             zones.get(4).setPlayer(players.get(0));
             zones.get(5).setUnits(8);
             zones.get(5).setPlayer(players.get(2));
@@ -228,11 +228,11 @@ public class TutorialModel {
         } else if (step == 10) {
             zones.get(0).setUnits(1);
             zones.get(0).setPlayer(players.get(0));
-            zones.get(1).setUnits(1);
+            zones.get(1).setUnits(2);
             zones.get(1).setPlayer(players.get(0));
-            zones.get(2).setUnits(6);
+            zones.get(2).setUnits(7);
             zones.get(2).setPlayer(players.get(0));
-            zones.get(3).setUnits(1);
+            zones.get(3).setUnits(3);
             zones.get(3).setPlayer((players.get(0)));
             zones.get(4).setUnits(7);
             zones.get(4).setPlayer(players.get(2));

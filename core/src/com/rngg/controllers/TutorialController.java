@@ -1,7 +1,6 @@
 package com.rngg.controllers;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
@@ -38,13 +37,7 @@ public class TutorialController extends Controller {
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
-    @Override
-    public void update(float delta) {
-        if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
-            game.screenManager.setMenuScreen();
-    }
-
-    public void addMenuActorListeners(final TextButton prevButton, final TextButton nextButton, final TextButton quitButton){
+    public void addMenuActorListeners(final TextButton prevButton, final TextButton nextButton, final TextButton quitButton) {
         prevButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -67,7 +60,7 @@ public class TutorialController extends Controller {
         });
     }
 
-    public void addInputProcessor(Stage stage){
+    public void addInputProcessor(Stage stage) {
         this.inputMultiplexer.addProcessor(0, stage);
     }
 

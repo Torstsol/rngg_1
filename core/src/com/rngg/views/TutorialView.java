@@ -1,3 +1,7 @@
+/*
+ * View for the tutorial screen.
+ */
+
 package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;
@@ -12,6 +16,7 @@ import com.rngg.models.GameMap;
 import com.rngg.models.HexMap;
 import com.rngg.models.HexMeshMap;
 import com.rngg.models.SquareMap;
+import com.rngg.utils.Utils;
 
 public class TutorialView extends View {
 
@@ -23,13 +28,12 @@ public class TutorialView extends View {
     private TutorialMenuRenderer tutorialMenuRenderer;
 
     public TutorialView(TutorialController controller) {
-        camera.viewportHeight = (float) (Rngg.HEIGHT * 10 / 8);
-
         this.controller = controller;
-
-        batch = new SpriteBatch();
-        font.setColor(Color.WHITE);
         this.shapeRenderer = new ShapeRenderer();
+
+        camera.viewportHeight = (float) (Rngg.HEIGHT * 10 / 8);
+        batch = Utils.getSpriteBatch();
+        font.setColor(Color.WHITE);
 
         mapRenderer = getMapRenderer();
         tutorialMenuRenderer = new TutorialMenuRenderer(controller.getModel(), font, controller, shapeRenderer);
@@ -42,7 +46,6 @@ public class TutorialView extends View {
         batch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(camera.combined);
 
-        controller.update(delta);
         controller.setCamera(camera);
 
         Gdx.gl.glClearColor(0f, 0f, 0f, 1);
@@ -70,7 +73,4 @@ public class TutorialView extends View {
         return font;
     }
 
-    public SpriteBatch getBatch() {
-        return this.batch;
-    }
 }

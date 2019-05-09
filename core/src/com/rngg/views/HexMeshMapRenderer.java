@@ -97,7 +97,7 @@ public class HexMeshMapRenderer extends MapRenderer<HexMeshMap, HexMeshZone, Lis
 
                         x1 = (neighborCol == subZoneCol + 1) ? centerX + (width / 2) : centerX - (width / 2);
                         x2 = centerX;
-                    } else if (neighborRow == subZoneRow  + 1) {
+                    } else if (neighborRow == subZoneRow + 1) {
                         y1 = centerY + (size / 2);
                         y2 = centerY + size;
 

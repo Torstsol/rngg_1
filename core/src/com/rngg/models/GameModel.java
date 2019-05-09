@@ -3,15 +3,12 @@ package com.rngg.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.rngg.configuration.GamePreferences;
 import com.rngg.services.IPlayServices;
 import com.rngg.services.Message;
 import com.rngg.services.RealtimeListener;
-import com.rngg.services.IPlayServices;
-import com.rngg.services.Message;
 import com.rngg.utils.RNG;
 
 import java.util.ArrayDeque;
@@ -22,7 +19,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Random;
 
-public class GameModel implements RealtimeListener{
+public class GameModel implements RealtimeListener {
     public int playerScore = 0;
     private GameMap map;
     private ArrayList<Player> players;
@@ -60,7 +57,7 @@ public class GameModel implements RealtimeListener{
         this.gameWinner = null;
 
         //support for localgame, generates players or "bots"
-        if(players == null){
+        if (players == null) {
             this.localGame = true;
             this.players = new ArrayList<Player>();
             this.players.add(new Player("You", "6969", true, true, pref.getColorArray().get(0)));
@@ -69,16 +66,15 @@ public class GameModel implements RealtimeListener{
             for (int i = 1; i < 4; i++) {
                 this.players.add(new Player("BOT" + i, "6969", true, false, pref.getColorArray().get(i)));
             }
-        }
-        else{
+        } else {
             this.players = players;
             for (int i = 0; i < players.size(); i++) {
-                if(players.get(i).isHost == true){
+                if (players.get(i).isHost == true) {
                     this.host = players.get(i);
                     System.out.println("HOSTNAME: " + players.get(i).getName());
                     System.out.println("HOST_ID: " + players.get(i).playerId);
                 }
-                if (players.get(i).isLocal == true){
+                if (players.get(i).isLocal == true) {
                     this.localPlayer = players.get(i);
                     System.out.println("LocalNAME: " + players.get(i).getName());
                     System.out.println("Local_ID: " + players.get(i).playerId);
@@ -93,28 +89,26 @@ public class GameModel implements RealtimeListener{
         this.setMap(mapFileName);
 
 
-
         //check if proto-host, if true, generate seed, shuffle playerlist, and broadcast seed
-        if(this.localPlayer.isHost){
-            long shuffleSeed = this.rng.getSeed();
+        if (this.localPlayer.isHost) {
+            long shuffleSeed = RNG.getSeed();
             Collections.shuffle(this.players, new Random(shuffleSeed));
             System.out.println(this.players.toString());
 
-            if(!localGame){
+            if (!localGame) {
                 System.out.println("This unit believes its host and sends out order");
                 //broadcast order seed to everyone
-                Message message = new Message(new byte[512],"",0);
+                Message message = new Message(new byte[512], "", 0);
                 message.putString(Message.ORDER);
                 message.putLong(shuffleSeed);
                 sender.sendToAllReliably(message.getData());
             }
             //if the proto-host ends up as settings-host also, it has to broadcast the settings
-            if(!localGame && this.localPlayer.playerId.equals(players.get(0).playerId)){
+            if (!localGame && this.localPlayer.playerId.equals(players.get(0).playerId)) {
                 System.out.println("This unit believes its host and settingshost, and sends out settings");
                 sendSettings();
             }
         }
-
 
 
     }
@@ -131,12 +125,12 @@ public class GameModel implements RealtimeListener{
             applyPreferences(RNG.getSeed());
         }
 
-        for(int i = 0; i < this.players.size(); i++){
-            if(this.map.getPlayerZones(players.get(i)).size() == 0){
+        for (int i = 0; i < this.players.size(); i++) {
+            if (this.map.getPlayerZones(players.get(i)).size() == 0) {
                 this.eliminatedPlayers.add(players.get(i));
             }
         }
-        if(eliminatedPlayers.contains(players.get(0))){
+        if (eliminatedPlayers.contains(players.get(0))) {
             nextPlayer();
         }
 
@@ -206,7 +200,7 @@ public class GameModel implements RealtimeListener{
         return this.map;
     }
 
-    public Player getPlayer(int index){
+    public Player getPlayer(int index) {
         return players.get(index);
     }
 
@@ -284,13 +278,13 @@ public class GameModel implements RealtimeListener{
             defender.setUnits(attacker.getUnits() - 1);
 
             // Checking if defender is eliminated
-            if(map.getPlayerZones(defender.player).size() == 1){
-                Gdx.app.log(this.getClass().getSimpleName(),defender.player.getName() + " is eliminated");
+            if (map.getPlayerZones(defender.player).size() == 1) {
+                Gdx.app.log(this.getClass().getSimpleName(), defender.player.getName() + " is eliminated");
                 eliminatedPlayers.add(defender.player);
 
                 // Checking if the game is over
-                if(eliminatedPlayers.size() == players.size() - 1) {
-                    Gdx.app.log(this.getClass().getSimpleName(),attacker.getPlayer().getName() + " has won the game!");
+                if (eliminatedPlayers.size() == players.size() - 1) {
+                    Gdx.app.log(this.getClass().getSimpleName(), attacker.getPlayer().getName() + " has won the game!");
                     this.gameOver = true;
                     this.gameWinner = attacker.getPlayer();
                 }
@@ -307,7 +301,7 @@ public class GameModel implements RealtimeListener{
     }
 
     public void sendAttack(Zone attacker, Zone defender, long seed) {
-        Message message = new Message(new byte[512],"",0);
+        Message message = new Message(new byte[512], "", 0);
         message.putString(Message.ATTACK);
         message.putInt(attacker.getId());
         message.putInt(defender.getId());
@@ -488,7 +482,7 @@ public class GameModel implements RealtimeListener{
     }
 
     public void sendDefend(int playerIndex, String strategy, long seed) {
-        Message message = new Message(new byte[512],"",0);
+        Message message = new Message(new byte[512], "", 0);
         message.putString(Message.DEFEND);
         message.putInt(playerIndex);
         message.putString(strategy);
@@ -503,15 +497,15 @@ public class GameModel implements RealtimeListener{
         defend(playerIndex, strategy, false);
     }
 
-    public void nextPlayer(){
+    public void nextPlayer() {
         this.attackRoll = 0;
         this.defendRoll = 0;
 
         if (this.attacker != null) {
             this.attacker.unClick();
         }
-        this.playerIndex = (this.playerIndex + 1)%(players.size());
-        if(eliminatedPlayers.contains(getPlayer(playerIndex))){
+        this.playerIndex = (this.playerIndex + 1) % (players.size());
+        if (eliminatedPlayers.contains(getPlayer(playerIndex))) {
             nextPlayer();
         }
 
@@ -583,9 +577,9 @@ public class GameModel implements RealtimeListener{
         setMapFromType(pref.getMapType());
     }
 
-    public void sendSettings(){
+    public void sendSettings() {
         Gdx.app.log(this.getClass().getSimpleName(), "Sending settings");
-        Message message = new Message(new byte[512],"",0);
+        Message message = new Message(new byte[512], "", 0);
         // message header
         String header = Message.MAPSETTINGS;
         message.putString(header);
@@ -596,7 +590,7 @@ public class GameModel implements RealtimeListener{
         message.putInt(numDice);
         String mapType = pref.getMapType();
         message.putString(mapType);
-        long seed = rng.getSeed();
+        long seed = RNG.getSeed();
         message.putLong(seed);
         Gdx.app.log(this.getClass().getSimpleName(), "Sent settings: \n" +
                 "diceType: " + diceType + "\n" +
@@ -616,11 +610,11 @@ public class GameModel implements RealtimeListener{
 
         //the start-message is redundant if the game is initiated from the quick-game option,
         //the game is already in game-mode when it recieves the start-message.
-        if(contents.equals(Message.START)){
+        if (contents.equals(Message.START)) {
             return;
         }
 
-        if(contents.equals(Message.ORDER)) {
+        if (contents.equals(Message.ORDER)) {
             System.out.println("THis unit recieves an order");
             long shuffleSeed = message.getLong();
             System.out.println("ORDER recieved in gameModel" + shuffleSeed);
@@ -631,13 +625,13 @@ public class GameModel implements RealtimeListener{
 
             //this.setMap("");
 
-            if(this.localPlayer.playerId.equals(players.get(0).playerId)){
+            if (this.localPlayer.playerId.equals(players.get(0).playerId)) {
                 System.out.println("THis unit believes its not host, but settingshost and sends out the settings");
                 sendSettings();
             }
 
         }
-        if(contents.equals(Message.MAPSETTINGS)){
+        if (contents.equals(Message.MAPSETTINGS)) {
             System.out.println("This unit recieves mapSettings");
             applySettings(message);
         }
@@ -654,12 +648,12 @@ public class GameModel implements RealtimeListener{
         this.sender = playServices;
     }
 
-    public int getNumDice(){
+    public int getNumDice() {
         //return pref.getNumDice();
         return this.maxUnits;
     }
 
-    public boolean isGameOver(){
+    public boolean isGameOver() {
         return gameOver;
     }
 

@@ -115,25 +115,32 @@ public class TutorialModel {
             case 1: {
                 if (id == zoneIds.get(1)) nextStep();
                 break;
-            } case 2: {
+            }
+            case 2: {
                 if (id == zoneIds.get(3)) nextStep();
                 break;
-            } case 3: {
+            }
+            case 3: {
                 if (id == zoneIds.get(3)) nextStep();
                 break;
-            } case 4: {
+            }
+            case 4: {
                 if (id == zoneIds.get(2)) nextStep();
                 break;
-            } case 5: {
+            }
+            case 5: {
                 if (id == zoneIds.get(0)) nextStep();
                 break;
-            } case 6: {
+            }
+            case 6: {
                 if (id == zoneIds.get(4)) nextStep();
                 break;
-            } case 7: {
+            }
+            case 7: {
                 if (id == zoneIds.get(4)) nextStep();
                 break;
-            } case 8: {
+            }
+            case 8: {
                 if (id == zoneIds.get(5)) nextStep();
                 break;
             }
@@ -268,9 +275,13 @@ public class TutorialModel {
         updateStep();
     }
 
-    public boolean hasPrev() { return step > MIN_STEP; }
+    public boolean hasPrev() {
+        return step > MIN_STEP;
+    }
 
-    public boolean hasNext() { return step < MAX_STEP; }
+    public boolean hasNext() {
+        return step < MAX_STEP;
+    }
 
     public int getStep() {
         return step;

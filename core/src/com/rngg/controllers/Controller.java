@@ -15,8 +15,6 @@ abstract public class Controller {
         this.game = game;
     }
 
-    abstract public void update(float delta);
-
     public void setCamera(OrthographicCamera camera) {
         this.camera = camera;
     }

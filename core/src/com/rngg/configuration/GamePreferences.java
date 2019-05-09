@@ -23,24 +23,38 @@ public class GamePreferences {
 
     private GamePreferences(){
         prefs = Gdx.app.getPreferences("game-preferences");
-        if(!hasColors()){
+        if (!hasColors()){
             setTrueColors();
         }
-        if(!prefs.contains("colorblind mode")){
+
+        if (!prefs.contains("colorblind mode")){
             setCbMode(false);
         }
-        if(!prefs.contains("Main color")){
+
+        if (!prefs.contains("Main color")){
             setMainColor("color 1");
         }
-        if(!prefs.contains("map type")){
+
+        if (!prefs.contains("map type")){
             setMapType("SquareMap");
         }
-        if(!prefs.contains("dice type")){
+
+        if (!prefs.contains("dice type")){
             setDiceType(RNG.D6);
         }
-        if(!prefs.contains("Number of dice")){
+
+        if (!prefs.contains("Number of dice")){
             setNumDice(8);
         }
+
+        if (!prefs.contains("custom map")) {
+            setCustomMap("levels/RectangleHex.json");
+        }
+
+        if (!prefs.contains("custom map enabled")) {
+            setCustomMapEnabled(false);
+        }
+
         updateColors();
     }
 
@@ -65,6 +79,16 @@ public class GamePreferences {
     public void setMusic(boolean enable) {
         musicEnabled = enable;
         prefs.putBoolean("music", enable);
+        prefs.flush();
+    }
+
+    public void setCustomMap(String filename) {
+        prefs.putString("custom map", filename);
+        prefs.flush();
+    }
+
+    public void setCustomMapEnabled(boolean enabled) {
+        prefs.putBoolean("custom map enabled", enabled);
         prefs.flush();
     }
 
@@ -169,5 +193,13 @@ public class GamePreferences {
 
     public int getNumDice(){
         return prefs.getInteger("Number of dice");
+    }
+
+    public String getCustomMap() {
+        return prefs.getString("custom map");
+    }
+
+    public boolean customMapEnabled() {
+        return prefs.getBoolean("custom map enabled");
     }
 }

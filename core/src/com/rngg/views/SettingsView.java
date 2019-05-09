@@ -8,7 +8,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -139,9 +141,19 @@ public class SettingsView extends View {
         color4Button.getLabel().setFontScale(1.5f);
         group1.addActor(color4Button);
 
-        final TextButton mapButton = new TextButton(pref.getMapType().equals("SquareMap") ? "Square map" : pref.getMapType().equals("HexMap") ? "Hexagonal map" : "HexMeshMap", skin);
+        HorizontalGroup mapButtonAndDropdown = new HorizontalGroup();
+        mapButtonAndDropdown.grow();
+        mapButtonAndDropdown.padLeft(35f);
+
+        final TextButton mapButton = new TextButton(settingsModel.getMapButtonText(), skin);
         mapButton.getLabel().setFontScale(1.5f);
-        group4.addActor(mapButton);
+
+        final SelectBox<String> customMaps = new SelectBox<String>(skin);
+        customMaps.setItems(settingsModel.getCustomMaps());
+
+        mapButtonAndDropdown.addActor(mapButton);
+        mapButtonAndDropdown.addActor(customMaps);
+        group4.addActor(mapButtonAndDropdown);
 
         final TextButton diceBytton = new TextButton(pref.getDiceType(), skin);
         diceBytton.getLabel().setFontScale(1.5f);
@@ -170,7 +182,7 @@ public class SettingsView extends View {
         group3.addActor(menuButton);
 
 
-        controller.addActorListeners(cbSettingsButton, toggleMusic, menuButton, color1Button, color2Button, color3Button, color4Button, mapButton, diceBytton, diceNumSLider, sliderLabel); // handle input
+        controller.addActorListeners(cbSettingsButton, toggleMusic, menuButton, color1Button, color2Button, color3Button, color4Button, mapButton, diceBytton, diceNumSLider, sliderLabel, customMaps); // handle input
     }
 
     @Override
@@ -199,6 +211,7 @@ public class SettingsView extends View {
         settingsModel.drawText(font, batch, Integer.toString(4), x_margin, Rngg.HEIGHT/2 - 215);
         batch.end();
 
+        stage.act();
         stage.draw();
     }
 

@@ -88,7 +88,7 @@ public class GameModel implements RealtimeListener{
         this.rng = RNG.getInstance();
         this.contiguousAreas = new int[this.players.size()];
 
-        this.setMap(mapFileName);
+        this.setMap(pref.customMapEnabled() ? pref.getCustomMap() : mapFileName);
 
 
 

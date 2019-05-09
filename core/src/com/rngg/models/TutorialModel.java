@@ -14,6 +14,9 @@ import java.util.Deque;
 import java.util.List;
 
 public class TutorialModel {
+    private final int MIN_STEP = 1;
+    private final int MAX_STEP = 11;
+
     private GameMap map;
     private ArrayList<Player> players;
     private int maxUnits = 8;
@@ -214,6 +217,21 @@ public class TutorialModel {
         } else if (step == 9) {
             zones.get(0).setUnits(1);
             zones.get(0).setPlayer(players.get(0));
+            zones.get(1).setUnits(1);
+            zones.get(1).setPlayer(players.get(0));
+            zones.get(2).setUnits(6);
+            zones.get(2).setPlayer(players.get(0));
+            zones.get(3).setUnits(1);
+            zones.get(3).setPlayer((players.get(0)));
+            zones.get(4).setUnits(1);
+            zones.get(4).setPlayer(players.get(0));
+            zones.get(5).setUnits(8);
+            zones.get(5).setPlayer(players.get(2));
+
+            zones.get(4).unClick();
+        } else if (step == 10) {
+            zones.get(0).setUnits(1);
+            zones.get(0).setPlayer(players.get(0));
             zones.get(1).setUnits(2);
             zones.get(1).setPlayer(players.get(0));
             zones.get(2).setUnits(7);
@@ -224,9 +242,7 @@ public class TutorialModel {
             zones.get(4).setPlayer(players.get(0));
             zones.get(5).setUnits(8);
             zones.get(5).setPlayer(players.get(2));
-
-            if (step == 9) zones.get(4).unClick();
-        } else if (step == 10) {
+        } else if (step == 11) {
             zones.get(0).setUnits(1);
             zones.get(0).setPlayer(players.get(0));
             zones.get(1).setUnits(2);
@@ -243,18 +259,18 @@ public class TutorialModel {
     }
 
     public void prevStep() {
-        if (step > 1) step--;
+        if (step > MIN_STEP) step--;
         updateStep();
     }
 
     public void nextStep() {
-        if (step < 10) step++;
+        if (step < MAX_STEP) step++;
         updateStep();
     }
 
-    public boolean hasPrev() { return step > 1; }
+    public boolean hasPrev() { return step > MIN_STEP; }
 
-    public boolean hasNext() { return step < 10; }
+    public boolean hasNext() { return step < MAX_STEP; }
 
     public int getStep() {
         return step;

@@ -74,6 +74,7 @@ public class TutorialMenuRenderer {
         prevButton.setColor(model.hasPrev() ? Color.WHITE  : Color.GRAY);
         nextButton.setTouchable(model.hasNext() ? Touchable.enabled : Touchable.disabled);
         nextButton.setColor(model.hasNext() ? Color.WHITE : Color.GRAY);
+        quitButton.setColor(Color.WHITE);
 
         int step = model.getStep();
         if (step > 8) {
@@ -81,10 +82,10 @@ public class TutorialMenuRenderer {
             timeCounter += dt;
 
             if (timeCounter > 50 * dt) {
-                ((step == 9) ? nextButton : quitButton).setColor(Color.RED);
+                ((step == 9 || step == 10) ? nextButton : quitButton).setColor(Color.RED);
             }
             if (timeCounter > 100 * dt) {
-                ((step == 9) ? nextButton : quitButton).setColor(Color.WHITE);
+                ((step == 9 || step == 10) ? nextButton : quitButton).setColor(Color.WHITE);
                 timeCounter = 0f;
             }
         }
@@ -143,28 +144,40 @@ public class TutorialMenuRenderer {
                 font.draw(batch, "This way you'll be better off, when attacking.", textBeginX, textBeginY - 4 * lineHeight);
                 break;
             } case 6: {
-                font.draw(batch, "Try to attack the zone with less dice.", textBeginX, textBeginY);
+                font.draw(batch, "You can only attack neighboring zones that", textBeginX, textBeginY);
+                font.draw(batch, "you do not own yourself.", textBeginX, textBeginY - lineHeight);
                 break;
             } case 7: {
                 font.draw(batch, "One zone left. Go for it!", textBeginX, textBeginY);
                 break;
             } case 9: {
                 font.draw(batch, "Arghh! You lost the battle and most of", textBeginX, textBeginY);
-                font.draw(batch, "your dice. You had a much lower chance", textBeginX, textBeginY - lineHeight);
-                font.draw(batch, "of winning, because of the dice count difference.", textBeginX, textBeginY - 2 * lineHeight);
-                font.draw(batch, "Now it's the turn of the ", textBeginX, textBeginY - 4 * lineHeight);
-                font.setColor(Color.BLUE);
-                font.draw(batch, "BLUE Player", textBeginX + 250, textBeginY - 4 * lineHeight);
-                font.setColor(Color.WHITE);
-                font.draw(batch, "Notice how your dice count increased at", textBeginX, textBeginY - 6 * lineHeight);
-                font.draw(batch, "the end of your turn!", textBeginX, textBeginY - 7 * lineHeight);
+                font.draw(batch, "your dice. You had a much lower chance of", textBeginX, textBeginY - lineHeight);
+                font.draw(batch, "winning, because of the dice count difference.", textBeginX, textBeginY - 2 * lineHeight);
+                font.draw(batch, "Now end your turn by pressing \"Next step\".", textBeginX, textBeginY - 4 * lineHeight);
                 break;
             } case 10: {
+                font.draw(batch, "Now it's the turn of the ", textBeginX, textBeginY);
+                font.setColor(Color.BLUE);
+                font.draw(batch, "BLUE Player", textBeginX + 250, textBeginY);
+                font.setColor(Color.WHITE);
+                font.draw(batch, "Notice how your dice count increased at", textBeginX, textBeginY - lineHeight);
+                font.draw(batch, "the end of your turn!", textBeginX, textBeginY - 2 * lineHeight);
+                font.draw(batch, "In a real game you would choose either to", textBeginX, textBeginY - 4 * lineHeight);
+                font.draw(batch, "defend your frontier, core or all zones to", textBeginX, textBeginY - 5 * lineHeight);
+                font.draw(batch, "manipulate which zones gets new dice.", textBeginX, textBeginY - 6 * lineHeight);
+                font.draw(batch, "By clicking the \"Next step\" button, you chose", textBeginX, textBeginY - 8 * lineHeight);
+                font.draw(batch, "to defend all zones.", textBeginX, textBeginY - 9 * lineHeight);
+                break;
+            } case 11: {
                 font.draw(batch, "Your opponent started by capturing one", textBeginX, textBeginY);
                 font.draw(batch, "of your zones.", textBeginX, textBeginY - lineHeight);
-                font.draw(batch, "You should now know enough to play a", textBeginX, textBeginY - 3 * lineHeight);
-                font.draw(batch, "game for real.", textBeginX, textBeginY - 4 * lineHeight);
-                font.draw(batch, "Quit the tutorial, when ready.", textBeginX, textBeginY - 5 * lineHeight);
+                font.draw(batch, "He would most likely go on to capture many", textBeginX, textBeginY - 3 * lineHeight);
+                font.draw(batch, "more of your zones, but this is enough for", textBeginX, textBeginY - 4 * lineHeight);
+                font.draw(batch, "a simple demonstration.", textBeginX, textBeginY - 5 * lineHeight);
+                font.draw(batch, "You should now know enough to play a", textBeginX, textBeginY - 7 * lineHeight);
+                font.draw(batch, "game for real.", textBeginX, textBeginY - 8 * lineHeight);
+                font.draw(batch, "Quit the tutorial, when ready.", textBeginX, textBeginY - 9 * lineHeight);
                 break;
             }
         }

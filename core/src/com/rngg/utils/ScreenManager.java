@@ -1,3 +1,8 @@
+/*
+ * A class with methods for changing screens.
+ * This make modification a lot easier.
+ */
+
 package com.rngg.utils;
 
 import com.rngg.controllers.GameController;
@@ -8,7 +13,6 @@ import com.rngg.controllers.TutorialController;
 import com.rngg.controllers.WaitingRoomController;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
-import com.rngg.models.Player;
 import com.rngg.models.TutorialModel;
 import com.rngg.models.WaitingRoomModel;
 import com.rngg.views.GameView;
@@ -17,8 +21,6 @@ import com.rngg.views.MenuView;
 import com.rngg.views.SettingsView;
 import com.rngg.views.TutorialView;
 import com.rngg.views.WaitingRoomView;
-
-import java.util.List;
 
 public class ScreenManager {
 
@@ -40,7 +42,9 @@ public class ScreenManager {
         game.setScreen(new LobbyView(new LobbyController(game)));
     }
 
-    public void setTutorialScreen(TutorialModel model) { game.setScreen(new TutorialView(new TutorialController(game, model))); }
+    public void setTutorialScreen(TutorialModel model) {
+        game.setScreen(new TutorialView(new TutorialController(game, model)));
+    }
 
     public void setSettingsScreen() {
         game.setScreen(new SettingsView(new SettingsController(game)));

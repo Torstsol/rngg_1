@@ -1,9 +1,15 @@
+/*
+ * This class is a singleton wrapper for LibGDXs AssetManager class.
+ * In addition it has methods for loading groups of assets.
+ */
+
 package com.rngg.utils;
 
 import com.badlogic.gdx.assets.AssetManager;
 
 public class GameAssetManager {
 
+    // since this is a singleton, prevent creation of new objects
     private GameAssetManager() {
 
     }
@@ -14,7 +20,6 @@ public class GameAssetManager {
 
     public void loadImages() {
         manager.load(Assets.LOGO);
-        manager.load(Assets.BACKGROUND_GAME);
     }
 
     public void loadFonts() {

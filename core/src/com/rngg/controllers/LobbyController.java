@@ -13,15 +13,11 @@ public class LobbyController extends Controller {
         super(game);
     }
 
-    @Override
-    public void update(float delta) {}
-
-
     public void addActorListeners(final TextButton quickGameButton, final TextButton invitePlayersButton, final TextButton seeInvitationsButton, final TextButton localGameButton, final TextButton menuButton) {
         localGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-               game.screenManager.setGameScreen(new GameModel(null, "", null)); // levels/StarMap.json as MapFileName to test custom map
+                game.screenManager.setGameScreen(new GameModel(null, "", null)); // levels/StarMap.json as MapFileName to test custom map
             }
         });
 

@@ -34,9 +34,6 @@ public class TutorialMenuRenderer {
     private float textBeginY;
 
     public TutorialMenuRenderer(TutorialModel model, BitmapFont font, TutorialController controller, ShapeRenderer shapeRenderer) {
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, Rngg.WIDTH, Rngg.HEIGHT);
-        batch = Utils.getSpriteBatch();
         this.font = font;
         this.model = model;
         this.prevButton = new TextButton("Prev step", GameAssetManager.getManager().get(Assets.SKIN));
@@ -46,8 +43,11 @@ public class TutorialMenuRenderer {
         this.textBeginX = Rngg.WIDTH - Rngg.WIDTH / 2.5f;
         this.textBeginY = (float) (Rngg.HEIGHT - Rngg.HEIGHT / 16);
 
-        FitViewport fitViewport = new FitViewport(Rngg.WIDTH, Rngg.HEIGHT, camera);
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, Rngg.WIDTH, Rngg.HEIGHT);
+        batch = Utils.getSpriteBatch();
 
+        FitViewport fitViewport = new FitViewport(Rngg.WIDTH, Rngg.HEIGHT, camera);
         stage = new Stage(fitViewport, batch);
 
         Table table = new Table();
@@ -71,7 +71,7 @@ public class TutorialMenuRenderer {
 
     public void draw() {
         prevButton.setTouchable(model.hasPrev() ? Touchable.enabled : Touchable.disabled);
-        prevButton.setColor(model.hasPrev() ? Color.WHITE  : Color.GRAY);
+        prevButton.setColor(model.hasPrev() ? Color.WHITE : Color.GRAY);
         nextButton.setTouchable(model.hasNext() ? Touchable.enabled : Touchable.disabled);
         nextButton.setColor(model.hasNext() ? Color.WHITE : Color.GRAY);
         quitButton.setColor(Color.WHITE);
@@ -121,12 +121,14 @@ public class TutorialMenuRenderer {
                 font.draw(batch, "Note that the numbers represent the", textBeginX, textBeginY - 8 * lineHeight);
                 font.draw(batch, "number  of dice per zone.", textBeginX, textBeginY - 9 * lineHeight);
                 break;
-            } case 2: {
+            }
+            case 2: {
                 font.draw(batch, "Good! Now you have selected a zone.", textBeginX, textBeginY);
                 font.draw(batch, "You can now attack neighboring zones.", textBeginX, textBeginY - lineHeight);
                 font.draw(batch, "Attack the green zone on top, with 5 dice on it.", textBeginX, textBeginY - 2 * lineHeight);
                 break;
-            } case 3: {
+            }
+            case 3: {
                 font.draw(batch, "Good! You captured the zone!", textBeginX, textBeginY);
                 font.draw(batch, "As your total score of the dice roll was", textBeginX, textBeginY - lineHeight);
                 font.draw(batch, "higher than the opponent's, you won the zone.", textBeginX, textBeginY - 2 * lineHeight);
@@ -134,7 +136,8 @@ public class TutorialMenuRenderer {
                 font.draw(batch, "capturing his last zone.", textBeginX, textBeginY - 5 * lineHeight);
                 font.draw(batch, "Use the zone you've just captured.", textBeginX, textBeginY - 6 * lineHeight);
                 break;
-            } case 5: {
+            }
+            case 5: {
                 font.draw(batch, "Great! You've eliminated the", textBeginX, textBeginY);
                 font.setColor(Color.GREEN);
                 font.draw(batch, "GREEN Player", textBeginX + 310, textBeginY);
@@ -143,20 +146,24 @@ public class TutorialMenuRenderer {
                 font.draw(batch, "Use the zone you have with the most dice.", textBeginX, textBeginY - 3 * lineHeight);
                 font.draw(batch, "This way you'll be better off, when attacking.", textBeginX, textBeginY - 4 * lineHeight);
                 break;
-            } case 6: {
+            }
+            case 6: {
                 font.draw(batch, "You can only attack neighboring zones that", textBeginX, textBeginY);
                 font.draw(batch, "you do not own yourself.", textBeginX, textBeginY - lineHeight);
                 break;
-            } case 7: {
+            }
+            case 7: {
                 font.draw(batch, "One zone left. Go for it!", textBeginX, textBeginY);
                 break;
-            } case 9: {
+            }
+            case 9: {
                 font.draw(batch, "Arghh! You lost the battle and most of", textBeginX, textBeginY);
                 font.draw(batch, "your dice. You had a much lower chance of", textBeginX, textBeginY - lineHeight);
                 font.draw(batch, "winning, because of the dice count difference.", textBeginX, textBeginY - 2 * lineHeight);
                 font.draw(batch, "Now end your turn by pressing \"Next step\".", textBeginX, textBeginY - 4 * lineHeight);
                 break;
-            } case 10: {
+            }
+            case 10: {
                 font.draw(batch, "Now it's the turn of the ", textBeginX, textBeginY);
                 font.setColor(Color.BLUE);
                 font.draw(batch, "BLUE Player", textBeginX + 250, textBeginY);
@@ -169,7 +176,8 @@ public class TutorialMenuRenderer {
                 font.draw(batch, "By clicking the \"Next step\" button, you chose", textBeginX, textBeginY - 8 * lineHeight);
                 font.draw(batch, "to defend all zones.", textBeginX, textBeginY - 9 * lineHeight);
                 break;
-            } case 11: {
+            }
+            case 11: {
                 font.draw(batch, "Your opponent started by capturing one", textBeginX, textBeginY);
                 font.draw(batch, "of your zones.", textBeginX, textBeginY - lineHeight);
                 font.draw(batch, "He would most likely go on to capture many", textBeginX, textBeginY - 3 * lineHeight);

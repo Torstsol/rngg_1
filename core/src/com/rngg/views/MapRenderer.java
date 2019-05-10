@@ -3,11 +3,8 @@ package com.rngg.views;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.rngg.game.Rngg;
 import com.rngg.models.GameMap;
 import com.rngg.models.Zone;
-import com.rngg.utils.Assets;
-import com.rngg.utils.GameAssetManager;
 
 import java.util.List;
 
@@ -18,7 +15,7 @@ public abstract class MapRenderer<M extends GameMap<Z, ZoneFormat>, Z extends Zo
     protected BitmapFont font;
     protected ShapeRenderer.ShapeType shapeType;
 
-    public MapRenderer(M map,ShapeRenderer sr, SpriteBatch batch, BitmapFont font) {
+    public MapRenderer(M map, ShapeRenderer sr, SpriteBatch batch, BitmapFont font) {
         this.map = map;
         this.sr = sr;
         this.batch = batch;

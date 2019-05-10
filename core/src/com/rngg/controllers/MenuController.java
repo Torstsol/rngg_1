@@ -14,9 +14,6 @@ public class MenuController extends Controller {
         super(game);
     }
 
-    @Override
-    public void update(float delta) {}
-
     public void addActorListeners(final TextButton lobbyButton, final TextButton tutorialButton, final TextButton settingsButton, final TextButton exitButton) {
         lobbyButton.addListener(new ChangeListener() {
             @Override

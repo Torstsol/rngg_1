@@ -47,8 +47,8 @@ public class HexMapRenderer extends MapRenderer<HexMap, HexZone, List<List<int[]
         float angleRad;
 
         /*
-        *   Renders all points that makes up the hex.
-        *   The hex is rendered as a collection of triangles, hence the vast point generation
+         *   Renders all points that makes up the hex.
+         *   The hex is rendered as a collection of triangles, hence the vast point generation
          */
         for (int i = 0; i < 6; i++) {
             angleDeg = (float) (60 * i - 30);
@@ -63,8 +63,8 @@ public class HexMapRenderer extends MapRenderer<HexMap, HexZone, List<List<int[]
 
         for (int i = 0; i < 6; i++) {
             sr.triangle(centerX, centerY,
-                xPoints[i], yPoints[i],
-                xPoints[i + 1], yPoints[i + 1]);
+                    xPoints[i], yPoints[i],
+                    xPoints[i + 1], yPoints[i + 1]);
         }
     }
 

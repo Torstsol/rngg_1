@@ -1,14 +1,15 @@
 package com.rngg.models;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 
 import java.util.ArrayList;
 
 public class Bot extends Player {
     private GameModel model;
 
-    public Bot(String name, String playerId, boolean isLocal, GameModel model) {
-        super(name, playerId, isLocal);
+    public Bot(String name, String playerId, boolean isLocal, boolean isHost, Color color, GameModel model) {
+        super(name, playerId, isLocal, isHost, color);
         this.model = model;
     }
 
@@ -31,13 +32,13 @@ public class Bot extends Player {
                 Zone zone = zones.get(i);
                 deleteList.add(zone);
                 // no need to check neighbors if zone cannot attack
-                if (zone.getUnits() <= 1) {
+                if (zone.getUnits() < 1) {
                     continue;
                 }
                 ArrayList<Zone> neighbors = model.getMap().getNeighbors(zone);
                 for (Zone neighbor : neighbors) {
                     if (!neighbor.getPlayer().equals(this) && shouldAttack(zone, neighbor)) {
-                        int result = model.attack(zone, neighbor);
+                        int result = model.attack(zone, neighbor, true);
                         // result > 0 means bot won
                         if (result > 0) {
                             zones.add(neighbor);
@@ -51,7 +52,7 @@ public class Bot extends Player {
         } while (changed);
         // bots only act when it is their turn, thus we defend using the current playerIndex
         // TODO bots always defend using DEFEND_ALL
-        model.defend(model.getPlayerIndex(), GameModel.DEFEND_ALL);
+        model.defend(model.getPlayerIndex(), GameModel.DEFEND_ALL, true);
         model.nextPlayer();
     }
 

@@ -2,26 +2,29 @@ package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.rngg.game.Rngg;
 import com.rngg.utils.Assets;
 import com.rngg.utils.GameAssetManager;
+import com.rngg.utils.Utils;
 
 abstract public class View implements Screen {
 
     protected OrthographicCamera camera;
-    protected GameAssetManager assetManager;
     protected BitmapFont font; // default font
+    protected AssetManager assetManager;
+    protected SpriteBatch batch = Utils.getSpriteBatch();
 
-    public View(GameAssetManager assetManager) {
-        this.assetManager = assetManager;
-
+    public View() {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Rngg.WIDTH, Rngg.HEIGHT);
 
-        font = assetManager.manager.get(Assets.MINECRAFTIA);
+        font = GameAssetManager.getManager().get(Assets.FONT);
+        assetManager = GameAssetManager.getManager();
     }
 
     @Override

@@ -8,6 +8,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.WindowManager;
 
+import com.rngg.models.Player;
+import com.google.android.gms.games.multiplayer.Invitation;
+import com.google.android.gms.games.multiplayer.Multiplayer;
+import com.rngg.configuration.GamePreferences;
 import com.rngg.game.AndroidLauncher;
 import com.rngg.services.IPlayServices;
 import com.rngg.services.Message;
@@ -34,58 +38,73 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
 /**
- * Created by erlin on 23.03.2018.
+ * Created by torstein on 23.03.2018.
  */
 
 public class AndroidAPI implements IPlayServices {
+
     public GoogleSignInClient googleSignInClient;
     public GoogleSignInAccount googleSignInAccount;
     public RealTimeMultiplayerClient realTimeMultiplayerClient;
     public RoomConfig mJoinedRoomConfig;
     public InvitationsClient invitationsClient;
+    public boolean mWaitingRoomFinishedFromCode = false;
+    public Room mRoom;
+    HashSet<Integer> pendingMessageSet = new HashSet<>();
+    public RealtimeListener liveListener;
+    public RoomListener roomListener;
 
     private AndroidLauncher androidLauncher;
     private Activity thisActivity;
 
 
-
+    //Status codes
     public static final int RC_SIGN_IN = 9001;
     public static final int RC_WAITING_ROOM = 9002;
+    public static final int RC_SELECT_PLAYERS = 9006;
+    public static final int RC_INVITATION_INBOX = 9008;
+
+    // minimum and maximum amount of players
+    final static int MIN_PLAYERS = 2;
+    final static int MAX_PLAYERS = 4;
+
+    // are we already playing?
+    public boolean mPlaying = false;
+
 
     public AndroidAPI(AndroidLauncher androidLauncher) {
-        // create client to sign in.
 
         this.androidLauncher = androidLauncher;
         this.thisActivity = androidLauncher;
         googleSignInClient = GoogleSignIn.getClient(this.androidLauncher, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
+
     }
 
 
-    // ----------------- intents -----------------
-    public void startSignInIntent() {
+    // Sign-in method
+    public void signIn() {
         Intent intent = googleSignInClient.getSignInIntent();
         androidLauncher.startActivityForResult(intent, RC_SIGN_IN);
-
-
-
-        //if it equals 2 you need to update google play services on your device
-        int result = GooglePlayServicesUtil.isGooglePlayServicesAvailable(androidLauncher.getContext());
-        System.out.println(result);
-        System.out.println(result == ConnectionResult.SUCCESS);
-
     }
 
-
-    public boolean mWaitingRoomFinishedFromCode = false;
-
-    private void onStartGameMessageReceived() {
-        mWaitingRoomFinishedFromCode = true;
-        androidLauncher.finishActivity(RC_WAITING_ROOM);
+    //sign-out method
+    public void signOut() {
+        GoogleSignInClient signInClient = GoogleSignIn.getClient(androidLauncher,
+                GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
+        signInClient.signOut().addOnCompleteListener(androidLauncher,
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // at this point, the user is signed out.
+                    }
+                });
     }
 
     // display the waiting room ui
@@ -100,31 +119,11 @@ public class AndroidAPI implements IPlayServices {
                 });
     }
 
-
-
-    private OnRealTimeMessageReceivedListener mMessageReceivedHandler =
-            new OnRealTimeMessageReceivedListener() {
-                @Override
-                public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
-                    Message message = new Message(realTimeMessage.getMessageData(), realTimeMessage.getSenderParticipantId(), realTimeMessage.describeContents());
-                    liveListener.handleDataReceived(message);
-                }
-            };
-
-
-
-
-
-    // --------- creating multiplayer rooms ------------------
-    private static final long ROLE_ANY = 0x0; // can play in any match.
-    private static final long ROLE_FARMER = 0x1; // 001 in binary
-    private static final long ROLE_ARCHER = 0x2; // 010 in binary
-    private static final long ROLE_WIZARD = 0x4; // 100 in binary
-
-    private void startQuickGame(long role) {
+    //Start quick game
+    public void startQuickGame() {
         // auto-match criteria to invite one random automatch opponent.
         // You can also specify more opponents (up to 3).
-        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, role);
+        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0x0);
 
         // build the room config:
         RoomConfig roomConfig =
@@ -145,14 +144,137 @@ public class AndroidAPI implements IPlayServices {
         System.out.println("Room created");
     }
 
-    private RoomUpdateCallback roomUpdateCallback = new RoomUpdateCallback() {
+    //Invite players option, gets room to search and add players
+    public void startInvitePlayersRoom() {
+        // launch the player selection screen
+        // minimum: 1 other player; maximum: 3 other players
+        Games.getRealTimeMultiplayerClient(androidLauncher, GoogleSignIn.getLastSignedInAccount(androidLauncher))
+                .getSelectOpponentsIntent(MIN_PLAYERS-1, MAX_PLAYERS-1, true)
+                .addOnSuccessListener(new OnSuccessListener<Intent>() {
+                    @Override
+                    public void onSuccess(Intent intent) {
+                        androidLauncher.startActivityForResult(intent, RC_SELECT_PLAYERS);
+                    }
+                });
+    }
+
+    //Shows the pending invititations
+    public void showInvitationInbox() {
+        Games.getInvitationsClient(androidLauncher, GoogleSignIn.getLastSignedInAccount(androidLauncher))
+                .getInvitationInboxIntent()
+                .addOnSuccessListener(new OnSuccessListener<Intent>() {
+                    @Override
+                    public void onSuccess(Intent intent) {
+                        androidLauncher.startActivityForResult(intent, RC_INVITATION_INBOX);
+                    }
+                });
+    }
+
+    @Override
+    public void setMPlaying(boolean bool) {
+        this.mPlaying = bool;
+    }
+
+    @Override
+    public void onStartGameMessageRecieved() {
+        mPlaying = true;
+        mWaitingRoomFinishedFromCode = true;
+
+        androidLauncher.finishActivity(RC_WAITING_ROOM);
+    }
+
+
+    // sending data to all
+    @Override
+    public void sendToAllReliably(byte[] message) {
+        if(mRoom == null){return;}
+        for (String participantId : mRoom.getParticipantIds()) {
+            if (!participantId.equals(mMyParticipantId)) {
+                Task<Integer> task = Games.
+                        getRealTimeMultiplayerClient(androidLauncher, GoogleSignIn.getLastSignedInAccount(androidLauncher))
+                        .sendReliableMessage(message, mRoom.getRoomId(), participantId,
+                                handleMessageSentCallback).addOnCompleteListener(new OnCompleteListener<Integer>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Integer> task) {
+                                // Keep track of which messages are sent, if desired.
+                                recordMessageToken(task.getResult());
+                            }
+                        });
+            }
+        }
+    }
+
+    synchronized void recordMessageToken(int tokenId) {
+        pendingMessageSet.add(tokenId);
+    }
+
+    @Override
+    public void setRealTimeListener(RealtimeListener listener){
+        this.liveListener = listener;
+        listener.setSender(this);
+    }
+
+
+    @Override
+    public void setRoomListener(RoomListener listener) {
+
+        this.roomListener = listener;
+        this.liveListener = (RealtimeListener) listener;
+    }
+
+    @Override
+    public boolean isSignedIn() {
+        return googleSignInAccount != null;
+    }
+
+    @Override
+    public String getLocalID() {
+        return mMyParticipantId;
+    }
+
+    @Override
+    public ArrayList<String> getRemotePlayers() {
+        ArrayList<String> participants = new ArrayList<>();
+        String localID = getLocalID();
+        for(String s : mRoom.getParticipantIds()) {
+            if(s != localID) {
+                participants.add(s);
+            }
+        }
+        return participants;
+    }
+
+    //------Listeners and callback-handlers
+    private RealTimeMultiplayerClient.ReliableMessageSentCallback handleMessageSentCallback =
+            new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
+                @Override
+                public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientId) {
+                    // handle the message being sent.
+                    synchronized (this) {
+                        pendingMessageSet.remove(tokenId);
+                    }
+                }
+            };
+
+
+
+    public OnRealTimeMessageReceivedListener mMessageReceivedHandler =
+            new OnRealTimeMessageReceivedListener() {
+                @Override
+                public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
+                    Message message = new Message(realTimeMessage.getMessageData(), realTimeMessage.getSenderParticipantId(), realTimeMessage.describeContents());
+                    liveListener.handleDataReceived(message);
+                }
+            };
+
+    public RoomUpdateCallback roomUpdateCallback = new RoomUpdateCallback() {
         @Override
         public void onRoomCreated(int code, @Nullable Room room) {
             // Update UI and internal state based on room updates.
             if (code == GamesCallbackStatusCodes.OK && room != null) {
                 System.out.println("Room " + room.getRoomId() + " created.");
                 mRoom = room;
-                showWaitingRoom(room, 4);
+                showWaitingRoom(room, MIN_PLAYERS);
             } else {
                 System.out.println("Error creating room: " + code);
                 String message = "Error creating room: " + code ;
@@ -171,7 +293,7 @@ public class AndroidAPI implements IPlayServices {
             if (code == GamesCallbackStatusCodes.OK && room != null) {
                 System.out.println("Room " + room.getRoomId() + " joined.");
                 mRoom = room;
-                showWaitingRoom(room, 4);
+                showWaitingRoom(room, MIN_PLAYERS);
             } else {
                 System.out.println("Error joining room: " + code);
                 // let screen go to sleep
@@ -199,31 +321,7 @@ public class AndroidAPI implements IPlayServices {
         }
     };
 
-    // are we already playing?
-    boolean mPlaying = false;
-
-    // at least 2 players required for our game
-    final static int MIN_PLAYERS = 2;
-    private String mMyParticipantId;
-
-    // returns whether there are enough players to start the game
-    boolean shouldStartGame(Room room) {
-        int connectedPlayers = 0;
-        for (Participant p : room.getParticipants()) {
-            if (p.isConnectedToRoom()) {
-                ++connectedPlayers;
-            }
-        }
-        return connectedPlayers >= MIN_PLAYERS;
-    }
-
-    // Returns whether the room is in a state where the game should be canceled.
-    boolean shouldCancelGame(Room room) {
-        return false;
-    }
-
-    public Room mRoom;
-    private RoomStatusUpdateCallback mRoomStatusCallbackHandler = new RoomStatusUpdateCallback() {
+    public RoomStatusUpdateCallback mRoomStatusCallbackHandler = new RoomStatusUpdateCallback() {
         @Override
         public void onRoomConnecting(@Nullable Room room) {
             // Update the UI status since we are in the process of connecting to a specific room.
@@ -289,11 +387,11 @@ public class AndroidAPI implements IPlayServices {
 
         @Override
         public void onPeersConnected(@Nullable Room room, @NonNull List<String> list) {
-            if (mPlaying) {
+            /*if (mPlaying) {
                 // add new player to an ongoing game
             } else if (shouldStartGame(room)) {
                 // start game!
-            }
+            }*/
         }
 
         @Override
@@ -322,150 +420,75 @@ public class AndroidAPI implements IPlayServices {
         }
     };
 
+    //-------Unused methods as of now--------------------------
 
-    // sending data
-    @Override
-    public void sendToAllReliably(byte[] message) {
-        if(mRoom == null){return;}
-        for (String participantId : mRoom.getParticipantIds()) {
-            if (!participantId.equals(mMyParticipantId)) {
-                Task<Integer> task = Games.
-                        getRealTimeMultiplayerClient(androidLauncher, GoogleSignIn.getLastSignedInAccount(androidLauncher))
-                        .sendReliableMessage(message, mRoom.getRoomId(), participantId,
-                                handleMessageSentCallback).addOnCompleteListener(new OnCompleteListener<Integer>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Integer> task) {
-                                // Keep track of which messages are sent, if desired.
-                                recordMessageToken(task.getResult());
-                            }
-                        });
+
+    private String mMyParticipantId;
+
+    //determine if this client is the host
+    public boolean isHost(){
+        Collections.sort(mRoom.getParticipantIds());
+        return mRoom.getParticipantIds().get(0).equals(mMyParticipantId);
+    }
+
+    public String hostID(){
+        Collections.sort(mRoom.getParticipantIds());
+        return mRoom.getParticipantIds().get(0);
+    }
+
+
+
+    // returns whether there are enough players to start the game
+    boolean shouldStartGame(Room room) {
+        int connectedPlayers = 0;
+        for (Participant p : room.getParticipants()) {
+            if (p.isConnectedToRoom()) {
+                ++connectedPlayers;
             }
         }
+        return connectedPlayers >= MIN_PLAYERS;
     }
 
-    // send to all unreliably. used for more frequent sending
-    @Override
-    public void sendToAllUnreliably(byte[] message) {
-        if(mRoom == null){return;}
-        List<String> recievers = new ArrayList<>();
-        for (String participantId : mRoom.getParticipantIds()) {
-            if (!participantId.equals(mMyParticipantId)) {
-                Task<Void> task = Games.
-                        getRealTimeMultiplayerClient(androidLauncher, GoogleSignIn.getLastSignedInAccount(androidLauncher))
-                        .sendUnreliableMessage(message, mRoom.getRoomId(), participantId).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+    public ArrayList<Player> getPlayers(){
 
-                            }
-                        });
+        GamePreferences pref = GamePreferences.getInstance();
+        ArrayList<Player> playerList = new ArrayList<Player>();
+        Player[] players = new Player[mRoom.getParticipantIds().size()];
+        ArrayList<Player> playerListTesting = new ArrayList<Player>();
+
+        for (int i = 0; i < mRoom.getParticipants().size(); i++) {
+            /*if(!mRoom.getParticipants().get(0).getParticipantId().equals(getLocalID())){
+                players[i] = new Player(mRoom.getParticipants().get(i).getDisplayName(), mRoom.getParticipants().get(i).getParticipantId(), false, pref.getColorArray().get(i));
+            }
+            else {
+                players[i] = new Player(mRoom.getParticipants().get(i).getDisplayName(), mRoom.getParticipants().get(i).getParticipantId(), true, pref.getColorArray().get(i));
+            }*/
+            Participant player = mRoom.getParticipants().get(i);
+            if(!player.getParticipantId().equals(getLocalID())){
+                players[i] = new Player(player.getDisplayName(), player.getParticipantId(), false, this.hostID() == player.getParticipantId(), pref.getEnemyColorArray().get(i));
+                playerList.add(new Player(player.getDisplayName(), player.getParticipantId(), false, this.hostID() == player.getParticipantId(), pref.getEnemyColorArray().get(i)));
+                playerListTesting.add(new Player(player.getDisplayName(), player.getParticipantId(), false, player.getDisplayName().equals("IncapableTactics3"), pref.getEnemyColorArray().get(i)));
+            }
+            else {
+                players[i] = new Player(player.getDisplayName(), player.getParticipantId(), true, this.hostID() == player.getParticipantId(), pref.getMainColor());
+                playerList.add(new Player(player.getDisplayName(), player.getParticipantId(), true, this.hostID() == player.getParticipantId(), pref.getMainColor()));
+                playerListTesting.add(new Player(player.getDisplayName(), player.getParticipantId(), true, player.getDisplayName().equals("IncapableTactics3"), pref.getEnemyColorArray().get(i)));
             }
         }
+
+        return playerList;
+
     }
 
-    // send data to specific user ID
-    @Override
-    public void sendToOneReliably(byte[] message, String userID){
-        for(String uID : mRoom.getParticipantIds()) {
-            if(uID == userID) {
-                Task<Integer> task = Games.
-                        getRealTimeMultiplayerClient(androidLauncher, GoogleSignIn.getLastSignedInAccount(androidLauncher))
-                        .sendReliableMessage(message, mRoom.getRoomId(), userID,
-                                handleMessageSentCallback).addOnCompleteListener(new OnCompleteListener<Integer>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Integer> task) {
-                                // Keep track of which messages are sent, if desired.
-                                recordMessageToken(task.getResult());
-                            }
-                        });
-            }
-        }
+    // Returns whether the room is in a state where the game should be canceled.
+    boolean shouldCancelGame(Room room) {
+        return false;
     }
 
-    HashSet<Integer> pendingMessageSet = new HashSet<>();
-
-    synchronized void recordMessageToken(int tokenId) {
-        pendingMessageSet.add(tokenId);
+    public void leaveGame(){
+        mPlaying = false;
     }
 
-    private RealTimeMultiplayerClient.ReliableMessageSentCallback handleMessageSentCallback =
-            new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
-                @Override
-                public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientId) {
-                    // handle the message being sent.
-                    synchronized (this) {
-                        pendingMessageSet.remove(tokenId);
-                    }
-                }
-            };
-
-
-
-    private RealtimeListener liveListener;
-    private RoomListener roomListener;
-    @Override
-    public void setRealTimeListener(RealtimeListener listener){
-        this.liveListener = listener;
-        listener.setSender(this);
-    }
-    /*private OnRealTimeMessageReceivedListener mMessageReceivedHandler =
-            new OnRealTimeMessageReceivedListener() {
-                @Override
-                public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
-                    Message message = new Message(realTimeMessage.getMessageData(), realTimeMessage.getSenderParticipantId(), realTimeMessage.describeContents());
-                    liveListener.handleDataReceived(message);
-                }
-            };*/
-
-    @Override
-    public void setRoomListener(RoomListener listener) {
-        this.roomListener = listener;
-    }
-    @Override
-    public void signIn() {
-
-        // start signing in before starting game
-        startSignInIntent();
-    }
-
-    @Override
-    public void signOut() {
-        GoogleSignInClient signInClient = GoogleSignIn.getClient(androidLauncher,
-                GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
-        signInClient.signOut().addOnCompleteListener(androidLauncher,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // at this point, the user is signed out.
-                    }
-                });
-    }
-
-    @Override
-    public void startMatchMaking() {
-        startQuickGame(ROLE_ANY);
-    }
-
-    @Override
-    public boolean isSignedIn() {
-        return googleSignInAccount != null;
-    }
-
-    @Override
-    public String getLocalID() {
-        return mMyParticipantId;
-    }
-
-    @Override
-    public ArrayList<String> getRemotePlayers() {
-        ArrayList<String> participants = new ArrayList<>();
-        String localID = getLocalID();
-        for(String s : mRoom.getParticipantIds()) {
-            if(s != localID) {
-                participants.add(s);
-            }
-        }
-        return participants;
-    }
 
 }
 

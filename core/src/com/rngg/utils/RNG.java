@@ -1,11 +1,17 @@
 package com.rngg.utils;
 
 // TODO only used for Arrays.toString() in main, remove before merging
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class RNG {
     private String[] labels;
     private float[] values, probabilities;
+    private static final Random generator = new Random();
+    private static long seed = generator.nextLong();
 
     private int[] rollResult;
 
@@ -26,6 +32,51 @@ public class RNG {
 
     public static RNG getInstance() {
         return LazyHolder.INSTANCE;
+    }
+
+    public static long getSeed() {
+        return RNG.seed;
+    }
+
+    public static void setSeed(long seed) {
+        RNG.seed = seed;
+        RNG.generator.setSeed(seed);
+    }
+
+    public static void newSeed() {
+        RNG.setSeed(RNG.generator.nextLong());
+    }
+
+    public static int nextInt(int min, int max) {
+        int ret = RNG.generator.nextInt(max - min) + min;
+        RNG.newSeed();
+        return ret;
+    }
+
+    public static int nextInt(int max) {
+        return RNG.nextInt(0, max);
+    }
+
+    public static float nextFloat(float min, float max) {
+        float ret = RNG.generator.nextFloat() * (max - min) + min;
+        RNG.newSeed();
+        return ret;
+    }
+
+    public static float nextFloat(float max) {
+        return RNG.nextFloat(0, max);
+    }
+
+    public static float nextFloat() {
+        return RNG.nextFloat(1);
+    }
+
+    public static <O> O choice(O[] arr) {
+        return arr[RNG.nextInt(arr.length)];
+    }
+
+    public static <O> O choice(List<O> list) {
+        return list.get(RNG.nextInt(list.size()));
     }
 
     private void setLabelsValuesProbs(String[] labels, float[] values, float[] probabilities) {
@@ -51,7 +102,7 @@ public class RNG {
 
     public int roll() {
         // rolls the dice once, returns index rolled
-        double roll = Math.random();
+        double roll = RNG.nextFloat();
         double sum = 0;
         for (int i = 0; i < probabilities.length; i++) {
             sum += probabilities[i];
@@ -60,7 +111,7 @@ public class RNG {
             }
         }
         // only gets here if sum of probabilities is slightly less than 1,
-        // and Math.random() returns between that sum and 1.
+        // and RNG.random() returns between that sum and 1.
         // This is fairly unlikely, but entirely possible
         return probabilities.length - 1;
     }
@@ -84,17 +135,33 @@ public class RNG {
     }
 
     public String[] labelFromRoll() {
-        // takes an array of indices, returns array of labels
-        String[] ret = new String[rollResult.length];
-        for (int j = 0; j < rollResult.length; j++) {
-            ret[j] = labels[rollResult[j]];
+        if(rollResult != null){
+            // takes an array of indices, returns array of labels
+            String[] ret = new String[rollResult.length];
+            for (int j = 0; j < rollResult.length; j++) {
+                ret[j] = labels[rollResult[j]];
+            }
+            return ret;
+        } else {
+            return new String[0];
         }
-        return ret;
     }
 
     // --- END rolling logic ---
 
     // --- BEGIN useful instances ---
+
+    public static final String D6 = "d6", D20 = "d20", GRADES = "grades";
+
+    public void setFromString(String type) {
+        if (type.equals(D6)) {
+            d6();
+        } else if (type.equals(D20)) {
+            d20();
+        } else if (type.equals(GRADES)) {
+            grades();
+        }
+    }
 
     public void uniformRange(int min, int max, int step) {
         // Fills the RNG with uniformly distributed integer values in a range

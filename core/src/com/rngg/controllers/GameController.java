@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameModel;
+import com.rngg.services.IPlayServices;
 
 public class GameController extends Controller {
 
@@ -47,16 +48,16 @@ public class GameController extends Controller {
                         gameModel.setPlayer(3);
                         break;
                     case Input.Keys.A:
-                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_ALL);
-                        gameModel.nextPlayer();
+                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_ALL, true);
                         break;
                     case Input.Keys.F:
-                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_FRONTIER);
-                        gameModel.nextPlayer();
+                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_FRONTIER, true);
                         break;
                     case Input.Keys.C:
-                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_CORE);
-                        gameModel.nextPlayer();
+                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_CORE, true);
+                        break;
+                    case Input.Keys.I:
+                        gameModel.updateInGameMenu();
                         break;
                     default:
                         break;
@@ -68,6 +69,11 @@ public class GameController extends Controller {
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(gameInputProcessor);
         Gdx.input.setInputProcessor(inputMultiplexer);
+
+        IPlayServices playServices = game.getAPI();
+        if(!Rngg.RUN_DESKTOP) {
+            playServices.setRealTimeListener(gameModel);
+        }
     }
 
     @Override
@@ -86,28 +92,53 @@ public class GameController extends Controller {
         inputMultiplexer.addProcessor(0, stage);
     }
 
-    public void addActorListeners(final TextButton defendAllButton, final TextButton defendCoreButton, final TextButton defendFrontierButton) {
+    public void removeInputProcessor() {
+        inputMultiplexer.removeProcessor(0);
+    }
+
+    public void addActorListeners(final TextButton defendAllButton, final TextButton defendCoreButton, final TextButton defendFrontierButton, final TextButton menuButton) {
         defendAllButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_ALL);
-                gameModel.nextPlayer();
+                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_ALL, true);
             }
         });
 
         defendCoreButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_CORE);
-                gameModel.nextPlayer();
+                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_CORE, true);
             }
         });
 
         defendFrontierButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_FRONTIER);
-                gameModel.nextPlayer();
+                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_FRONTIER, true);
+            }
+        });
+
+        menuButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                gameModel.updateInGameMenu();
+            }
+        });
+    }
+
+    public void addInGameMenuActorListeners(final TextButton backButton, final TextButton menuButton){
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.getAPI().leaveGame();
+                game.screenManager.setMenuScreen();
+            }
+        });
+
+        menuButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                gameModel.updateInGameMenu();
             }
         });
     }

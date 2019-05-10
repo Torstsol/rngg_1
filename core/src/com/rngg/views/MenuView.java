@@ -14,52 +14,68 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.rngg.controllers.MenuController;
 import com.rngg.game.Rngg;
 import com.rngg.utils.Assets;
-import com.rngg.utils.GameAssetManager;
 
 public class MenuView extends View {
 
     MenuController controller;
 
-    private SpriteBatch batch;
-
     private Stage stage;
 
-    public MenuView(GameAssetManager assetManager, MenuController controller) {
-        super(assetManager);
-
+    public MenuView(MenuController controller) {
         this.controller = controller;
-
-        batch = new SpriteBatch();
 
         FitViewport fitViewport = new FitViewport(Rngg.WIDTH, Rngg.HEIGHT, camera);
         stage = new Stage(fitViewport, batch);
         controller.setInputProcessor(stage);
 
         Table table = new Table();
+        table.defaults().pad(40f);
         table.setFillParent(true);
 
-        VerticalGroup group = new VerticalGroup();
-        group.grow();
-        group.space(8);
-        table.add(group);
+        Table imageTable = new Table();
+        imageTable.row();
+        //imageTable.setFillParent(true);
+
+        Table buttonTable = new Table();
+        buttonTable.row();
+        //buttonTable.setFillParent(true);
+
+        table.add(imageTable);
+        table.add(buttonTable);
+
+        VerticalGroup imageGroup = new VerticalGroup();
+        imageGroup.grow();
+        imageTable.add(imageGroup);
+
+        VerticalGroup buttonGroup = new VerticalGroup();
+        buttonGroup.grow();
+        buttonGroup.space(50);
+        buttonTable.add(buttonGroup).width(300);
 
         stage.addActor(table);
 
-        final Texture logoTexture = assetManager.manager.get(Assets.LOGO);
+        final Texture logoTexture = assetManager.get(Assets.LOGO);
         final Image logoImage = new Image(logoTexture);
+        //logoImage.setOrigin(Rngg.WIDTH/2, Rngg.HEIGHT/2);
 
-        group.addActor(logoImage);
+        imageGroup.addActor(logoImage);
 
-        final Label label = new Label("Are you ready to expand your empire?", assetManager.manager.get(Assets.SKIN));
-        group.addActor(label);
+        final Label label = new Label("Are you ready to expand your empire?", assetManager.get(Assets.SKIN));
+        buttonGroup.addActor(label);
 
-        final TextButton lobbyButton = new TextButton("Create lobby", assetManager.manager.get(Assets.SKIN));
-        group.addActor(lobbyButton);
+        final TextButton lobbyButton = new TextButton("Play", assetManager.get(Assets.SKIN));
+        lobbyButton.getLabel().setFontScale(2f);
+        buttonGroup.addActor(lobbyButton);
 
-        final TextButton settingsButton = new TextButton("Settings", assetManager.manager.get(Assets.SKIN));
-        group.addActor(settingsButton);
+        final TextButton settingsButton = new TextButton("Settings", assetManager.get(Assets.SKIN));
+        settingsButton.getLabel().setFontScale(2f);
+        buttonGroup.addActor(settingsButton);
 
-        controller.addActorListeners(lobbyButton, settingsButton); // handle input
+        final TextButton exitButton = new TextButton("Exit", assetManager.get(Assets.SKIN));
+        exitButton.getLabel().setFontScale(2f);
+        buttonGroup.addActor(exitButton);
+
+        controller.addActorListeners(lobbyButton, settingsButton, exitButton); // handle input
     }
 
     @Override

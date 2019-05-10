@@ -1,6 +1,7 @@
 package com.rngg.services;
 
 public interface RoomListener {
-    public void roomConnected();
-    public void leftRoom();
+    void roomConnected();
+    void leftRoom();
+    void enterGameScreen();
 }

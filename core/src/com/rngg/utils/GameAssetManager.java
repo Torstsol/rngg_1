@@ -1,23 +1,40 @@
 package com.rngg.utils;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.SkinLoader.SkinParameter;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class GameAssetManager {
 
-    public final AssetManager manager = new AssetManager();
+    private GameAssetManager() {
+
+    }
+
+    private static final GameAssetManager instance = new GameAssetManager();
+
+    private final AssetManager manager = new AssetManager();
 
     public void loadImages() {
         manager.load(Assets.LOGO);
+        manager.load(Assets.BACKGROUND_GAME);
     }
 
     public void loadFonts() {
-        manager.load(Assets.MINECRAFTIA);
+        manager.load(Assets.FONT);
     }
 
     public void loadSkin() {
         manager.load(Assets.SKIN);
+    }
+
+    public void loadMusic() {
+        manager.load(Assets.MUSIC);
+    }
+
+    public static GameAssetManager getInstance() {
+        return instance;
+    }
+
+    public static AssetManager getManager() {
+        return instance.manager;
     }
 
 }

@@ -6,13 +6,13 @@ import com.badlogic.gdx.Gdx;
 import com.rngg.services.IPlayServices;
 import com.rngg.utils.GameAssetManager;
 import com.rngg.utils.ScreenManager;
+import com.rngg.utils.Utils;
 
 public class Rngg extends Game {
 
 	public static final int HEIGHT = 720;
 	public static final int WIDTH = 1280;
 
-	public GameAssetManager assetManager;
 	public ScreenManager screenManager;
 
 	public final IPlayServices playServices;
@@ -21,7 +21,9 @@ public class Rngg extends Game {
 
 	public Rngg(IPlayServices playServices) {
 		this.playServices = playServices;
-		if(!RUN_DESKTOP) playServices.signIn();
+		if(!RUN_DESKTOP){
+			playServices.signIn();
+		}
 	}
 
 	public IPlayServices getAPI(){
@@ -32,11 +34,12 @@ public class Rngg extends Game {
 	public void create () {
         Gdx.app.setLogLevel(Application.LOG_INFO);
 
-        assetManager = new GameAssetManager();
-        assetManager.loadImages();
-        assetManager.loadFonts();
-        assetManager.loadSkin();
-        assetManager.manager.finishLoading();
+		GameAssetManager gameAssetManager = GameAssetManager.getInstance();
+        gameAssetManager.loadImages();
+        gameAssetManager.loadFonts();
+        gameAssetManager.loadSkin();
+        gameAssetManager.loadMusic();
+        GameAssetManager.getManager().finishLoading();
 
         screenManager = new ScreenManager(this);
         screenManager.setMenuScreen();
@@ -45,6 +48,14 @@ public class Rngg extends Game {
 	@Override
 	public void render () {
 	    screen.render(Gdx.graphics.getDeltaTime());
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+
+		GameAssetManager.getManager().dispose();
+		Utils.dispose();
 	}
 
 }

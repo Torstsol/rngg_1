@@ -1,74 +1,204 @@
 package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.rngg.configuration.GamePreferences;
 import com.rngg.controllers.SettingsController;
+import com.rngg.game.Rngg;
 import com.rngg.models.SettingsModel;
 import com.rngg.utils.Assets;
-import com.rngg.utils.GameAssetManager;
 
 public class SettingsView extends View {
 
     SettingsController controller;
 
-    private SpriteBatch batch;
+    private ShapeRenderer sr;
+
+    private ShapeRenderer.ShapeType shapeType;
+
+    private GamePreferences pref;
+
+    protected BitmapFont font;
 
     private Stage stage;
 
     private SettingsModel settingsModel;
 
-    public SettingsView(GameAssetManager assetManager, SettingsController controller) {
-        super(assetManager);
+    private TextButton cbSettingsButton;
 
+    private TextButton color1Button;
+
+    private TextButton color2Button;
+
+    private TextButton color3Button;
+
+    private TextButton color4Button;
+
+
+    public SettingsView(SettingsController controller) {
         this.controller = controller;
 
-        batch = new SpriteBatch();
+        sr = new ShapeRenderer();
 
-        stage = new Stage();
+        shapeType = ShapeRenderer.ShapeType.Filled;
+
+        font = assetManager.get(Assets.FONT);
+        font.setColor(Color.WHITE);
+
+        pref = GamePreferences.getInstance();
+
+        Skin skin = assetManager.get(Assets.SKIN);
+
+        FitViewport fitViewport = new FitViewport(Rngg.WIDTH, Rngg.HEIGHT, camera);
+        stage = new Stage(fitViewport, batch);
         controller.setInputProcessor(stage);
 
         Table table = new Table();
+        table.defaults().pad(10F);
         table.setFillParent(true);
 
-        VerticalGroup group = new VerticalGroup();
-        group.grow();
-        group.space(8);
-        table.add(group);
+        Label label = new Label("Game Settings",skin);
+        label.setAlignment(Align.center);
+
+        Table first_table = new Table();
+        //first_table.defaults().padRight(100f);
+
+        Table color_choose_table = new Table();
+        color_choose_table.defaults().pad(10F);
+        color_choose_table.add(new Label("Choose your color", skin)).row();
+
+        Table game_settings_table = new Table();
+        game_settings_table.defaults().pad(10F);
+        game_settings_table.add(new Label("Choose your in-game settings", skin)).row();
+
+        Table second_table = new Table();
+        second_table.defaults().pad(10F);
+        second_table.row();
+
+        Table third_table = new Table();
+        third_table.defaults().pad(10F);
+        third_table.row();
+
+        table.add(label).colspan(2).fillX().row();
+        first_table.add(color_choose_table).expand();
+        first_table.add(game_settings_table).expand().row();
+        table.add(first_table).expand().row();
+        table.add(second_table).expand().row();
+        table.add(third_table).expand().row();
+
+        VerticalGroup group1 = new VerticalGroup();
+        group1.grow();
+        group1.space(30);
+        color_choose_table.add(group1).width(300);
+
+        VerticalGroup group2 = new VerticalGroup();
+        group2.grow();
+        group2.space(30);
+        second_table.add(group2).width(500);
+
+        VerticalGroup group3 = new VerticalGroup();
+        group3.grow();
+        third_table.add(group3);
+
+        VerticalGroup group4 = new VerticalGroup();
+        group4.grow();
+        group4.space(30);
+        game_settings_table.add(group4).width(300);
 
         stage.addActor(table);
 
         settingsModel = new SettingsModel();
 
-        final TextButton ncSettingsButton = new TextButton("Normal colors", assetManager.manager.get(Assets.SKIN));
-        group.addActor(ncSettingsButton);
+        color1Button = new TextButton("Color 1", skin);
+        color1Button.getLabel().setFontScale(1.5f);
+        group1.addActor(color1Button);
 
-        final TextButton cbSettingsButton = new TextButton("Colorblind mode", assetManager.manager.get(Assets.SKIN));
-        group.addActor(cbSettingsButton);
+        color2Button = new TextButton("Color 2", skin);
+        color2Button.getLabel().setFontScale(1.5f);
+        group1.addActor(color2Button);
 
-        final TextButton menuButton = new TextButton("Cancel", assetManager.manager.get(Assets.SKIN));
-        group.addActor(menuButton);
+        color3Button = new TextButton("Color 3", skin);
+        color3Button.getLabel().setFontScale(1.5f);
+        group1.addActor(color3Button);
 
-        controller.addActorListeners(ncSettingsButton, cbSettingsButton, menuButton); // handle input
+        color4Button = new TextButton("Color 4", skin);
+        color4Button.getLabel().setFontScale(1.5f);
+        group1.addActor(color4Button);
+
+        final TextButton mapButton = new TextButton(pref.getMapType().equals("SquareMap") ? "Square map" : "Hexagonal map", skin);
+        mapButton.getLabel().setFontScale(1.5f);
+        group4.addActor(mapButton);
+
+        final TextButton diceBytton = new TextButton(pref.getDiceType(), skin);
+        diceBytton.getLabel().setFontScale(1.5f);
+        group4.addActor(diceBytton);
+
+        final Slider diceNumSLider = settingsModel.createSlider(skin);
+        Container<Slider> container = new Container<Slider>(diceNumSLider);
+        container.setTransform(true);   // for enabling scaling and rotation
+        container.size(200, 10);
+        container.setScale(2);  //scale according to your requirement
+        Label sliderLabel = new Label("Number of dice: " + pref.getNumDice(), skin);
+        sliderLabel.setAlignment(Align.center);
+        group4.addActor(sliderLabel);
+        group4.addActor(container);
+
+        cbSettingsButton = new TextButton("Colorblind mode [" + (pref.getCbMode() ? "enabled" : "disabled") + "]", skin);
+        cbSettingsButton.getLabel().setFontScale(1.5f);
+        group2.addActor(cbSettingsButton);
+
+        final TextButton toggleMusic = new TextButton("Music [" + (pref.isMusicEnabled() ? "enabled" : "disabled") + "]", skin);
+        toggleMusic.getLabel().setFontScale(1.5f);
+        group2.addActor(toggleMusic);
+
+        final TextButton menuButton = new TextButton("Back", assetManager.get(Assets.SKIN));
+        menuButton.getLabel().setFontScale(1.5f);
+        group3.addActor(menuButton);
+
+
+        controller.addActorListeners(cbSettingsButton, toggleMusic, menuButton, color1Button, color2Button, color3Button, color4Button, mapButton, diceBytton, diceNumSLider, sliderLabel); // handle input
     }
 
     @Override
     public void render(float delta) {
         controller.update(delta);
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+        sr.setProjectionMatrix(camera.combined);
 
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        sr.begin(shapeType);
+        settingsModel.setCustomColor("color 1", sr, 100, Rngg.HEIGHT/2 + 225);
+        settingsModel.setCustomColor("color 2", sr, 100, Rngg.HEIGHT/2 + 75);
+        settingsModel.setCustomColor("color 3", sr, 100, Rngg.HEIGHT/2 - 75);
+        settingsModel.setCustomColor("color 4", sr, 100, Rngg.HEIGHT/2 - 225);
+        sr.end();
+
+        int x_margin = 92;
+
         batch.begin();
-        batch.draw(settingsModel.setCustomColor("color 1"),150,450);
-        batch.draw(settingsModel.setCustomColor("color 2"),150,350);
-        batch.draw(settingsModel.setCustomColor("color 3"),150,250);
-        batch.draw(settingsModel.setCustomColor("color 4"),150,150);
+        settingsModel.drawText(font, batch, Integer.toString(1), x_margin, Rngg.HEIGHT/2 + 235);
+        settingsModel.drawText(font, batch, Integer.toString(2), x_margin, Rngg.HEIGHT/2 + 85);
+        settingsModel.drawText(font, batch, Integer.toString(3), x_margin, Rngg.HEIGHT/2 - 65);
+        settingsModel.drawText(font, batch, Integer.toString(4), x_margin, Rngg.HEIGHT/2 - 215);
         batch.end();
+
         stage.draw();
     }
 

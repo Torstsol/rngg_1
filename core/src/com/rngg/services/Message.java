@@ -13,6 +13,13 @@ public class Message {
     private String senderID;
     private int describeContents;
 
+    // Message headers here
+    public static final String
+        START = "START",
+        ORDER = "ORDER",
+        MAPSETTINGS = "MAPSETTINGS",
+        ATTACK = "ATTACK",
+        DEFEND = "DEFEND";
 
 
     public Message(byte[] data, String senderID, int describeContents){
@@ -67,6 +74,22 @@ public class Message {
         byte[] chars = new byte[len];
         buffer.get(chars);
         return new String(chars, StandardCharsets.UTF_8);
+    }
+
+    public int getInt(){
+        return buffer.getInt();
+    }
+
+    public long getLong() {
+        return buffer.getLong();
+    }
+
+    public void putInt(int number){
+        buffer.putInt(number);
+    }
+
+    public void putLong(long number) {
+        buffer.putLong(number);
     }
 
     public void putString(String str){

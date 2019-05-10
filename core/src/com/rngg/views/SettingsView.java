@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.rngg.configuration.GamePreferences;
 import com.rngg.controllers.SettingsController;
@@ -49,6 +50,8 @@ public class SettingsView extends View {
     private TextButton color3Button;
 
     private TextButton color4Button;
+
+    private final SelectBox<String> customMaps;
 
 
     public SettingsView(SettingsController controller) {
@@ -85,6 +88,7 @@ public class SettingsView extends View {
 
         Table game_settings_table = new Table();
         game_settings_table.defaults().pad(10F);
+        game_settings_table.defaults().padLeft(50F);
         game_settings_table.add(new Label("Choose your in-game settings", skin)).row();
 
         Table second_table = new Table();
@@ -119,7 +123,11 @@ public class SettingsView extends View {
         VerticalGroup group4 = new VerticalGroup();
         group4.grow();
         group4.space(30);
-        game_settings_table.add(group4).width(300);
+        game_settings_table.add(group4).width(400);
+
+        HorizontalGroup customMapGroup = new HorizontalGroup();
+        customMapGroup.grow();
+        customMapGroup.space(30);
 
         stage.addActor(table);
 
@@ -141,19 +149,14 @@ public class SettingsView extends View {
         color4Button.getLabel().setFontScale(1.5f);
         group1.addActor(color4Button);
 
-        HorizontalGroup mapButtonAndDropdown = new HorizontalGroup();
-        mapButtonAndDropdown.grow();
-        mapButtonAndDropdown.padLeft(35f);
-
         final TextButton mapButton = new TextButton(settingsModel.getMapButtonText(), skin);
         mapButton.getLabel().setFontScale(1.5f);
+        customMapGroup.addActor(mapButton);
 
-        final SelectBox<String> customMaps = new SelectBox<String>(skin);
-        customMaps.setItems(settingsModel.getCustomMaps());
+        customMaps = new SelectBox<String>(skin);
+        customMapGroup.addActor(customMaps);
 
-        mapButtonAndDropdown.addActor(mapButton);
-        mapButtonAndDropdown.addActor(customMaps);
-        group4.addActor(mapButtonAndDropdown);
+        group4.addActor(customMapGroup);
 
         final TextButton diceBytton = new TextButton(pref.getDiceType(), skin);
         diceBytton.getLabel().setFontScale(1.5f);
@@ -210,6 +213,10 @@ public class SettingsView extends View {
         settingsModel.drawText(font, batch, Integer.toString(3), x_margin, Rngg.HEIGHT/2 - 65);
         settingsModel.drawText(font, batch, Integer.toString(4), x_margin, Rngg.HEIGHT/2 - 215);
         batch.end();
+
+        customMaps.setColor(pref.customMapEnabled() ? Color.WHITE : Color.CLEAR);
+        customMaps.setDisabled(!pref.customMapEnabled());
+        customMaps.setItems(pref.customMapEnabled() ? settingsModel.getCustomMaps() : new Array<String>());
 
         stage.act();
         stage.draw();

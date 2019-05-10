@@ -32,7 +32,7 @@ public class Bot extends Player {
                 Zone zone = zones.get(i);
                 deleteList.add(zone);
                 // no need to check neighbors if zone cannot attack
-                if (zone.getUnits() < 1) {
+                if (zone.getUnits() <= 1) {
                     continue;
                 }
                 ArrayList<Zone> neighbors = model.getMap().getNeighbors(zone);
@@ -52,13 +52,12 @@ public class Bot extends Player {
         } while (changed);
         // bots only act when it is their turn, thus we defend using the current playerIndex
         // TODO bots always defend using DEFEND_ALL
-        model.defend(model.getPlayerIndex(), GameModel.DEFEND_ALL, true);
-        model.nextPlayer();
+        model.defend(model.getPlayerIndex(), GameModel.DEFEND_ALL, false);
     }
 
     public boolean shouldAttack(Zone attacker, Zone defender) {
         // method for determining whether or not to attack
         // TODO current bot is a warmonger and will ALWAYS try to attack, regardless of units
-        return true;
+        return attacker.getUnits() > 1;
     }
 }

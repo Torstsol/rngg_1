@@ -124,11 +124,12 @@ public class GameModel implements RealtimeListener {
         }
 
         for (int i = 0; i < this.players.size(); i++) {
-            if (this.map.getPlayerZones(players.get(i)).size() == 0) {
-                this.eliminatedPlayers.add(players.get(i));
+            Player player = players.get(i);
+            if (this.map.getPlayerZones(player).size() == 0) {
+                eliminatePlayer(player);
             }
         }
-        if (eliminatedPlayers.contains(players.get(0))) {
+        if (isEliminated(players.get(0))) {
             nextPlayer();
         }
 
@@ -260,13 +261,13 @@ public class GameModel implements RealtimeListener {
         this.rng.roll(attacker.getUnits());
         attackRoll = rng.valueFromRoll();
         attackValues = rng.labelFromRoll();
-        Gdx.app.log(this.getClass().getSimpleName(),
+        Gdx.app.debug(this.getClass().getSimpleName(),
                 attacker.toString() + " rolled " + attackRoll + " (" + Arrays.toString(rng.labelFromRoll()) + ")");
 
         this.rng.roll(defender.getUnits());
         defendRoll = rng.valueFromRoll();
         defendValues = rng.labelFromRoll();
-        Gdx.app.log(this.getClass().getSimpleName(),
+        Gdx.app.debug(this.getClass().getSimpleName(),
                 defender.toString() + " rolled " + defendRoll + " (" + Arrays.toString(rng.labelFromRoll()) + ")");
 
         boolean attackerWon = attackRoll > defendRoll;
@@ -277,15 +278,8 @@ public class GameModel implements RealtimeListener {
 
             // Checking if defender is eliminated
             if (map.getPlayerZones(defender.player).size() == 1) {
-                Gdx.app.log(this.getClass().getSimpleName(), defender.player.getName() + " is eliminated");
-                eliminatedPlayers.add(defender.player);
-
-                // Checking if the game is over
-                if (eliminatedPlayers.size() == players.size() - 1) {
-                    Gdx.app.log(this.getClass().getSimpleName(), attacker.getPlayer().getName() + " has won the game!");
-                    this.gameOver = true;
-                    this.gameWinner = attacker.getPlayer();
-                }
+                eliminatePlayer(defender.player);
+                checkGameOver(attacker.player);
             }
             defender.setPlayer(attacker.getPlayer());
             this.updateAreas();
@@ -315,7 +309,7 @@ public class GameModel implements RealtimeListener {
     }
 
     public Player currentPlayer() {
-        return this.players.get(playerIndex);
+        return this.players.get(this.playerIndex);
     }
 
     public int getPlayerIndex() {
@@ -398,7 +392,7 @@ public class GameModel implements RealtimeListener {
         // total number of units to distribute
 
         if (localDefend && !this.currentPlayer().equals(this.localPlayer)) {
-            Gdx.app.log(this.getClass().getSimpleName(), this.localPlayer + " attempted to click but " + this.currentPlayer() + " is playing");
+            Gdx.app.log(this.getClass().getSimpleName(), this.localPlayer + " attempted to defend but " + this.currentPlayer() + " is playing");
             return;
         }
 
@@ -503,15 +497,16 @@ public class GameModel implements RealtimeListener {
             this.attacker.unClick();
         }
         this.playerIndex = (this.playerIndex + 1) % (players.size());
-        if (eliminatedPlayers.contains(getPlayer(playerIndex))) {
-            nextPlayer();
+        if (this.isEliminated(this.currentPlayer())) {
+            this.nextPlayer();
+            return;
         }
         checkBot();
         Gdx.app.debug(this.getClass().getSimpleName(), "Player " + playerIndex + " is now playing");
     }
 
     public void checkBot() {
-        if ((this.localGame) && this.currentPlayer() instanceof Bot) {
+        if (!this.gameOver && this.localGame && (this.currentPlayer() instanceof Bot)) {
             ((Bot) this.currentPlayer()).act();
         }
     }
@@ -655,6 +650,23 @@ public class GameModel implements RealtimeListener {
     public int getNumDice() {
         //return pref.getNumDice();
         return this.maxUnits;
+    }
+
+    public void eliminatePlayer(Player player) {
+        Gdx.app.log(this.getClass().getSimpleName(), player.getName() + " is eliminated");
+        eliminatedPlayers.add(player);
+    }
+
+    public boolean isEliminated(Player player) {
+        return this.eliminatedPlayers.contains(player);
+    }
+
+    public void checkGameOver(Player player) {
+        if (eliminatedPlayers.size() == players.size() - 1) {
+            Gdx.app.log(this.getClass().getSimpleName(), player.getName() + " has won the game!");
+            this.gameOver = true;
+            this.gameWinner = player;
+        }
     }
 
     public boolean isGameOver() {

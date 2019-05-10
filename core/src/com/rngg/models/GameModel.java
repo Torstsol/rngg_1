@@ -14,9 +14,11 @@ import com.rngg.services.IPlayServices;
 import com.rngg.services.Message;
 import com.rngg.utils.RNG;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -149,6 +151,7 @@ public class GameModel implements RealtimeListener{
         boolean randomPlayers = false;
         int offset = 0;
         JsonValue zones = null;
+        Deque<Integer> units = null;
 
         JsonValue json = new JsonReader().parse(Gdx.files.internal(fileName).readString());
 
@@ -167,6 +170,12 @@ public class GameModel implements RealtimeListener{
                 offset = value.asInt();
             } else if (value.name.equals("zones")) {
                 zones = value;
+            } else if (value.name.equals("units")) {
+                units = new ArrayDeque<Integer>();
+
+                for (int i : value.asIntArray()) {
+                    units.add(i);
+                }
             }
         }
 
@@ -182,7 +191,7 @@ public class GameModel implements RealtimeListener{
         } else if (mapType.equals("HexMap")) {
             return new HexMap(totalRows, totalCols, this.players, this.maxUnits, randomPlayers, zones, offset);
         } else if (mapType.equals("HexMeshMap")) {
-            return new HexMeshMap(totalRows, this.players, randomPlayers, zones, offset, this.maxUnits);
+            return new HexMeshMap(totalRows, this.players, randomPlayers, zones, offset, this.maxUnits, units);
         }
 
         this.updateAreas();

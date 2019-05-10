@@ -154,6 +154,7 @@ public class SettingsView extends View {
         customMapGroup.addActor(mapButton);
 
         customMaps = new SelectBox<String>(skin);
+        customMaps.getStyle().font.getData().setScale(3f);
         customMapGroup.addActor(customMaps);
 
         group4.addActor(customMapGroup);
@@ -217,6 +218,7 @@ public class SettingsView extends View {
         customMaps.setColor(pref.customMapEnabled() ? Color.WHITE : Color.CLEAR);
         customMaps.setDisabled(!pref.customMapEnabled());
         customMaps.setItems(pref.customMapEnabled() ? settingsModel.getCustomMaps() : new Array<String>());
+        customMaps.pack();
 
         stage.act();
         stage.draw();

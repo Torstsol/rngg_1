@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 public class GameModel implements RealtimeListener{
@@ -69,8 +70,7 @@ public class GameModel implements RealtimeListener{
             for (int i = 1; i < 4; i++) {
                 this.players.add(new Player("BOT" + i, "6969", true, false, pref.getColorArray().get(i)));
             }
-        }
-        else{
+        } else {
             this.players = players;
             for (int i = 0; i < players.size(); i++) {
                 if(players.get(i).isHost == true){
@@ -87,12 +87,11 @@ public class GameModel implements RealtimeListener{
 
         }
 
+        this.numPlayers = this.players.size();
         this.rng = RNG.getInstance();
         this.contiguousAreas = new int[this.players.size()];
 
-        this.setMap(pref.customMapEnabled() ? pref.getCustomMap() : mapFileName);
-
-
+        this.setMap();
 
         //check if proto-host, if true, generate seed, shuffle playerlist, and broadcast seed
         if(this.localPlayer.isHost){
@@ -123,14 +122,8 @@ public class GameModel implements RealtimeListener{
         this(players, "", sender);
     }
 
-    public void setMap(String fileName) {
-        if (fileName.length() > 0) {
-            applyPreferences(RNG.getSeed());
-            this.map = loadMap(fileName);
-            this.updateAreas();
-        } else {
-            applyPreferences(RNG.getSeed());
-        }
+    public void setMap() {
+        applyPreferences(RNG.getSeed());
 
         for(int i = 0; i < this.players.size(); i++){
             if(this.map.getPlayerZones(players.get(i)).size() == 0){
@@ -180,12 +173,12 @@ public class GameModel implements RealtimeListener{
             }
         }
 
-        /*if (!randomPlayers || this.numPlayers > maxPlayers) {
-            this.numPlayers = maxPlayers;
-            this.players = new ArrayList<Player>(this.players.subList(0, maxPlayers));
-        }*/
+        if (localGame) players = new ArrayList<Player>(players.subList(0, maxPlayers));
+        numPlayers = players.size();
 
-        //initializePlayerAndAreas();
+        if (this.numPlayers > maxPlayers || (this.numPlayers < maxPlayers && !randomPlayers)) {
+            return new HexMeshMap(25, players, maxUnits);
+        }
 
         if (mapType.equals("SquareMap")) {
             return new SquareMap(totalRows, totalCols, this.players, this.maxUnits, randomPlayers, zones);
@@ -195,7 +188,7 @@ public class GameModel implements RealtimeListener{
             return new HexMeshMap(totalRows, this.players, randomPlayers, zones, offset, this.maxUnits, units);
         }
 
-        this.updateAreas();
+        //this.updateAreas();
         return new SquareMap(9, 16, this.players, this.maxUnits);
     }
 
@@ -539,7 +532,7 @@ public class GameModel implements RealtimeListener{
         this.inGameMenuOpen = !this.inGameMenuOpen;
     }
 
-    public void setMapFromType(String mapType) {
+    public void setMapFromType(String mapType, String fileName) {
         // TODO remove magic Strings
         if (mapType.equals("HexMap")) {
             this.map = new HexMap(7, 7, players, this.maxUnits);
@@ -547,6 +540,8 @@ public class GameModel implements RealtimeListener{
             this.map = new SquareMap(9, 16, players, this.maxUnits);
         } else if (mapType.equals("HexMeshMap")) {
             this.map = new HexMeshMap(25, players, maxUnits);
+        } else if (mapType.equals("CustomMap")) {
+            this.map = loadMap(fileName);
         } else {
             Gdx.app.error(this.getClass().getSimpleName(), "Incorrect or missing mapType: " + mapType);
         }
@@ -559,18 +554,21 @@ public class GameModel implements RealtimeListener{
         String diceType = settings.getString();
         int numDice = settings.getInt();
         String mapType = settings.getString();
+        String customMapFileName = settings.getString();
         long seed = settings.getLong();
+
         Gdx.app.log(this.getClass().getSimpleName(), "Recieved settings: \n" +
                 "diceType: " + diceType + "\n" +
                 "numDice: " + numDice + "\n" +
                 "mapType: " + mapType + "\n" +
+                "customMap: " + customMapFileName + "\n" +
                 "seed: " + seed + "\n"
         );
 
         rng.setFromString(diceType);
         this.maxUnits = numDice;
         RNG.setSeed(seed);
-        setMapFromType(mapType);
+        setMapFromType(mapType, customMapFileName);
     }
 
     public void applyPreferences(long seed) {
@@ -578,33 +576,43 @@ public class GameModel implements RealtimeListener{
         this.maxUnits = pref.getNumDice();
         RNG.setSeed(seed);
 
-        if (!pref.getMapType().equals("CustomMap")) {
-            setMapFromType(pref.getMapType());
-            System.out.println(pref.getMapType());
-        }
+        setMapFromType(pref.getMapType(), pref.getMapType().equals("CustomMap") ? pref.getCustomMap() : "");
     }
 
     public void sendSettings(){
         Gdx.app.log(this.getClass().getSimpleName(), "Sending settings");
         Message message = new Message(new byte[512],"",0);
+
         // message header
         String header = Message.MAPSETTINGS;
         message.putString(header);
+
         // actual settings
         String diceType = pref.getDiceType();
         message.putString(diceType);
+
         int numDice = pref.getNumDice();
         message.putInt(numDice);
+
         String mapType = pref.getMapType();
         message.putString(mapType);
+
+        String customMapFileName = "";
+        if (pref.getMapType().equals("CustomMap"))
+            customMapFileName = pref.getCustomMap();
+        message.putString(customMapFileName);
+
         long seed = rng.getSeed();
         message.putLong(seed);
+
         Gdx.app.log(this.getClass().getSimpleName(), "Sent settings: \n" +
                 "diceType: " + diceType + "\n" +
                 "numDice: " + numDice + "\n" +
                 "mapType: " + mapType + "\n" +
+                "customMap: " + customMapFileName + "\n" +
                 "seed: " + seed + "\n"
         );
+
         // apply settings and send
         // TODO this doesn't work, for some reason
         applyPreferences(seed);

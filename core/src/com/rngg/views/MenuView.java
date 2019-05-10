@@ -1,9 +1,12 @@
+/*
+ * View for the menu screen. Renders a table of buttons for navigation to other screens
+ */
+
 package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -34,11 +37,9 @@ public class MenuView extends View {
 
         Table imageTable = new Table();
         imageTable.row();
-        //imageTable.setFillParent(true);
 
         Table buttonTable = new Table();
         buttonTable.row();
-        //buttonTable.setFillParent(true);
 
         table.add(imageTable);
         table.add(buttonTable);
@@ -56,7 +57,6 @@ public class MenuView extends View {
 
         final Texture logoTexture = assetManager.get(Assets.LOGO);
         final Image logoImage = new Image(logoTexture);
-        //logoImage.setOrigin(Rngg.WIDTH/2, Rngg.HEIGHT/2);
 
         imageGroup.addActor(logoImage);
 
@@ -67,6 +67,10 @@ public class MenuView extends View {
         lobbyButton.getLabel().setFontScale(2f);
         buttonGroup.addActor(lobbyButton);
 
+        final TextButton tutorialButton = new TextButton("Tutorial", assetManager.get(Assets.SKIN));
+        tutorialButton.getLabel().setFontScale(2f);
+        buttonGroup.addActor(tutorialButton);
+
         final TextButton settingsButton = new TextButton("Settings", assetManager.get(Assets.SKIN));
         settingsButton.getLabel().setFontScale(2f);
         buttonGroup.addActor(settingsButton);
@@ -75,7 +79,7 @@ public class MenuView extends View {
         exitButton.getLabel().setFontScale(2f);
         buttonGroup.addActor(exitButton);
 
-        controller.addActorListeners(lobbyButton, settingsButton, exitButton); // handle input
+        controller.addActorListeners(lobbyButton, tutorialButton, settingsButton, exitButton); // handle input
     }
 
     @Override
@@ -85,8 +89,6 @@ public class MenuView extends View {
 
     @Override
     public void render(float delta) {
-        controller.update(delta);
-
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.draw();

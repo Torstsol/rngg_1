@@ -1,0 +1,17 @@
+{
+  "mapType": "HexMeshMap",
+  "totalRows": 20,
+  "maxPlayers": 2,
+  "randomPlayers": false,
+  "offset": 10,
+  "zones": {
+    "player1": [
+      [[5, 9], [5, 10], [4, 9]],
+      [[6, 8], [6, 9]]
+    ],
+    "player2": [
+      [[5, 11], [4, 11]],
+      [[7, 8], [7, 7]]
+    ]
+  }
+}

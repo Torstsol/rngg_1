@@ -78,8 +78,8 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
     public HexZone _screenCoordToZone(Vector2 coords) {
         // Values are offset a bit to fit with the rendering of the map
         // The rendering is offset to not draw the map exactly at coordinate (0,0)
-        double q = (Math.sqrt(3)/3 * (coords.x - size / 2)  -  1./3 * (coords.y - size)) / size;
-        double r =  (2./3 * (coords.y - size)) / size;
+        double q = (Math.sqrt(3) / 3 * (coords.x - size / 2) - 1. / 3 * (coords.y - size)) / size;
+        double r = (2. / 3 * (coords.y - size)) / size;
 
         // The q (column) and r (row) coordinates must be rounded to match their corresponding integer values
         Hex hex = Hex.hexRound(new Hex(q, r));
@@ -154,7 +154,8 @@ public class HexMap extends GameMap<HexZone, List<List<int[]>>> {
     }
 
     private HexZone getZone(int row, int col) {
-        if (row > rows - 1 || col > cols + this.offset || row < 0 || col + this.offset < 0) return null;
+        if (row > rows - 1 || col > cols + this.offset || row < 0 || col + this.offset < 0)
+            return null;
 
         return this.zones[row][col + this.offset];
     }

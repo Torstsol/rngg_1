@@ -4,7 +4,7 @@ public class SquareZone extends Zone {
 
     private int row, col;
 
-    public SquareZone(Player player,  int maxUnits, int row, int col) {
+    public SquareZone(Player player, int maxUnits, int row, int col) {
         super(player, maxUnits);
         this.row = row;
         this.col = col;

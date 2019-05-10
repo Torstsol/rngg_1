@@ -33,7 +33,8 @@ public class GameController extends Controller {
             }
 
             // Switch current player, for debugging purposes
-            @Override public boolean keyDown(int keycode) {
+            @Override
+            public boolean keyDown(int keycode) {
                 switch (keycode) {
                     case Input.Keys.NUM_1:
                         gameModel.setPlayer(0);
@@ -48,13 +49,13 @@ public class GameController extends Controller {
                         gameModel.setPlayer(3);
                         break;
                     case Input.Keys.A:
-                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_ALL, true);
+                        gameModel.defend(gameModel.getPlayerIndex(), GameModel.DEFEND_ALL, true);
                         break;
                     case Input.Keys.F:
-                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_FRONTIER, true);
+                        gameModel.defend(gameModel.getPlayerIndex(), GameModel.DEFEND_FRONTIER, true);
                         break;
                     case Input.Keys.C:
-                        gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_CORE, true);
+                        gameModel.defend(gameModel.getPlayerIndex(), GameModel.DEFEND_CORE, true);
                         break;
                     case Input.Keys.I:
                         gameModel.updateInGameMenu();
@@ -71,24 +72,12 @@ public class GameController extends Controller {
         Gdx.input.setInputProcessor(inputMultiplexer);
 
         IPlayServices playServices = game.getAPI();
-        if(!Rngg.RUN_DESKTOP) {
+        if (!Rngg.RUN_DESKTOP) {
             playServices.setRealTimeListener(gameModel);
         }
     }
 
-    @Override
-    public void update(float delta) {
-        gameModel.playerScore++;
-
-        if(Gdx.input.isKeyPressed(Input.Keys.B))
-            game.screenManager.setMenuScreen();
-    }
-
-    public int getPlayerScore() {
-        return gameModel.playerScore;
-    }
-
-    public void addInputProcessor(Stage stage){
+    public void addInputProcessor(Stage stage) {
         inputMultiplexer.addProcessor(0, stage);
     }
 
@@ -100,21 +89,21 @@ public class GameController extends Controller {
         defendAllButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_ALL, true);
+                gameModel.defend(gameModel.getPlayerIndex(), GameModel.DEFEND_ALL, true);
             }
         });
 
         defendCoreButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_CORE, true);
+                gameModel.defend(gameModel.getPlayerIndex(), GameModel.DEFEND_CORE, true);
             }
         });
 
         defendFrontierButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gameModel.defend(gameModel.getPlayerIndex(), gameModel.DEFEND_FRONTIER, true);
+                gameModel.defend(gameModel.getPlayerIndex(), GameModel.DEFEND_FRONTIER, true);
             }
         });
 
@@ -126,11 +115,11 @@ public class GameController extends Controller {
         });
     }
 
-    public void addInGameMenuActorListeners(final TextButton backButton, final TextButton menuButton){
+    public void addInGameMenuActorListeners(final TextButton backButton, final TextButton menuButton) {
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.getAPI().leaveGame();
+                if (!Rngg.RUN_DESKTOP) game.getAPI().leaveGame();
                 game.screenManager.setMenuScreen();
             }
         });

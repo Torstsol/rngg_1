@@ -7,8 +7,6 @@ public class Player {
     private Color color;
     private String name;
     public final String playerId;
-    public int randomNumber = -1;
-    public int playerIndex = -1;
     public final boolean isLocal;
     public final boolean isHost;
 
@@ -20,7 +18,7 @@ public class Player {
         this.isHost = isHost;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 

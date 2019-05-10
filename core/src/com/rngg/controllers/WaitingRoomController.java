@@ -11,7 +11,6 @@ import com.rngg.services.RealtimeListener;
 import com.rngg.services.RoomListener;
 import com.rngg.views.WaitingRoomView;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class WaitingRoomController extends Controller implements RoomListener, RealtimeListener {
@@ -32,11 +31,6 @@ public class WaitingRoomController extends Controller implements RoomListener, R
         pref = GamePreferences.getInstance();
     }
 
-    @Override
-    public void update(float delta) {
-
-    }
-
     public void enterGameScreen() {
 
         model.joinedRoom = true;
@@ -53,12 +47,12 @@ public class WaitingRoomController extends Controller implements RoomListener, R
 
         String type = message.getString();
         System.out.println(type);
-        if(type.equals(Message.START)) {
+        if (type.equals(Message.START)) {
 
             game.getAPI().onStartGameMessageRecieved();
             enterGameScreen();
         }
-        if(type.equals(Message.ORDER)) {
+        if (type.equals(Message.ORDER)) {
             System.out.println("ORDER recieved in waitingRoom" + message.getInt());
 
         }
@@ -80,7 +74,8 @@ public class WaitingRoomController extends Controller implements RoomListener, R
     public void leftRoom() {
         model.leftRoom = true;
     }
-    public Rngg getGame(){
+
+    public Rngg getGame() {
         return game;
     }
 }

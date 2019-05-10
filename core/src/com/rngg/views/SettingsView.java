@@ -1,10 +1,14 @@
+/*
+ * View for the settings screen. Renders buttons which let the user toggle different
+ * settings such as music and colors.
+ */
+
 package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
@@ -26,37 +30,30 @@ public class SettingsView extends View {
 
     SettingsController controller;
 
-    private ShapeRenderer sr;
+    private ShapeRenderer shapeRenderer;
 
     private ShapeRenderer.ShapeType shapeType;
 
     private GamePreferences pref;
-
-    protected BitmapFont font;
 
     private Stage stage;
 
     private SettingsModel settingsModel;
 
     private TextButton cbSettingsButton;
-
     private TextButton color1Button;
-
     private TextButton color2Button;
-
     private TextButton color3Button;
-
     private TextButton color4Button;
 
 
     public SettingsView(SettingsController controller) {
         this.controller = controller;
 
-        sr = new ShapeRenderer();
+        shapeRenderer = new ShapeRenderer();
 
         shapeType = ShapeRenderer.ShapeType.Filled;
 
-        font = assetManager.get(Assets.FONT);
         font.setColor(Color.WHITE);
 
         pref = GamePreferences.getInstance();
@@ -71,11 +68,10 @@ public class SettingsView extends View {
         table.defaults().pad(10F);
         table.setFillParent(true);
 
-        Label label = new Label("Game Settings",skin);
+        Label label = new Label("Game Settings", skin);
         label.setAlignment(Align.center);
 
         Table first_table = new Table();
-        //first_table.defaults().padRight(100f);
 
         Table color_choose_table = new Table();
         color_choose_table.defaults().pad(10F);
@@ -139,7 +135,7 @@ public class SettingsView extends View {
         color4Button.getLabel().setFontScale(1.5f);
         group1.addActor(color4Button);
 
-        final TextButton mapButton = new TextButton(pref.getMapType().equals("SquareMap") ? "Square map" : "Hexagonal map", skin);
+        final TextButton mapButton = new TextButton(pref.getMapType().equals("SquareMap") ? "Square map" : pref.getMapType().equals("HexMap") ? "Hexagonal map" : "HexMeshMap", skin);
         mapButton.getLabel().setFontScale(1.5f);
         group4.addActor(mapButton);
 
@@ -152,7 +148,7 @@ public class SettingsView extends View {
         container.setTransform(true);   // for enabling scaling and rotation
         container.size(200, 10);
         container.setScale(2);  //scale according to your requirement
-        Label sliderLabel = new Label("Number of dice: " + pref.getNumDice(), skin);
+        Label sliderLabel = new Label("Number of dices: " + pref.getNumDice(), skin);
         sliderLabel.setAlignment(Align.center);
         group4.addActor(sliderLabel);
         group4.addActor(container);
@@ -175,28 +171,27 @@ public class SettingsView extends View {
 
     @Override
     public void render(float delta) {
-        controller.update(delta);
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-        sr.setProjectionMatrix(camera.combined);
+        shapeRenderer.setProjectionMatrix(camera.combined);
 
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        sr.begin(shapeType);
-        settingsModel.setCustomColor("color 1", sr, 100, Rngg.HEIGHT/2 + 225);
-        settingsModel.setCustomColor("color 2", sr, 100, Rngg.HEIGHT/2 + 75);
-        settingsModel.setCustomColor("color 3", sr, 100, Rngg.HEIGHT/2 - 75);
-        settingsModel.setCustomColor("color 4", sr, 100, Rngg.HEIGHT/2 - 225);
-        sr.end();
+        shapeRenderer.begin(shapeType);
+        settingsModel.setCustomColor("color 1", shapeRenderer, 100, Rngg.HEIGHT / 2 + 225);
+        settingsModel.setCustomColor("color 2", shapeRenderer, 100, Rngg.HEIGHT / 2 + 75);
+        settingsModel.setCustomColor("color 3", shapeRenderer, 100, Rngg.HEIGHT / 2 - 75);
+        settingsModel.setCustomColor("color 4", shapeRenderer, 100, Rngg.HEIGHT / 2 - 225);
+        shapeRenderer.end();
 
         int x_margin = 92;
 
         batch.begin();
-        settingsModel.drawText(font, batch, Integer.toString(1), x_margin, Rngg.HEIGHT/2 + 235);
-        settingsModel.drawText(font, batch, Integer.toString(2), x_margin, Rngg.HEIGHT/2 + 85);
-        settingsModel.drawText(font, batch, Integer.toString(3), x_margin, Rngg.HEIGHT/2 - 65);
-        settingsModel.drawText(font, batch, Integer.toString(4), x_margin, Rngg.HEIGHT/2 - 215);
+        settingsModel.drawText(font, batch, Integer.toString(1), x_margin, Rngg.HEIGHT / 2 + 235);
+        settingsModel.drawText(font, batch, Integer.toString(2), x_margin, Rngg.HEIGHT / 2 + 85);
+        settingsModel.drawText(font, batch, Integer.toString(3), x_margin, Rngg.HEIGHT / 2 - 65);
+        settingsModel.drawText(font, batch, Integer.toString(4), x_margin, Rngg.HEIGHT / 2 - 215);
         batch.end();
 
         stage.draw();

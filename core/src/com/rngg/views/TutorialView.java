@@ -1,5 +1,5 @@
 /*
- * View for the actual game.
+ * View for the tutorial screen.
  */
 
 package com.rngg.views;
@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.rngg.controllers.GameController;
+import com.rngg.controllers.TutorialController;
 import com.rngg.game.Rngg;
 import com.rngg.models.GameMap;
 import com.rngg.models.HexMap;
@@ -18,31 +18,30 @@ import com.rngg.models.HexMeshMap;
 import com.rngg.models.SquareMap;
 import com.rngg.utils.Utils;
 
-public class GameView extends View {
+public class TutorialView extends View {
 
-    private GameController controller;
+    private TutorialController controller;
 
     private SpriteBatch batch;
     private MapRenderer mapRenderer;
     private ShapeRenderer shapeRenderer;
-    private HUDRenderer hudRenderer;
-    private InGameMenuRenderer inGameMenuRenderer;
+    private TutorialMenuRenderer tutorialMenuRenderer;
 
-    public GameView(GameController controller) {
+    public TutorialView(TutorialController controller) {
         this.controller = controller;
+        this.shapeRenderer = new ShapeRenderer();
 
         camera.viewportHeight = (float) (Rngg.HEIGHT * 10 / 8);
         batch = Utils.getSpriteBatch();
         font.setColor(Color.WHITE);
-        shapeRenderer = new ShapeRenderer();
+
         mapRenderer = getMapRenderer();
-        hudRenderer = new HUDRenderer(controller.gameModel, font, controller, shapeRenderer);
-        inGameMenuRenderer = new InGameMenuRenderer(controller.gameModel, font, controller, shapeRenderer);
+        tutorialMenuRenderer = new TutorialMenuRenderer(controller.getModel(), font, controller, shapeRenderer);
     }
 
     @Override
     public void render(float delta) {
-        mapRenderer = this.getMapRenderer();
+        this.mapRenderer = this.getMapRenderer();
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -53,12 +52,11 @@ public class GameView extends View {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         mapRenderer.draw();
-        hudRenderer.draw();
-        inGameMenuRenderer.draw();
+        tutorialMenuRenderer.draw();
     }
 
     private MapRenderer getMapRenderer() {
-        GameMap map = controller.gameModel.getMap();
+        GameMap map = controller.getModel().getMap();
 
         if (map instanceof SquareMap) {
             return new SquareMapRenderer((SquareMap) map, shapeRenderer, batch, font);
@@ -71,15 +69,8 @@ public class GameView extends View {
         return null;
     }
 
-    public ShapeRenderer getSR() {
-        return this.shapeRenderer;
-    }
-
     public BitmapFont getFont() {
         return font;
     }
 
-    public SpriteBatch getBatch() {
-        return this.batch;
-    }
 }

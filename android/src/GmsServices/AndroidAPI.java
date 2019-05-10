@@ -8,24 +8,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.WindowManager;
 
-import com.rngg.models.Player;
-import com.google.android.gms.games.multiplayer.Invitation;
-import com.google.android.gms.games.multiplayer.Multiplayer;
-import com.rngg.configuration.GamePreferences;
-import com.rngg.game.AndroidLauncher;
-import com.rngg.services.IPlayServices;
-import com.rngg.services.Message;
-import com.rngg.services.RealtimeListener;
-import com.rngg.services.RoomListener;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesCallbackStatusCodes;
-import com.google.android.gms.games.InvitationsClient;
 import com.google.android.gms.games.RealTimeMultiplayerClient;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.realtime.OnRealTimeMessageReceivedListener;
@@ -37,8 +25,14 @@ import com.google.android.gms.games.multiplayer.realtime.RoomUpdateCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.rngg.configuration.GamePreferences;
+import com.rngg.game.AndroidLauncher;
+import com.rngg.models.Player;
+import com.rngg.services.IPlayServices;
+import com.rngg.services.Message;
+import com.rngg.services.RealtimeListener;
+import com.rngg.services.RoomListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -54,7 +48,6 @@ public class AndroidAPI implements IPlayServices {
     public GoogleSignInAccount googleSignInAccount;
     public RealTimeMultiplayerClient realTimeMultiplayerClient;
     public RoomConfig mJoinedRoomConfig;
-    public InvitationsClient invitationsClient;
     public boolean mWaitingRoomFinishedFromCode = false;
     public Room mRoom;
     HashSet<Integer> pendingMessageSet = new HashSet<>();
@@ -149,7 +142,7 @@ public class AndroidAPI implements IPlayServices {
         // launch the player selection screen
         // minimum: 1 other player; maximum: 3 other players
         Games.getRealTimeMultiplayerClient(androidLauncher, GoogleSignIn.getLastSignedInAccount(androidLauncher))
-                .getSelectOpponentsIntent(MIN_PLAYERS-1, MAX_PLAYERS-1, true)
+                .getSelectOpponentsIntent(MIN_PLAYERS - 1, MAX_PLAYERS - 1, true)
                 .addOnSuccessListener(new OnSuccessListener<Intent>() {
                     @Override
                     public void onSuccess(Intent intent) {
@@ -187,7 +180,9 @@ public class AndroidAPI implements IPlayServices {
     // sending data to all
     @Override
     public void sendToAllReliably(byte[] message) {
-        if(mRoom == null){return;}
+        if (mRoom == null) {
+            return;
+        }
         for (String participantId : mRoom.getParticipantIds()) {
             if (!participantId.equals(mMyParticipantId)) {
                 Task<Integer> task = Games.
@@ -209,7 +204,7 @@ public class AndroidAPI implements IPlayServices {
     }
 
     @Override
-    public void setRealTimeListener(RealtimeListener listener){
+    public void setRealTimeListener(RealtimeListener listener) {
         this.liveListener = listener;
         listener.setSender(this);
     }
@@ -236,8 +231,8 @@ public class AndroidAPI implements IPlayServices {
     public ArrayList<String> getRemotePlayers() {
         ArrayList<String> participants = new ArrayList<>();
         String localID = getLocalID();
-        for(String s : mRoom.getParticipantIds()) {
-            if(s != localID) {
+        for (String s : mRoom.getParticipantIds()) {
+            if (s != localID) {
                 participants.add(s);
             }
         }
@@ -255,7 +250,6 @@ public class AndroidAPI implements IPlayServices {
                     }
                 }
             };
-
 
 
     public OnRealTimeMessageReceivedListener mMessageReceivedHandler =
@@ -277,7 +271,7 @@ public class AndroidAPI implements IPlayServices {
                 showWaitingRoom(room, MIN_PLAYERS);
             } else {
                 System.out.println("Error creating room: " + code);
-                String message = "Error creating room: " + code ;
+                String message = "Error creating room: " + code;
                 new AlertDialog.Builder(androidLauncher).setMessage(message)
                         .setNeutralButton(android.R.string.ok, null).show();
 
@@ -426,16 +420,15 @@ public class AndroidAPI implements IPlayServices {
     private String mMyParticipantId;
 
     //determine if this client is the host
-    public boolean isHost(){
+    public boolean isHost() {
         Collections.sort(mRoom.getParticipantIds());
         return mRoom.getParticipantIds().get(0).equals(mMyParticipantId);
     }
 
-    public String hostID(){
+    public String hostID() {
         Collections.sort(mRoom.getParticipantIds());
         return mRoom.getParticipantIds().get(0);
     }
-
 
 
     // returns whether there are enough players to start the game
@@ -449,7 +442,7 @@ public class AndroidAPI implements IPlayServices {
         return connectedPlayers >= MIN_PLAYERS;
     }
 
-    public ArrayList<Player> getPlayers(){
+    public ArrayList<Player> getPlayers() {
 
         GamePreferences pref = GamePreferences.getInstance();
         ArrayList<Player> playerList = new ArrayList<Player>();
@@ -464,12 +457,11 @@ public class AndroidAPI implements IPlayServices {
                 players[i] = new Player(mRoom.getParticipants().get(i).getDisplayName(), mRoom.getParticipants().get(i).getParticipantId(), true, pref.getColorArray().get(i));
             }*/
             Participant player = mRoom.getParticipants().get(i);
-            if(!player.getParticipantId().equals(getLocalID())){
+            if (!player.getParticipantId().equals(getLocalID())) {
                 players[i] = new Player(player.getDisplayName(), player.getParticipantId(), false, this.hostID() == player.getParticipantId(), pref.getEnemyColorArray().get(i));
                 playerList.add(new Player(player.getDisplayName(), player.getParticipantId(), false, this.hostID() == player.getParticipantId(), pref.getEnemyColorArray().get(i)));
                 playerListTesting.add(new Player(player.getDisplayName(), player.getParticipantId(), false, player.getDisplayName().equals("IncapableTactics3"), pref.getEnemyColorArray().get(i)));
-            }
-            else {
+            } else {
                 players[i] = new Player(player.getDisplayName(), player.getParticipantId(), true, this.hostID() == player.getParticipantId(), pref.getMainColor());
                 playerList.add(new Player(player.getDisplayName(), player.getParticipantId(), true, this.hostID() == player.getParticipantId(), pref.getMainColor()));
                 playerListTesting.add(new Player(player.getDisplayName(), player.getParticipantId(), true, player.getDisplayName().equals("IncapableTactics3"), pref.getEnemyColorArray().get(i)));
@@ -485,7 +477,7 @@ public class AndroidAPI implements IPlayServices {
         return false;
     }
 
-    public void leaveGame(){
+    public void leaveGame() {
         mPlaying = false;
     }
 

@@ -1,8 +1,5 @@
 package com.rngg.utils;
 
-// TODO only used for Arrays.toString() in main, remove before merging
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -15,7 +12,6 @@ public class RNG {
 
     private int[] rollResult;
 
-    // TODO main for testing purposes, remove before merging
     public static void main(String[] args) {
         RNG rng = RNG.getInstance();
         rng.d6();
@@ -28,7 +24,9 @@ public class RNG {
         static final RNG INSTANCE = new RNG();
     }
 
-    private RNG() { d6(); }
+    private RNG() {
+        d6();
+    }
 
     public static RNG getInstance() {
         return LazyHolder.INSTANCE;
@@ -80,7 +78,7 @@ public class RNG {
     }
 
     private void setLabelsValuesProbs(String[] labels, float[] values, float[] probabilities) {
-        if (labels.length != values.length  || labels.length != probabilities.length) {
+        if (labels.length != values.length || labels.length != probabilities.length) {
             throw new IllegalArgumentException("Arguments must have same length");
         }
 
@@ -135,7 +133,7 @@ public class RNG {
     }
 
     public String[] labelFromRoll() {
-        if(rollResult != null){
+        if (rollResult != null) {
             // takes an array of indices, returns array of labels
             String[] ret = new String[rollResult.length];
             for (int j = 0; j < rollResult.length; j++) {
@@ -199,9 +197,9 @@ public class RNG {
 
     public void grades() {
         setLabelsValuesProbs(
-            new String[]{"F", "E", "D", "C", "B", "A"},
-            new float[]{0, 41, 53, 65, 77, 89},
-            new float[]{41/101f, 12/101f, 12/101f, 12/101f, 12/101f, 12/101f}
+                new String[]{"F", "E", "D", "C", "B", "A"},
+                new float[]{0, 41, 53, 65, 77, 89},
+                new float[]{41 / 101f, 12 / 101f, 12 / 101f, 12 / 101f, 12 / 101f, 12 / 101f}
         );
     }
 
@@ -210,6 +208,6 @@ public class RNG {
     private boolean almostEqual(float x, float y) {
         // floating point math is hard, and n * 1/n is not necessarily equal to 1
         // checks if the two inputs are "close enough"
-        return Math.abs(x-y) <= 1e-5;
+        return Math.abs(x - y) <= 1e-5;
     }
 }

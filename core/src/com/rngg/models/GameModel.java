@@ -125,9 +125,10 @@ public class GameModel implements RealtimeListener{
 
     public void setMap(String fileName) {
         if (fileName.length() > 0) {
+            applyPreferences(RNG.getSeed());
             this.map = loadMap(fileName);
+            this.updateAreas();
         } else {
-            //initializePlayerAndAreas();
             applyPreferences(RNG.getSeed());
         }
 
@@ -179,10 +180,10 @@ public class GameModel implements RealtimeListener{
             }
         }
 
-        if (!randomPlayers || this.numPlayers > maxPlayers) {
+        /*if (!randomPlayers || this.numPlayers > maxPlayers) {
             this.numPlayers = maxPlayers;
             this.players = new ArrayList<Player>(this.players.subList(0, maxPlayers));
-        }
+        }*/
 
         //initializePlayerAndAreas();
 
@@ -195,10 +196,6 @@ public class GameModel implements RealtimeListener{
         }
 
         this.updateAreas();
-        this.rng = RNG.getInstance();
-        this.attackRoll = 0;
-        this.defendRoll = 0;
-        this.inGameMenuOpen = false;
         return new SquareMap(9, 16, this.players, this.maxUnits);
     }
 
@@ -580,7 +577,11 @@ public class GameModel implements RealtimeListener{
         rng.setFromString(pref.getDiceType());
         this.maxUnits = pref.getNumDice();
         RNG.setSeed(seed);
-        setMapFromType(pref.getMapType());
+
+        if (!pref.getMapType().equals("CustomMap")) {
+            setMapFromType(pref.getMapType());
+            System.out.println(pref.getMapType());
+        }
     }
 
     public void sendSettings(){

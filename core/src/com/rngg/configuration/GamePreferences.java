@@ -36,7 +36,7 @@ public class GamePreferences {
         }
 
         if (!prefs.contains("map type")) {
-            setMapType("SquareMap");
+            setMapType("HexMeshMap");
         }
 
         if (!prefs.contains("dice type")) {

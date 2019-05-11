@@ -82,11 +82,11 @@ public class GameModel implements RealtimeListener {
             }
         }
 
+        this.numPlayers = this.players.size();
         this.rng = RNG.getInstance();
         this.contiguousAreas = new int[this.players.size()];
 
-        this.setMap(mapFileName);
-
+        this.setMap();
 
         //check if proto-host, if true, generate seed, shuffle playerlist, and broadcast seed
         if (this.localPlayer.isHost) {
@@ -115,13 +115,8 @@ public class GameModel implements RealtimeListener {
         this(players, "", sender);
     }
 
-    public void setMap(String fileName) {
-        if (fileName.length() > 0) {
-            this.map = loadMap(fileName);
-        } else {
-            //initializePlayerAndAreas();
-            applyPreferences(RNG.getSeed());
-        }
+    public void setMap() {
+        applyPreferences(RNG.getSeed());
 
         for (int i = 0; i < this.players.size(); i++) {
             Player player = players.get(i);
@@ -172,12 +167,19 @@ public class GameModel implements RealtimeListener {
             }
         }
 
-        if (!randomPlayers || this.numPlayers > maxPlayers) {
-            this.numPlayers = maxPlayers;
-            this.players = new ArrayList<Player>(this.players.subList(0, maxPlayers));
+        if (localGame) players = new ArrayList<Player>(players.subList(0, maxPlayers));
+        numPlayers = players.size();
+
+        // Don't allow custom maps with more players than specified in JSON
+        if (this.numPlayers > maxPlayers) {
+            Gdx.app.log(this.getClass().getSimpleName(), "Number of players exceed allowed number for chosen CustomMap");
+            return new HexMeshMap(25, players, maxUnits);
         }
 
-        //initializePlayerAndAreas();
+        // If number of players are not correct for the custom map, disregard zone ownership configuration in JSON
+        if (this.numPlayers < maxPlayers && !randomPlayers) randomPlayers = !randomPlayers;
+
+        if (randomPlayers) units = new ArrayDeque<Integer>();
 
         if (mapType.equals("SquareMap")) {
             return new SquareMap(totalRows, totalCols, this.players, this.maxUnits, randomPlayers, zones);
@@ -187,11 +189,6 @@ public class GameModel implements RealtimeListener {
             return new HexMeshMap(totalRows, this.players, randomPlayers, zones, offset, this.maxUnits, units);
         }
 
-        this.updateAreas();
-        this.rng = RNG.getInstance();
-        this.attackRoll = 0;
-        this.defendRoll = 0;
-        this.inGameMenuOpen = false;
         return new SquareMap(9, 16, this.players, this.maxUnits);
     }
 
@@ -535,7 +532,7 @@ public class GameModel implements RealtimeListener {
         this.inGameMenuOpen = !this.inGameMenuOpen;
     }
 
-    public void setMapFromType(String mapType) {
+    public void setMapFromType(String mapType, String fileName) {
         // TODO remove magic Strings
         if (mapType.equals("HexMap")) {
             this.map = new HexMap(7, 7, players, this.maxUnits);
@@ -543,6 +540,8 @@ public class GameModel implements RealtimeListener {
             this.map = new SquareMap(9, 16, players, this.maxUnits);
         } else if (mapType.equals("HexMeshMap")) {
             this.map = new HexMeshMap(25, players, maxUnits);
+        } else if (mapType.equals("CustomMap")) {
+            this.map = loadMap(fileName);
         } else {
             Gdx.app.error(this.getClass().getSimpleName(), "Incorrect or missing mapType: " + mapType);
         }
@@ -555,25 +554,29 @@ public class GameModel implements RealtimeListener {
         String diceType = settings.getString();
         int numDice = settings.getInt();
         String mapType = settings.getString();
+        String customMapFileName = settings.getString();
         long seed = settings.getLong();
+
         Gdx.app.log(this.getClass().getSimpleName(), "Recieved settings: \n" +
                 "diceType: " + diceType + "\n" +
                 "numDice: " + numDice + "\n" +
                 "mapType: " + mapType + "\n" +
+                "customMap: " + customMapFileName + "\n" +
                 "seed: " + seed + "\n"
         );
 
         rng.setFromString(diceType);
         this.maxUnits = numDice;
         RNG.setSeed(seed);
-        setMapFromType(mapType);
+        setMapFromType(mapType, customMapFileName);
     }
 
     public void applyPreferences(long seed) {
         rng.setFromString(pref.getDiceType());
         this.maxUnits = pref.getNumDice();
         RNG.setSeed(seed);
-        setMapFromType(pref.getMapType());
+
+        setMapFromType(pref.getMapType(), pref.getMapType().equals("CustomMap") ? pref.getCustomMap() : "");
     }
 
     public void sendSettings() {
@@ -582,21 +585,33 @@ public class GameModel implements RealtimeListener {
         // message header
         String header = Message.MAPSETTINGS;
         message.putString(header);
+
         // actual settings
         String diceType = pref.getDiceType();
         message.putString(diceType);
+
         int numDice = pref.getNumDice();
         message.putInt(numDice);
+
         String mapType = pref.getMapType();
         message.putString(mapType);
+
+        String customMapFileName = "";
+        if (pref.getMapType().equals("CustomMap"))
+            customMapFileName = pref.getCustomMap();
+        message.putString(customMapFileName);
+
         long seed = RNG.getSeed();
         message.putLong(seed);
+
         Gdx.app.log(this.getClass().getSimpleName(), "Sent settings: \n" +
                 "diceType: " + diceType + "\n" +
                 "numDice: " + numDice + "\n" +
                 "mapType: " + mapType + "\n" +
+                "customMap: " + customMapFileName + "\n" +
                 "seed: " + seed + "\n"
         );
+
         // apply settings and send
         // TODO this doesn't work, for some reason
         applyPreferences(seed);

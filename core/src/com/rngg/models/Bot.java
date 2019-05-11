@@ -37,6 +37,8 @@ public class Bot extends Player {
                 }
                 ArrayList<Zone> neighbors = model.getMap().getNeighbors(zone);
                 for (Zone neighbor : neighbors) {
+                    if (neighbor == null) continue; // Not sure why, but at least for custom StarMap, one neighbor yields null
+
                     if (!neighbor.getPlayer().equals(this) && shouldAttack(zone, neighbor)) {
                         int result = model.attack(zone, neighbor, true);
                         // result > 0 means bot won

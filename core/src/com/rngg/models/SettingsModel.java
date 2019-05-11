@@ -1,11 +1,14 @@
 package com.rngg.models;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.utils.Array;
 import com.rngg.configuration.GamePreferences;
 
 public class SettingsModel {
@@ -52,4 +55,27 @@ public class SettingsModel {
         return slider;
     }
 
+    public String getMapButtonText() {
+        String map = pref.getMapType();
+        if (map.equals("SquareMap")) {
+            return "SquareMap";
+        } else if (map.equals("HexMap")) {
+            return "Hexagonal map";
+        } else if (map.equals("HexMeshMap")) {
+            return "HexMeshMap";
+        }
+
+        return "Custom Map";
+    }
+
+    public Array<String> getCustomMaps() {
+        FileHandle dirHandle = Gdx.files.internal("levels/");
+        Array<String> mapNames = new Array<String>();
+
+        for (FileHandle entry : dirHandle.list()) {
+            if (entry.extension().equals("json")) mapNames.add(entry.nameWithoutExtension());
+        }
+
+        return mapNames;
+    }
 }

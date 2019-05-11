@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -35,7 +36,8 @@ public class SettingsController extends Controller {
                                   final TextButton mapButton,
                                   final TextButton diceButton,
                                   final Slider slider,
-                                  final Label sliderLabel) {
+                                  final Label sliderLabel,
+                                  final SelectBox<String> customMaps) {
 
         cbSettingsButton.addListener(new ChangeListener() {
             @Override
@@ -106,12 +108,20 @@ public class SettingsController extends Controller {
         mapButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (pref.getMapType().equals("SquareMap")) {
+                String map = pref.getMapType();
+
+                pref.setCustomMapEnabled(false);
+
+                if (map.equals("SquareMap")){
                     pref.setMapType("HexMap");
                     mapButton.setText("Hexagonal map");
-                } else if (pref.getMapType().equals("HexMap")) {
+                } else if (map.equals("HexMap")) {
                     pref.setMapType("HexMeshMap");
                     mapButton.setText("HexMeshMap");
+                } else if (map.equals("HexMeshMap")) {
+                    pref.setMapType("CustomMap");
+                    mapButton.setText("Custom Map");
+                    pref.setCustomMapEnabled(true);
                 } else {
                     pref.setMapType("SquareMap");
                     mapButton.setText("Square map");
@@ -137,6 +147,13 @@ public class SettingsController extends Controller {
             public void changed(ChangeEvent event, Actor actor) {
                 pref.setNumDice((int) slider.getValue());
                 sliderLabel.setText("Number of dice: " + pref.getNumDice());
+            }
+        });
+
+        customMaps.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                pref.setCustomMap("levels/" + customMaps.getSelected() + ".json");
             }
         });
     }

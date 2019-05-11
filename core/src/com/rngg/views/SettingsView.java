@@ -8,17 +8,19 @@ package com.rngg.views;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.rngg.configuration.GamePreferences;
 import com.rngg.controllers.SettingsController;
@@ -45,6 +47,8 @@ public class SettingsView extends View {
     private TextButton color2Button;
     private TextButton color3Button;
     private TextButton color4Button;
+
+    private final SelectBox<String> customMaps;
 
 
     public SettingsView(SettingsController controller) {
@@ -79,6 +83,7 @@ public class SettingsView extends View {
 
         Table game_settings_table = new Table();
         game_settings_table.defaults().pad(10F);
+        game_settings_table.defaults().padLeft(50F);
         game_settings_table.add(new Label("Choose your in-game settings", skin)).row();
 
         Table second_table = new Table();
@@ -113,7 +118,11 @@ public class SettingsView extends View {
         VerticalGroup group4 = new VerticalGroup();
         group4.grow();
         group4.space(30);
-        game_settings_table.add(group4).width(300);
+        game_settings_table.add(group4).width(400);
+
+        HorizontalGroup customMapGroup = new HorizontalGroup();
+        customMapGroup.grow();
+        customMapGroup.space(30);
 
         stage.addActor(table);
 
@@ -135,9 +144,15 @@ public class SettingsView extends View {
         color4Button.getLabel().setFontScale(1.5f);
         group1.addActor(color4Button);
 
-        final TextButton mapButton = new TextButton(pref.getMapType().equals("SquareMap") ? "Square map" : pref.getMapType().equals("HexMap") ? "Hexagonal map" : "HexMeshMap", skin);
+        final TextButton mapButton = new TextButton(settingsModel.getMapButtonText(), skin);
         mapButton.getLabel().setFontScale(1.5f);
-        group4.addActor(mapButton);
+        customMapGroup.addActor(mapButton);
+
+        customMaps = new SelectBox<String>(skin);
+        customMaps.getStyle().font.getData().setScale(3f);
+        customMapGroup.addActor(customMaps);
+
+        group4.addActor(customMapGroup);
 
         final TextButton diceBytton = new TextButton(pref.getDiceType(), skin);
         diceBytton.getLabel().setFontScale(1.5f);
@@ -166,7 +181,7 @@ public class SettingsView extends View {
         group3.addActor(menuButton);
 
 
-        controller.addActorListeners(cbSettingsButton, toggleMusic, menuButton, color1Button, color2Button, color3Button, color4Button, mapButton, diceBytton, diceNumSLider, sliderLabel); // handle input
+        controller.addActorListeners(cbSettingsButton, toggleMusic, menuButton, color1Button, color2Button, color3Button, color4Button, mapButton, diceBytton, diceNumSLider, sliderLabel, customMaps); // handle input
     }
 
     @Override
@@ -194,6 +209,12 @@ public class SettingsView extends View {
         settingsModel.drawText(font, batch, Integer.toString(4), x_margin, Rngg.HEIGHT / 2 - 215);
         batch.end();
 
+        customMaps.setColor(pref.customMapEnabled() ? Color.WHITE : Color.CLEAR);
+        customMaps.setDisabled(!pref.customMapEnabled());
+        customMaps.setItems(pref.customMapEnabled() ? settingsModel.getCustomMaps() : new Array<String>());
+        customMaps.pack();
+
+        stage.act();
         stage.draw();
     }
 

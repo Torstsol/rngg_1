@@ -23,7 +23,7 @@ public class GamePreferences {
 
     private GamePreferences() {
         prefs = Gdx.app.getPreferences("game-preferences");
-        if (!hasColors()){
+        if (!hasColors()) {
             setTrueColors();
         }
 

@@ -176,9 +176,16 @@ public class GameModel implements RealtimeListener{
         if (localGame) players = new ArrayList<Player>(players.subList(0, maxPlayers));
         numPlayers = players.size();
 
-        if (this.numPlayers > maxPlayers || (this.numPlayers < maxPlayers && !randomPlayers)) {
+        // Don't allow custom maps with more players than specified in JSON
+        if (this.numPlayers > maxPlayers) {
+            Gdx.app.log(this.getClass().getSimpleName(), "Number of players exceed allowed number for chosen CustomMap");
             return new HexMeshMap(25, players, maxUnits);
         }
+
+        // If number of players are not correct for the custom map, disregard zone ownership configuration in JSON
+        if (this.numPlayers < maxPlayers && !randomPlayers) randomPlayers = !randomPlayers;
+
+        if (randomPlayers) units = new ArrayDeque<Integer>();
 
         if (mapType.equals("SquareMap")) {
             return new SquareMap(totalRows, totalCols, this.players, this.maxUnits, randomPlayers, zones);
@@ -188,7 +195,6 @@ public class GameModel implements RealtimeListener{
             return new HexMeshMap(totalRows, this.players, randomPlayers, zones, offset, this.maxUnits, units);
         }
 
-        //this.updateAreas();
         return new SquareMap(9, 16, this.players, this.maxUnits);
     }
 

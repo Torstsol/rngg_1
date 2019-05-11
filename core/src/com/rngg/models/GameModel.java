@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 public class GameModel implements RealtimeListener {
@@ -582,7 +581,7 @@ public class GameModel implements RealtimeListener {
 
     public void sendSettings() {
         Gdx.app.log(this.getClass().getSimpleName(), "Sending settings");
-        Message message = new Message(new byte[512],"",0);
+        Message message = new Message(new byte[512], "", 0);
         // message header
         String header = Message.MAPSETTINGS;
         message.putString(header);

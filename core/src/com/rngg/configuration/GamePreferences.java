@@ -27,23 +27,23 @@ public class GamePreferences {
             setTrueColors();
         }
 
-        if (!prefs.contains("colorblind mode")){
+        if (!prefs.contains("colorblind mode")) {
             setCbMode(false);
         }
 
-        if (!prefs.contains("Main color")){
+        if (!prefs.contains("Main color")) {
             setMainColor("color 1");
         }
 
-        if (!prefs.contains("map type")){
+        if (!prefs.contains("map type")) {
             setMapType("SquareMap");
         }
 
-        if (!prefs.contains("dice type")){
+        if (!prefs.contains("dice type")) {
             setDiceType(RNG.D6);
         }
 
-        if (!prefs.contains("Number of dice")){
+        if (!prefs.contains("Number of dice")) {
             setNumDice(8);
         }
 

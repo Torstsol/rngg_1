@@ -26,9 +26,6 @@ public class SettingsController extends Controller {
         assetManager = GameAssetManager.getManager();
     }
 
-    @Override
-    public void update(float delta) {}
-
     public void addActorListeners(final TextButton cbSettingsButton,
                                   final TextButton musicButton,
                                   final TextButton menuButton,
@@ -48,7 +45,7 @@ public class SettingsController extends Controller {
                 Gdx.app.log(this.getClass().getSimpleName(), "colors updated");
                 pref.setCbMode(!pref.getCbMode());
                 System.out.println("Cb mode: " + pref.getCbMode());
-                if (pref.getCbMode()){
+                if (pref.getCbMode()) {
                     pref.setColors("213,0,0", "240,228,66", "0,114,178", "86,180,233");
                     cbSettingsButton.setText("Colorblind mode [enabled]");
                 } else {
@@ -61,7 +58,7 @@ public class SettingsController extends Controller {
         musicButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(pref.isMusicEnabled()) {
+                if (pref.isMusicEnabled()) {
                     assetManager.get(Assets.MUSIC).pause();
                     pref.setMusic(false);
                     musicButton.setText("Music [disabled]");
@@ -135,7 +132,7 @@ public class SettingsController extends Controller {
         diceButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (pref.getDiceType().equals(RNG.D6)){
+                if (pref.getDiceType().equals(RNG.D6)) {
                     pref.setDiceType(RNG.D20);
                     diceButton.setText(RNG.D20);
                 } else {

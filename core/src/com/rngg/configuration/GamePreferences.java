@@ -21,7 +21,7 @@ public class GamePreferences {
     private ArrayList<Color> enemyList;
     private boolean musicEnabled = false;
 
-    private GamePreferences(){
+    private GamePreferences() {
         prefs = Gdx.app.getPreferences("game-preferences");
         if (!hasColors()){
             setTrueColors();
@@ -62,12 +62,12 @@ public class GamePreferences {
         return LazyHolder.INSTANCE;
     }
 
-    public void setTrueColors(){
+    public void setTrueColors() {
         this.setColors("200,0,0", "0,200,0", "0,0,200", "200,200,0");
         prefs.flush();
     }
 
-    public void setColors(String c1, String c2, String c3, String c4){
+    public void setColors(String c1, String c2, String c3, String c4) {
         prefs.putString("color 1", c1);
         prefs.putString("color 2", c2);
         prefs.putString("color 3", c3);
@@ -96,16 +96,16 @@ public class GamePreferences {
         return musicEnabled;
     }
 
-    public Color getColor(String color){
+    public Color getColor(String color) {
         colorArray = new ArrayList<Float>();
-        for(String c : prefs.getString(color).split(",")) {
+        for (String c : prefs.getString(color).split(",")) {
             colorArray.add(Float.parseFloat(c) / 255f);
         }
 
-        return new Color(colorArray.get(0), colorArray.get(1), colorArray.get(2),1);
+        return new Color(colorArray.get(0), colorArray.get(1), colorArray.get(2), 1);
     }
 
-    public ArrayList<Color> getColorArray(){
+    public ArrayList<Color> getColorArray() {
         list = new ArrayList<Color>();
         list.add(COLOR1);
         list.add(COLOR2);
@@ -115,10 +115,10 @@ public class GamePreferences {
         return list;
     }
 
-    public ArrayList<Color> getEnemyColorArray(){
+    public ArrayList<Color> getEnemyColorArray() {
         enemyList = new ArrayList<Color>();
-        for(Color c : this.getColorArray()){
-            if(!c.equals(this.getMainColor())){
+        for (Color c : this.getColorArray()) {
+            if (!c.equals(this.getMainColor())) {
                 enemyList.add(c);
             }
         }
@@ -126,12 +126,12 @@ public class GamePreferences {
         return enemyList;
     }
 
-    public boolean getCbMode(){
+    public boolean getCbMode() {
         return prefs.getBoolean("colorblind mode");
     }
 
-    public String getCbModeString(){
-        if (getCbMode()){
+    public String getCbModeString() {
+        if (getCbMode()) {
             return "enabled";
         } else {
             return "disabled";
@@ -143,11 +143,11 @@ public class GamePreferences {
         prefs.flush();
     }
 
-    public boolean hasColors(){
+    public boolean hasColors() {
         return prefs.contains("color 1");
     }
 
-    public void updateColors(){
+    public void updateColors() {
         COLOR1 = getColor("color 1");
         COLOR2 = getColor("color 2");
         COLOR3 = getColor("color 3");
@@ -159,30 +159,30 @@ public class GamePreferences {
         prefs.flush();
     }
 
-    public Color getMainColor(){
+    public Color getMainColor() {
         String color = prefs.getString("Main color");
         return getColor(color);
     }
 
-    public String getMainColorString(){
+    public String getMainColorString() {
         return prefs.getString("Main color");
     }
 
-    public void setMapType(String mapType){
+    public void setMapType(String mapType) {
         prefs.putString("map type", mapType);
         prefs.flush();
     }
 
-    public String getMapType(){
+    public String getMapType() {
         return prefs.getString("map type");
     }
 
-    public void setDiceType(String diceType){
+    public void setDiceType(String diceType) {
         prefs.putString("dice type", diceType);
         prefs.flush();
     }
 
-    public String getDiceType(){
+    public String getDiceType() {
         return prefs.getString("dice type");
     }
 
@@ -191,7 +191,7 @@ public class GamePreferences {
         prefs.flush();
     }
 
-    public int getNumDice(){
+    public int getNumDice() {
         return prefs.getInteger("Number of dice");
     }
 

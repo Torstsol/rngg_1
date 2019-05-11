@@ -86,8 +86,8 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<List<int[]>>>> {
     public HexMeshZone _screenCoordToZone(Vector2 coords) {
         // Values are offset a bit to fit with the rendering of the map
         // The rendering is offset to not draw the map exactly at coordinate (0,0)
-        double q = (Math.sqrt(3)/3 * (coords.x - size / 2)  -  1./3 * (coords.y - size)) / size;
-        double r =  (2./3 * (coords.y - size)) / size;
+        double q = (Math.sqrt(3) / 3 * (coords.x - size / 2) - 1. / 3 * (coords.y - size)) / size;
+        double r = (2. / 3 * (coords.y - size)) / size;
 
         // The q (column) and r (row) coordinates must be rounded to match their corresponding integer values
         Hex hex = Hex.hexRound(new Hex(q, r));
@@ -132,7 +132,8 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<List<int[]>>>> {
 
                 int row = randSubZone.getRow();
                 int col = randSubZone.getCol();
-                if (row < rows / 10 || row > rows - rows / 10 || col + this.offset < cols / 10 || col + this.offset > cols - cols / 10) continue;
+                if (row < rows / 10 || row > rows - rows / 10 || col + this.offset < cols / 10 || col + this.offset > cols - cols / 10)
+                    continue;
                 zone = randSubZone;
             }
         }
@@ -273,7 +274,8 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<List<int[]>>>> {
 
     // gets a single HexZone (subZone) of the map
     private HexZone getZone(int row, int col) {
-        if (row > rows - 1 || col + this.offset > cols || row < 0 || col + this.offset < 0) return null;
+        if (row > rows - 1 || col + this.offset > cols || row < 0 || col + this.offset < 0)
+            return null;
 
         return this.zones[row][col + this.offset];
     }
@@ -312,7 +314,8 @@ public class HexMeshMap extends GameMap<HexMeshZone, List<List<List<int[]>>>> {
                     subZoneNeigbor = getZone(row + i, col + j);
                     neighbor = getSuperZone(subZoneNeigbor);
 
-                    if (subZoneNeigbor != null && !noSubZoneNeighbors) subZone.addNeighbor(subZoneNeigbor);
+                    if (subZoneNeigbor != null && !noSubZoneNeighbors)
+                        subZone.addNeighbor(subZoneNeigbor);
                     if (neighbor != null && neighbor != zone) ret.add(neighbor);
                 }
             }

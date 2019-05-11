@@ -3,7 +3,6 @@ package com.rngg.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.rngg.game.Rngg;
 import com.rngg.utils.RNG;
@@ -74,7 +73,7 @@ public class SquareMap extends GameMap<SquareZone, List<List<int[]>>> {
                 }
             }
 
-        // custom levels from JSON
+            // custom levels from JSON
         } else {
             int playerNum = 0;
             for (List<int[]> playerZones : customZones) {

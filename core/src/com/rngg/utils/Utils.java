@@ -1,3 +1,8 @@
+/*
+ * This class collects common used resources which are heavy and are
+ * not assets, and may be shared.
+ */
+
 package com.rngg.utils;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

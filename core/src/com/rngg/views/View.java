@@ -1,3 +1,8 @@
+/*
+ * Super class for views which implements all methods from the screen interface.
+ * It also create common resources
+ */
+
 package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;

@@ -66,23 +66,22 @@ public class InGameMenuRenderer {
 
     public void draw() {
         //TODO: This part can be changed by using a listener (Observer pattern) instead
-        if(inGameMenuOpen != gameModel.isInGameMenuOpen()){
+        if (inGameMenuOpen != gameModel.isInGameMenuOpen()) {
             inGameMenuOpen = !inGameMenuOpen;
-            if(inGameMenuOpen){
+            if (inGameMenuOpen) {
                 this.controller.addInputProcessor(stage);
-            }
-            else{
+            } else {
                 this.controller.removeInputProcessor();
             }
         }
-        if(inGameMenuOpen){
+        if (inGameMenuOpen) {
             InGameMenuCamera.update();
             batch.setProjectionMatrix(InGameMenuCamera.combined);
             Gdx.gl.glEnable(GL20.GL_BLEND);
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             sr.begin(shapeType);
-            sr.setColor(0,0,0,0.7f);
-            sr.rect(Rngg.WIDTH / 2 - Rngg.WIDTH*1/10,Rngg.HEIGHT / 2 - Rngg.HEIGHT*1/10,Rngg.WIDTH*2/10,Rngg.HEIGHT*2/10);
+            sr.setColor(0, 0, 0, 0.7f);
+            sr.rect(Rngg.WIDTH / 2 - Rngg.WIDTH * 1 / 10, Rngg.HEIGHT / 2 - Rngg.HEIGHT * 1 / 10, Rngg.WIDTH * 2 / 10, Rngg.HEIGHT * 2 / 10);
             sr.end();
             stage.draw();
         }

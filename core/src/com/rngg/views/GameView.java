@@ -1,3 +1,7 @@
+/*
+ * View for the actual game.
+ */
+
 package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;
@@ -11,11 +15,8 @@ import com.rngg.game.Rngg;
 import com.rngg.models.GameMap;
 import com.rngg.models.HexMap;
 import com.rngg.models.HexMeshMap;
-import com.rngg.models.Player;
 import com.rngg.models.SquareMap;
-import com.rngg.utils.GameAssetManager;
-
-import java.util.List;
+import com.rngg.utils.Utils;
 
 public class GameView extends View {
 
@@ -24,18 +25,16 @@ public class GameView extends View {
     private SpriteBatch batch;
     private MapRenderer mapRenderer;
     private ShapeRenderer shapeRenderer;
-    private List<Player> players;
     private HUDRenderer hudRenderer;
     private InGameMenuRenderer inGameMenuRenderer;
 
     public GameView(GameController controller) {
-        camera.viewportHeight = (float) (Rngg.HEIGHT * 10 / 8);
-
         this.controller = controller;
 
-        batch = new SpriteBatch();
+        camera.viewportHeight = (float) (Rngg.HEIGHT * 10 / 8);
+        batch = Utils.getSpriteBatch();
         font.setColor(Color.WHITE);
-        this.shapeRenderer = new ShapeRenderer();
+        shapeRenderer = new ShapeRenderer();
         mapRenderer = getMapRenderer();
         hudRenderer = new HUDRenderer(controller.gameModel, font, controller, shapeRenderer);
         inGameMenuRenderer = new InGameMenuRenderer(controller.gameModel, font, controller, shapeRenderer);
@@ -43,12 +42,11 @@ public class GameView extends View {
 
     @Override
     public void render(float delta) {
-        this.mapRenderer = this.getMapRenderer();
+        mapRenderer = this.getMapRenderer();
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(camera.combined);
 
-        controller.update(delta);
         controller.setCamera(camera);
 
         Gdx.gl.glClearColor(0f, 0f, 0f, 1);

@@ -3,7 +3,7 @@ package com.rngg.views;
 import com.rngg.controllers.WaitingRoomController;
 import com.rngg.models.WaitingRoomModel;
 
-public class WaitingRoomView extends View{
+public class WaitingRoomView extends View {
 
     private WaitingRoomController controller;
     private WaitingRoomModel model;
@@ -20,36 +20,34 @@ public class WaitingRoomView extends View{
     @Override
     public void render(float delta) {
         super.render(delta);
-        if(!model.created){
-            if(isQuickGame) {
+        if (!model.created) {
+            if (isQuickGame) {
                 createQuickRoom();
                 model.created = true;
-            }
-            else if (isInviteRoom){
+            } else if (isInviteRoom) {
                 controller.getGame().getAPI().setRoomListener(controller);
                 controller.getGame().getAPI().showInvitationInbox();
                 model.created = true;
-            }
-            else{
+            } else {
                 createInvitePlayersRoom();
                 model.created = true;
             }
         }
-        if(model.leftRoom){
+        if (model.leftRoom) {
             controller.getGame().screenManager.setMenuScreen();
         }
-        if(model.joinedRoom){
+        if (model.joinedRoom) {
             controller.enterGameScreen2();
         }
     }
 
-    private void createQuickRoom(){
+    private void createQuickRoom() {
 
         controller.getGame().getAPI().setRoomListener(controller);
         controller.getGame().getAPI().startQuickGame();
     }
 
-    private void createInvitePlayersRoom(){
+    private void createInvitePlayersRoom() {
 
         controller.getGame().getAPI().setRoomListener(controller);
         controller.getGame().getAPI().startInvitePlayersRoom();

@@ -1,3 +1,8 @@
+/*
+ * View for the lobby screen. Let the user navigate to different type of game screens or screens handling
+ * multiplayer features.
+ */
+
 package com.rngg.views;
 
 import com.badlogic.gdx.Gdx;
@@ -60,8 +65,6 @@ public class LobbyView extends View {
 
     @Override
     public void render(float delta) {
-        controller.update(delta);
-
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
